@@ -15,9 +15,22 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'sakh96@gmail.com',
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'sakh96@gmail.com',
+        // ]);
+        $this->call([
+            MenuBaseSeeder::class
         ]);
+    }
+
+    public static function functionCall()
+    {
+        $functionCall = "updateOrCreate";
+        if (config('app.env') === 'production')
+        {
+            $functionCall = "firstOrCreate";
+        }
+        return $functionCall;
     }
 }

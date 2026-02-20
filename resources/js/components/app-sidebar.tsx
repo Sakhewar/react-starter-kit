@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,8 @@ import {
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 import { dashboard } from '@/routes';
+import { useEffect, useState } from 'react';
+
 
 const mainNavItems: NavItem[] = [
     {
@@ -37,14 +39,21 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
+
+
 export function AppSidebar() {
+
+    const { menu } = usePage().props;
+
+    console.log('Menu from server:', menu);
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -53,7 +62,15 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={menu.map(mod => ({
+                    title: mod.title,
+                    href: mod.link || '#',
+                    icon: LayoutGrid, // ou map ton icone dynamiquement
+                    subItems: mod.pages.map(p => ({
+                        title: p.title,
+                        href: p.link,
+                    })),
+                }))} />
             </SidebarContent>
 
             <SidebarFooter>
