@@ -23,7 +23,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <div className="min-h-screen bg-background flex">
 
             {/* Desktop Sidebar */}
-            <AppSidebar />
+            <AppSidebar defaultOpenId={2}/>
 
             <div className="flex flex-col flex-1">
 

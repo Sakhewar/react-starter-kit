@@ -7,7 +7,7 @@ export default function Welcome() {
 
     return (
         <AppLayout>
-            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <h1 className="text-2xl font-bold">From Entry Page Welcome</h1>
         </AppLayout>
     )
     return (
