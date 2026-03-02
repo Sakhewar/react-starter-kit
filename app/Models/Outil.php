@@ -17,4 +17,45 @@ class Outil extends Model
             $table->dropConstrainedForeignId('updated_at_user_id');
         }
     }
+
+    public static function hasOnePermissionOf(array $models)
+    {
+        return true;
+        $user = auth()->user();
+        if (!$user)
+        {
+            return false;
+        }
+
+        $permissions = collect();
+
+        if (count($models) > 0)
+        {
+            $permissions = Permission::whereNotNull('display_name')
+                ->where(function ($query) use ($models) {
+                    foreach ($models as $model)
+                    {
+                        $query->orWhere('name', 'like', "%{$model}%");
+                    }
+                })
+                ->pluck('name');
+        }
+
+        // Aucun modèle => pas de restriction
+        if ($permissions->isEmpty())
+        {
+            return true;
+        }
+
+        // Vérifie si l'utilisateur a au moins une permission correspondante
+        foreach ($permissions as $permissionName)
+        {
+            if ($user->can($permissionName))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

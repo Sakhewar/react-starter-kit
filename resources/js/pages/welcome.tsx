@@ -1,7 +1,15 @@
+
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Head } from '@inertiajs/react';
+import AppLayout from './AppLayout';
 
 export default function Welcome() {
+
+    return (
+        <AppLayout>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+        </AppLayout>
+    )
     return (
         <>
             <Head title="Welcome">

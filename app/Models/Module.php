@@ -25,6 +25,16 @@ class Module extends Model
         return $pages;
     }
 
+    public function modules()
+    {
+        return $this->hasMany(Module::class)->orderBy('order');
+    }
+
+    public function mode_link()
+    {
+        return $this->belongsTo(ModeLink::class);
+    }
+
     public function permissions()
     {
         $all_permissions = array();
