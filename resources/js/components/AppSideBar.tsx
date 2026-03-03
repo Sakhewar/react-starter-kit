@@ -4,16 +4,12 @@ import { useState } from "react"
 import * as Icons from "lucide-react"
 import { ChevronRight, PanelLeft } from "lucide-react"
 
-type AppSidebarProps =
+export default function AppSidebar()
 {
-  defaultOpenId?: number
-}
-
-export default function AppSidebar({ defaultOpenId }: AppSidebarProps)
-{
-    const { menu } = usePage().props as any
-    const [collapsed, setCollapsed] = useState(false)
-    const [openModule, setOpenModule] = useState<number | null>(defaultOpenId ?? null)
+    const { modules } = usePage().props as any;
+    const defaultModule = modules.find((m: any) => m.open_default);
+    const [collapsed, setCollapsed] = useState(false);
+    const [openModule, setOpenModule] = useState<number | null>(defaultModule ? defaultModule.id : null);
 
     const toggleModule = (id: number) =>
     {
@@ -27,17 +23,15 @@ export default function AppSidebar({ defaultOpenId }: AppSidebarProps)
             className="hidden md:flex h-screen border-r bg-background flex-col">
 
             {/* HEADER */}
-            <div className="h-16 flex items-center justify-between px-4 border-b">
+             <div className="h-16 flex items-center justify-between px-4 border-b">
                 {!collapsed && (<span className="font-semibold text-lg">MyApp</span>)}
-
-                <button onClick={() => setCollapsed(!collapsed)} className="p-2 rounded-md hover:bg-muted/60 transition">
-                    <PanelLeft className="w-4 h-4" />
-                </button>
             </div>
+
+           
 
             {/* CONTENT */}
             <div className="flex-1 px-3 py-4 space-y-3 overflow-y-auto">
-                {menu.map((module: any) =>
+                {modules.map((module: any) =>
                 {   
                     const isOpen = openModule === module.id;
                     const ModuleIcon = module.icon ? (Icons[module.icon as keyof typeof Icons] as React.ElementType) : null;
@@ -45,12 +39,12 @@ export default function AppSidebar({ defaultOpenId }: AppSidebarProps)
                     if((module.pages ?? []).length ===1)
                     {
                         const page = (module.pages ?? [])[0];
-                        const PageIcon = page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null
+                        const PageIcon = page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
                         return (
                             <div key={module.id}>
-                                <Link key={page.id} href={page.link} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-muted/60 transition">
+                                <Link key={page.id} href={`/pages${page.link}`} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-muted/60 transition">
                                     {PageIcon && <PageIcon className="w-4 h-4" />}
-                                    <span>{page.title}</span>
+                                    {!collapsed && <span>{module.title}</span>}
                                 </Link>
                             </div>
                         );
@@ -86,13 +80,13 @@ export default function AppSidebar({ defaultOpenId }: AppSidebarProps)
                                     initial={{ height: 0, opacity: 0 }}
                                     animate={{ height: "auto", opacity: 1 }}
                                     exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.25 }} className="ml-4 mt-1 border-l border-muted pl-4 space-y-1">
+                                    transition={{ duration: 0.25 }} className="ml-4 mt-1 border-l border-black pl-1 space-y-1">
                                     {module.pages.map((page: any) =>
                                     {
                                         const PageIcon = page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null
 
                                         return (
-                                            <Link key={page.id} href={page.link} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-muted/60 transition">
+                                            <Link key={page.id} href={`/pages${page.link}`} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-muted/60 transition">
                                                 {PageIcon && <PageIcon className="w-4 h-4" />}
                                                 <span>{page.title}</span>
                                             </Link>
@@ -104,6 +98,13 @@ export default function AppSidebar({ defaultOpenId }: AppSidebarProps)
                         </div>
                     );
                 })}
+            </div>
+
+             {/* FOOTER */}
+             <div className={`h-16 flex items-center ${!collapsed ? "justify-end" : "justify-center"} px-4 border-b`}>
+                <button onClick={() => setCollapsed(!collapsed)} className="p-2 cursor-pointer rounded-md hover:bg-muted/60 transition">
+                    <PanelLeft className="w-4 h-4" />
+                </button>
             </div>
         </motion.aside>
     );

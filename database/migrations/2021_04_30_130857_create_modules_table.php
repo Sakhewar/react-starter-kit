@@ -23,6 +23,7 @@ class CreateModulesTable extends Migration
             $table->unsignedBigInteger('order')->nullable();
             $table->foreignId('mode_link_id')->nullable()->constrained();
             $table->foreignId('module_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->boolean('open_default')->default(false);
             \App\Models\Outil::listenerUsers($table);
 
             $table->timestamps();

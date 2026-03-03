@@ -14,10 +14,17 @@ import MobileSidebar from "@/components/MobileSideBar"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import AppSidebar from "@/components/AppSideBar"
 
-import { ReactNode } from "react";
 
-export default function AppLayout({ children }: { children: ReactNode }) {
-    const { auth, breadcrumb } = usePage<{ auth: { user: { name: string } }, breadcrumb: string[] }>().props
+import * as Views from './views'; 
+
+
+export default function MAinEntry() {
+  const { namepage, modules, prefixepermission, page, requestData } = usePage().props;
+  const { auth, breadcrumb } = usePage<{ auth: { user: { name: string } }, breadcrumb: string[] }>().props
+
+  // 🔹 récupérer dynamiquement le composant
+  const DynamicComponent = Views[namepage] || Views.Unauthorized;
+
 
     return (
         <div className="min-h-screen bg-background flex">
@@ -106,8 +113,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 </header>
 
                 {/* Main content */}
-                <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-muted/30">
-                    {children}
+                <main className="flex-1 p-6 overflow-auto">
+                  <DynamicComponent
+                    prefixepermission={prefixepermission}
+                    page={page}
+                    requestData={requestData}
+                  />
                 </main>
 
             </div>

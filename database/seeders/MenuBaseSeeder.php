@@ -17,6 +17,9 @@ class MenuBaseSeeder extends Seeder
 
     public function run()
     {
+        Module::query()->forceDelete();
+        Page::query()->forceDelete();
+
         $functionCall = "updateOrCreate";
         if (config('app.env') === 'production') {
             $functionCall = "firstOrCreate";
@@ -59,13 +62,14 @@ class MenuBaseSeeder extends Seeder
                 ]
             ],
             [
-                'title'       => 'Backoffice',
-                'title_en'    => 'Backoffice',
-                'icon'        => 'Settings2',
-                'description' => null,
-                'order'       => 2,
-                'mode_link'   => 'liste-view',
-                'pages'       => [
+                'title'         => 'Backoffice',
+                'title_en'      => 'Backoffice',
+                'icon'          => 'Settings2',
+                'description'   => null,
+                'order'         => 2,
+                'mode_link'     => 'liste-view',
+                'open_default'  => true,
+                'pages'         => [
                     [
                         'title'       => 'Pays',
                         'title_en'    => 'Countries',
@@ -125,7 +129,7 @@ class MenuBaseSeeder extends Seeder
             [
                 'title'       => 'Outils Admin',
                 'title_en'    => 'Admin Tools',
-                'icon'        => 'Tool',
+                'icon'        => 'UserStar',
                 'description' => null,
                 'order'       => 3,
                 'mode_link'   => 'card-view',
@@ -174,6 +178,7 @@ class MenuBaseSeeder extends Seeder
                     'icon'         => $module['icon'],
                     'description'  => $module['description'],
                     'order'        => $module['order'],
+                    'open_default' => $module['open_default'] ?? false,
                     'mode_link_id' => ModeLink::where('nom', $module['mode_link'] ?? 'liste-view')->first()?->id,
                 ]
             );

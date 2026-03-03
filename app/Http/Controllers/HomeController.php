@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\{LinkRouteController, Module, Page, Outil};
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Str;
 
 class HomeController extends Controller
 {
@@ -115,10 +116,62 @@ class HomeController extends Controller
 
             $breadcrumb[] = $currentPage->title;
         }
-        return Inertia::render('welcome', ["menu" => $this->getModules(), "breadcrumb" => $breadcrumb]);
+        return Inertia::render('welcome', ["modules" => $this->getModules(), "breadcrumb" => $breadcrumb]);
     }
 
-    public function namepage(Request $request, $namepage, $prefixepermission = '')
+    public function renderPage(Request $request, string $namepage, string $prefixepermission = '')
+    {
+        $retour = [];
+
+        // Pour récupérer les attrs balancés
+        foreach (array_keys($request->all()) as $key)
+        {
+            $retour[$key] = $request->all()[$key];
+        }
+
+        $this->getModules();
+
+       
+        $getPage = Page::where('link', 'like', "%{$namepage}")->first();
+
+
+        $authorized = $getPage && Outil::hasOnePermissionOf($getPage->permissions);
+
+        
+        if (!$authorized)
+        {
+            $namepage = 'Unauthorized';
+        }
+
+        $breadcrumb = [];
+
+        if ($getPage)
+        {
+            $module = $getPage->module;
+            if ($module?->parent)
+            {
+                $breadcrumb[] = $module->parent->title;
+            }
+
+            if ($module)
+            {
+                $breadcrumb[] = $module->title;
+            }
+
+            $breadcrumb[] = $getPage->title;
+        }
+
+        $retour['prefixepermission']       = $prefixepermission;
+        $retour['modules']                 = $this->modules;
+        $retour['page']                    = $getPage;
+        $retour['breadcrumb']              = $breadcrumb;
+        $retour['namepage']                = \Illuminate\Support\Str::studly($namepage);
+
+        // Passer tout dans Inertia, layout unique
+        return Inertia::render('MainEntry', $retour);
+    }
+
+    public function namepageOld(Request $request, $namepage, $prefixepermission = '')
     {
         $retour = [];
 
@@ -153,6 +206,44 @@ class HomeController extends Controller
         //dd($viewName, $getPage);
 
         return view($viewName, $retour);
+    }
+
+    public function namepage(Request $request, $namepage, $prefixepermission = '')
+    {
+        $retour = [];
+
+
+        foreach ($request->all() as $key => $value)
+        {
+            $retour[$key] = $value;
+        }
+
+        // Charger les modules
+        $this->getModules();
+
+        // Récupérer la page depuis la DB
+        $getPage = Page::where('link', Outil::getOperateurLikeDB(), "%{$namepage}")->first();
+
+        $component = 'Unauthorized';
+
+        // Vérifier les permissions
+        if (isset($getPage) && Outil::hasOnePermissionOf($getPage->permissions))
+        {
+            $component = \Illuminate\Support\Str::studly($namepage);
+
+            if (str_contains($namepage, 'detail') || str_contains($namepage, 'sections'))
+            {
+                $component = \Illuminate\Support\Str::studly($namepage);
+            }
+        }
+
+        // Ajouter le prefixepermission et modules aux props
+        $retour['prefixepermission'] = $prefixepermission;
+        $retour['modules']           = $this->modules;
+        $retour['page']              = $getPage;
+
+        
+        return Inertia::render($component, $retour);
     }
 
     public function redirectToController($table_name, $methode = 'save', $id = null, \Illuminate\Http\Request $request)

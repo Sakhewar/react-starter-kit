@@ -36,7 +36,7 @@ export default function AppHeader() {
                     <DropdownMenuTrigger>
                         <Avatar>
                             <AvatarFallback>
-                                {auth.user.name.charAt(0)}
+                                {auth.user && auth.user.name.charAt(0)}
                             </AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>

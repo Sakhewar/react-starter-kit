@@ -58,4 +58,9 @@ class Outil extends Model
 
         return false;
     }
+
+    public static function getOperateurLikeDB()
+    {
+        return config('database.default') == "mysql" ? "like" : "ilike";
+    }
 }
