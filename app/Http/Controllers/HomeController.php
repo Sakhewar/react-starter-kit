@@ -130,19 +130,18 @@ class HomeController extends Controller
         }
 
         $this->getModules();
+        
+        $getPage = empty($namepage) ? null : Page::where('link', 'like', "%{$namepage}")->first();
 
-       
-        $getPage = Page::where('link', 'like', "%{$namepage}")->first();
-
-
+     
         $authorized = $getPage && Outil::hasOnePermissionOf($getPage->permissions);
 
         
         if (!$authorized)
         {
-            $namepage = 'Unauthorized';
+            $namepage =empty($namepage) ? 'Welcome' : 'Unauthorized';
         }
-
+        
         $breadcrumb = [];
 
         if ($getPage)

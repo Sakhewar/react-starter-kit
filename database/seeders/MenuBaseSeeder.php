@@ -145,8 +145,8 @@ class MenuBaseSeeder extends Seeder
                         'permissions' => ['role'],
                     ],
                     [
-                        'title'       => 'Gestion des utilisateurs',
-                        'title_en'    => 'Users management',
+                        'title'       => 'Utilisateurs',
+                        'title_en'    => 'Users',
                         'icon'        => 'UserCog',
                         'description' => null,
                         'order'       => 2,
@@ -154,8 +154,8 @@ class MenuBaseSeeder extends Seeder
                         'permissions' => ['user'],
                     ],
                     [
-                        'title'       => 'Liste des préférences',
-                        'title_en'    => 'Preferences list',
+                        'title'       => 'Préférences',
+                        'title_en'    => 'Preferences',
                         'icon'        => 'Settings',
                         'description' => null,
                         'order'       => 3,
