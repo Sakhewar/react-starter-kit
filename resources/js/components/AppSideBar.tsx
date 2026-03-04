@@ -1,181 +1,162 @@
-import { Link, usePage } from "@inertiajs/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { usePage } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import * as Icons from "lucide-react";
-import { ChevronRight, PanelLeft } from "lucide-react";
+import { ChevronDown, PanelLeft } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 export default function AppSidebar()
 {
-    const { namepage, modules, prefixepermission, page, requestData } = usePage().props;
+  const { props } = usePage();
+  const { modules = [], active_link } = props as any;
 
-    const current_page_id = page?.id || null;
-    console.log("diop log", page);
+  const [collapsed, setCollapsed] = useState(false);
+  const [openModules, setOpenModules] = useState<string[]>([]);
+
+  // Logique page active
+  const isPageActive = (pageLink: string) =>
+  {
+    console.log("diop log", pageLink, active_link);
     
-    const [collapsed, setCollapsed] = useState(false);
-    const [openModule, setOpenModule] = useState<number | null>(null);
+    if (!active_link || !pageLink) return false;
 
+    return active_link === pageLink;
+  };
 
-    useEffect(() =>
-    {
-        // Cas 1 : racine → module par défaut (seulement si rien n'est déjà ouvert)
-        if (!current_page_id)
-        {
-            if (openModule !== null) return; // déjà ouvert → on ne touche à rien
-        
-            const defaultMod = modules.find((m: any) => m.open_default === true);
-            if (defaultMod)
-            {
-                setOpenModule(defaultMod.id);
-            }
-            return;
-        }
-      
-        // Cas 2 : on est sur une page → ouvrir son module parent
-        const parent = modules.find((m: any) =>
-          m.pages?.some((p: any) => p.id === current_page_id)
-        );
-      
-        if (parent)
-        {
-          setOpenModule(parent.id);
-        }
-        // Note : on ne ferme jamais automatiquement ici → l'utilisateur peut refermer s'il veut
-      }, [current_page_id, modules]);
+  // Ouvre automatiquement le module parent de la page active
+  useEffect(() =>
+  {
+    modules.forEach((module: any) => {
+      const hasActivePage = module.pages?.some((p: any) => isPageActive(p.link));
+      if (hasActivePage && !openModules.includes(module.title))
+      {
+        setOpenModules((prev) => [...prev, module.title]);
+      }
+    });
+  }, [active_link, modules, openModules]);
 
-    const toggleModule = (id: number) =>
-    {
-        setOpenModule((prev) => (prev === id ? null : id));
-    };
-
-    const isPageActive = (pageId: number | undefined) =>
-    {
-        return current_page_id === pageId;
-    };
+  const toggleModule = (title: string) =>
+  {
+    setOpenModules((prev) => prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]);
+  };
 
   return (
     <motion.aside
-      animate={{ width: collapsed ? 80 : 260 }}
-      transition={{ type: "spring", stiffness: 260, damping: 25 }}
-      className="hidden md:flex h-screen border-r bg-background flex-col"
+      animate={{ width: collapsed ? 72 : 288 }}
+      transition={{ type: "spring", stiffness: 260, damping: 30 }}
+      className="hidden md:flex h-screen flex-col border-r bg-white overflow-hidden shadow-sm"
     >
-      {/* HEADER */}
-      <div className="h-16 flex items-center justify-between px-4 border-b">
-        {!collapsed && <span className="font-semibold text-lg">MyApp</span>}
+      {/* Header établissement */}
+      <div className="h-16 border-b bg-gray-50 px-4 flex items-center flex-shrink-0">
+        {!collapsed && (
+          <div className="flex items-center gap-3">
+            <Icons.School className="h-7 w-7 text-blue-600" />
+            <div>
+              <div className="font-semibold text-base tracking-tight">SMS2</div>
+              <div className="text-xs text-gray-500">Default Establishment</div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* CONTENT */}
-      <div className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
-        {modules.map((module: any) => {
-          const isOpen = openModule === module.id;
-          const ModuleIcon = module.icon
-            ? (Icons[module.icon as keyof typeof Icons] as React.ElementType)
-            : null;
+      {/* Menu scrollable */}
+      <ScrollArea className="flex-1">
+        <div className="px-3 py-4 space-y-1">
+          {modules.map((module: any, idx: number) => {
+            const isOpen = openModules.includes(module.title);
+            const ModuleIcon = Icons[module.icon as keyof typeof Icons] || Icons.Folder;
+            const hasActiveChild = module.pages?.some((p: any) => isPageActive(p.link));
 
-          // ── Module avec une seule page ──
-          if ((module.pages ?? []).length === 1) {
-            const page = module.pages[0];
-            const PageIcon = page.icon
-              ? (Icons[page.icon as keyof typeof Icons] as React.ElementType)
-              : null;
-            const active = isPageActive(page.id);
 
             return (
-              <Link
-                key={page.id}
-                href={`/pages${page.link}`}
-                className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors
-                  ${
-                    active
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "hover:bg-muted/70 text-muted-foreground"
+              <div key={module.title || idx}>
+                {/* Bouton module */}
+                <button 
+                  onClick={
+                    function()
+                    {
+                      if(module.pages?.length === 1)
+                      {
+                        return window.location.href = `/pages${module.pages[0].link}`
+                      }
+                      else if(module.pages?.length > 1)
+                      {
+                        if(collapsed) setCollapsed(!collapsed)
+                        toggleModule(module.title)
+                      }
+                    }
                   }
-                `}
-              >
-                {PageIcon && <PageIcon className="w-5 h-5 flex-shrink-0" />}
-                {!collapsed && <span className="truncate">{module.title || page.title}</span>}
-              </Link>
-            );
-          }
+                  className={cn(
+                    "flex w-full items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+                    hasActiveChild || isOpen ? "bg-blue-50 text-blue-700" : "hover:bg-gray-100 text-gray-700"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <ModuleIcon className="h-5 w-5 text-gray-600" />
+                    {!collapsed && <span className="truncate">{module.title}</span>}
+                  </div>
 
-          // ── Module avec plusieurs pages ──
-          return (
-            <div key={module.id}>
-              {/* Bouton du module */}
-              <button
-                onClick={() => toggleModule(module.id)}
-                className={`
-                  flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm 
-                  font-medium transition-colors
-                  ${isOpen ? "bg-muted/50" : "hover:bg-muted/70 text-muted-foreground"}
-                `}
-              >
-                <div className="flex items-center gap-3">
-                  {ModuleIcon && <ModuleIcon className="w-5 h-5 flex-shrink-0" />}
-                  {!collapsed && <span className="truncate">{module.title}</span>}
-                </div>
+                  {!collapsed && module.pages?.length > 1 && (
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 text-gray-500 transition-transform duration-200",
+                        isOpen && "rotate-180"
+                      )}
+                    />
+                  )}
+                </button>
 
-                {!collapsed && (
-                  <motion.div
-                    animate={{ rotate: isOpen ? 90 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </motion.div>
-                )}
-              </button>
+                {/* Sous-pages */}
+                <AnimatePresence>
+                  {isOpen && !collapsed && module.pages?.length > 1 && (
+                    <div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-5 py-1.5 space-y-0.5 border-l border-gray-200 pl-3">
+                        {module.pages.map((page: any, pIdx: number) =>
+                        {
+                          const PageIcon = Icons[page.icon as keyof typeof Icons] || Icons.FileText;
+                          const active = isPageActive(page.link);
 
-              {/* Sous-pages */}
-              <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="overflow-hidden"
-                  >
-                    <div className="ml-6 mt-1 border-l border-border/60 pl-3 space-y-1 py-1">
-                      {module.pages.map((page: any) => {
-                        const PageIcon = page.icon
-                          ? (Icons[page.icon as keyof typeof Icons] as React.ElementType)
-                          : null;
-                        const active = isPageActive(page.id);
-
-                        return (
-                          <Link
-                            key={page.id}
-                            href={`/pages${page.link}`}
-                            className={`
-                              flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
-                              ${
+                          return (
+                            <Link key={pIdx} href={`/pages${page.link}`}
+                              className={cn(
+                                "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-sm transition-colors",
                                 active
-                                  ? "bg-primary/10 text-primary font-medium"
-                                  : "hover:bg-muted/70 text-muted-foreground"
-                              }
-                            `}
-                          >
-                            {PageIcon && <PageIcon className="w-4.5 h-4.5 flex-shrink-0" />}
-                            {!collapsed && <span className="truncate">{page.title}</span>}
-                          </Link>
-                        );
-                      })}
+                                  ? "bg-blue-50 text-blue-700 font-medium"
+                                  : "text-gray-600 hover:bg-gray-50"
+                              )}
+                            >
+                              <div className="flex items-center gap-2">
+                                <PageIcon className="h-4 w-4 text-gray-500" />
+                                <span className="truncate">{page.title}</span>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
-      </div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+      </ScrollArea>
 
-      {/* FOOTER - bouton collapse */}
-      <div className="h-16 flex items-center justify-end px-4 border-t">
+      {/* Footer collapse */}
+      <div className="h-16 border-t bg-gray-50 px-4 flex items-center justify-end flex-shrink-0">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-md hover:bg-muted transition-colors"
+          className="p-2 rounded hover:bg-gray-200 transition-colors"
         >
-          <PanelLeft className="w-5 h-5" />
+          <PanelLeft className="h-5 w-5 text-gray-600" />
         </button>
       </div>
     </motion.aside>

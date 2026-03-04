@@ -164,6 +164,7 @@ class HomeController extends Controller
         $retour['modules']                 = $this->modules;
         $retour['page']                    = $getPage;
         $retour['breadcrumb']              = $breadcrumb;
+        $retour['active_link']             = "/" . $namepage;
         $retour['namepage']                = \Illuminate\Support\Str::studly($namepage);
 
         // Passer tout dans Inertia, layout unique
