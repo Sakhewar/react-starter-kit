@@ -150,7 +150,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'UserCog',
                         'description' => null,
                         'order'       => 2,
-                        'link'        => '/users',
+                        'link'        => '/user',
                         'permissions' => ['user'],
                     ],
                     [

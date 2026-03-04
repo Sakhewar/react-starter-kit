@@ -12,7 +12,7 @@ export default function MobileSidebar() {
                 </SheetTrigger>
 
                 <SheetContent side="left" className="p-0 w-64">
-                    <AppSidebar />
+                    <AppSidebar isMobile={true} />
                 </SheetContent>
             </Sheet>
         </div>

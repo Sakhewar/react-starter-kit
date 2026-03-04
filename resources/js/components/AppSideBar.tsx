@@ -1,19 +1,23 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 import * as Icons from "lucide-react";
 import { ChevronDown, PanelLeft } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import { FaSitemap } from "react-icons/fa";
 
-export default function AppSidebar()
+export default function AppSidebar({isMobile = false} : {isMobile?: boolean})
 {
   const { props } = usePage();
   const { modules = [], active_link } = props as any;
 
   const [collapsed, setCollapsed] = useState(false);
   const [openModules, setOpenModules] = useState<string[]>([]);
+
+  const { theme } = useTheme()
 
   // Logique page active
   const isPageActive = (pageLink: string) =>
@@ -44,16 +48,18 @@ export default function AppSidebar()
     <motion.aside
       animate={{ width: collapsed ? 72 : 288 }}
       transition={{ type: "spring", stiffness: 260, damping: 30 }}
-      className="hidden md:flex h-screen flex-col border-r bg-white overflow-hidden shadow-sm"
+      className="flex flex-col h-full border-r bg-background text-foreground"
     >
       {/* Header établissement */}
-      <div className="h-16 border-b bg-gray-50 px-4 flex items-center flex-shrink-0">
+      <div className={cn("h-16 border-b px-4 flex items-center flex-shrink-0",
+        theme === "light" ? "bg-gray-50" : ""
+      )}>
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <Icons.School className="h-7 w-7 text-blue-600" />
+            <FaSitemap className="h-7 w-7" />
             <div>
-              <div className="font-semibold text-base tracking-tight">SMS2</div>
-              <div className="text-xs text-gray-500">Default Establishment</div>
+              <div className="font-semibold text-base tracking-tight">OSP</div>
+              <div className="text-xs text-gray-500">Hope Future ... OSP</div>
             </div>
           </div>
         )}
@@ -77,7 +83,7 @@ export default function AppSidebar()
                     {
                       if(module.pages?.length === 1)
                       {
-                        return window.location.href = `/pages${module.pages[0].link}`
+                        router.visit(`/pages${module.pages[0].link}`);
                       }
                       else if(module.pages?.length > 1)
                       {
@@ -88,7 +94,8 @@ export default function AppSidebar()
                   }
                   className={cn(
                     "flex w-full items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                    hasActiveChild || isOpen ? "bg-black-50 text-black-700" : "hover:bg-gray-100 text-gray-700"
+                    hasActiveChild || isOpen ? "bg-black-50 text-black-700" : "hover:bg-gray-100 text-gray-700",
+                    module.pages?.length == 1 ? "cursor-pointer" : ""
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -149,14 +156,16 @@ export default function AppSidebar()
       </ScrollArea>
 
       {/* Footer collapse */}
-      <div className="h-16 border-t bg-gray-50 px-4 flex items-center justify-end flex-shrink-0">
+      {!isMobile &&<div className={cn("h-16 border-t px-4 flex items-center justify-end flex-shrink-0",
+        theme === "light" ? "bg-gray-50" : ""
+      )}>
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="p-2 rounded hover:bg-gray-200 transition-colors"
         >
-          <PanelLeft className="h-5 w-5 text-gray-600" />
+          <PanelLeft className="h-5 w-5" />
         </button>
-      </div>
+      </div>}
     </motion.aside>
   );
 }

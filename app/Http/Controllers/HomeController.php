@@ -130,8 +130,8 @@ class HomeController extends Controller
         }
 
         $this->getModules();
-        
-        $getPage = empty($namepage) ? null : Page::where('link', 'like', "%{$namepage}")->first();
+        //dd($namepage, $this->modules);
+        $getPage = empty($namepage) ? null : Page::where('link', Outil::getOperateurLikeDB(), "%/{$namepage}")->first();
 
      
         $authorized = $getPage && Outil::hasOnePermissionOf($getPage->permissions);

@@ -8,48 +8,46 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
+import MobileSidebar from "./MobileSideBar"
+import { ThemeToggle } from "./ThemeToggle"
 
 export default function AppHeader() {
     const { breadcrumb, auth } = usePage<{ breadcrumb?: string[]; auth: { user: { name: string } } }>().props
 
     return (
-        <header className="h-16 border-b bg-background px-6 flex items-center justify-between">
-
-            {/* Left */}
-            <div>
-                <div className="text-sm text-muted-foreground">
-                    {breadcrumb?.join(" / ")}
-                </div>
+        <header className="h-16 border-b bg-background flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-10">
+            {/* Gauche */}
+            <div className="flex items-center gap-4">
+                <MobileSidebar />
+                {/* Breadcrumb ou titre rapide si tu veux */}
             </div>
 
-            {/* Right */}
-            <div className="flex items-center gap-4">
+            {/* Droite */}
+            <div className="flex items-center gap-3">
 
-                <Input placeholder="Search..." className="w-64" />
+                <ThemeToggle />
 
-                <button className="relative">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                <button className="relative w-10 h-10 flex items-center justify-center rounded-lg hover:bg-muted transition">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                 </button>
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Avatar>
-                            <AvatarFallback>
-                                {auth.user && auth.user.name.charAt(0)}
-                            </AvatarFallback>
-                        </Avatar>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                        <DropdownMenuItem>Settings</DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                            <a href="/logout">Logout</a>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
+                <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 hover:bg-muted px-2 py-1 rounded-lg transition">
+                    <Avatar className="w-8 h-8">
+                        <AvatarFallback>{auth?.user?.name?.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem>Profil</DropdownMenuItem>
+                    <DropdownMenuItem>Paramètres</DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                    <a href="/logout">Déconnexion</a>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
                 </DropdownMenu>
-
             </div>
         </header>
     )
