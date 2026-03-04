@@ -17,9 +17,7 @@ export default function AppSidebar()
 
   // Logique page active
   const isPageActive = (pageLink: string) =>
-  {
-    console.log("diop log", pageLink, active_link);
-    
+  { 
     if (!active_link || !pageLink) return false;
 
     return active_link === pageLink;
@@ -90,7 +88,7 @@ export default function AppSidebar()
                   }
                   className={cn(
                     "flex w-full items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
-                    hasActiveChild || isOpen ? "bg-blue-50 text-blue-700" : "hover:bg-gray-100 text-gray-700"
+                    hasActiveChild || isOpen ? "bg-black-50 text-black-700" : "hover:bg-gray-100 text-gray-700"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -129,7 +127,7 @@ export default function AppSidebar()
                               className={cn(
                                 "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-sm transition-colors",
                                 active
-                                  ? "bg-blue-50 text-blue-700 font-medium"
+                                  ? "bg-black-50 text-black-700 font-medium"
                                   : "text-gray-600 hover:bg-gray-50"
                               )}
                             >

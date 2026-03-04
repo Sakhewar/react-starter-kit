@@ -8,7 +8,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Card } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,7 +20,6 @@ import {
   useReactTable,
   SortingState,
   getSortedRowModel,
-  VisibilityState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -42,6 +40,12 @@ import {
 
 import * as Icons from "lucide-react";
 import { Badge } from "./ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { FaRegFileExcel, FaRegFileWord } from "react-icons/fa";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+
+import * as Attributes from "../pages/configs/attributes";
 
 // ── Types & Données fictives ────────────────────────────────────────
 type Payment = {
@@ -60,6 +64,7 @@ const payments: Payment[] = [
   { id: "bhqecj4p", amount: 721, status: "processing", email: "carmella_h@hotmail.com", name: "Fatima Diallo" },
   // Ajoute-en plus si tu veux tester le scroll
 ];
+
 
 const columns: ColumnDef<Payment>[] = [
   {
@@ -124,6 +129,7 @@ export default function DashboardPage({namepage, page, ...props} : { namepage: s
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [pageSize, setPageSize] = React.useState(10);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const PageIcon = page && page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
@@ -140,31 +146,206 @@ export default function DashboardPage({namepage, page, ...props} : { namepage: s
     },
   });
 
+  const fraisPlans = [
+    {
+      code: "FI",
+      nom: "Frais inscription",
+      montant: "15,000.00 MAD",
+      reduction: "—",
+      net: "15,000.00 MAD",
+      plan: "Intégral 1 tr.",
+      statut: "Verrouillé",
+    },
+    {
+      code: "SC",
+      nom: "Scolarité",
+      montant: "20,000.00 MAD",
+      reduction: "2,000.00 MAD",
+      net: "18,000.00 MAD",
+      plan: "Mensualités 19 tr.",
+      statut: "Verrouillé",
+    },
+  ];
 
+  console.log("diop log",String(page.link).replaceAll("/", ''), );
+  
+  const columnsTable = Attributes.colonneTables[String(page.link).replaceAll("/", '')] || [];
   return (
     <div className="space-y-6">
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Header de la section Titre et btn Ajouter */}
+      <div className="flex sm:flex-row sm:items-center sm:justify-between gap-4">
         
         <div className="flex items-center gap-3">
-          {PageIcon && <PageIcon className="w-4 h-4 flex-shrink-0" />}
-          <h1 className="text-lg font-bold tracking-tight">
+          {PageIcon && <PageIcon className="w-4 h-4" />}
+          <h1 className="text-lg tracking-tight">
             {namepage}
           </h1>
-          <Badge className="text-sm font-medium bg-white-100 text-black-800 ring-1 ring-black-300 rounded-md">20</Badge>
+          <Badge className="ring-black-200 rounded-0">20</Badge>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button className="gap-2 bg-black hover:bg-black/90 text-white">
-            <Plus className="h-4 w-4" />
-            Enregistrer un paiement
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <Icons.FileText className="h-4 w-4" />
-            Facture
-          </Button>
+        <div className="">
+          <HoverCard openDelay={80} closeDelay={150}>
+              <HoverCardTrigger asChild>
+                <Button className="cursor-pointer">
+                  <Plus className="h-4 w-4" />
+                  Ajouter
+                  <ChevronDown className="h-4 w-4 opacity-70" />
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-52 p-2" align="end" sideOffset={8}>
+                <div className="flex flex-col gap-1 text-sm">
+                  <div className="flex items-center gap-2 px-3 py-2 hover:bg-accent rounded-md cursor-pointer">
+                    <Plus className="h-4 w-4" />
+                    Ajouter un item
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 hover:bg-accent rounded-md cursor-pointer">
+                    <Sheet className="h-4 w-4" />
+                    Fichier Excel
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 hover:bg-accent rounded-md cursor-pointer">
+                    <Sheet className="h-4 w-4" />
+                    Trame Excel
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
         </div>
       </div>
+
+      
+      <Card className="mt-10">
+        <CardContent>
+          <div className="flex justify-between">
+              <p className="text-sm text-muted-foreground">Filtrer par periode</p>
+              <div className="flex items-center gap-2 cursor-pointer">
+                <FaRegFileExcel className="text-green-600 text-2xl" />
+                <FaRegFileWord className="text-blue-600 text-2xl" />
+              </div>
+            </div>
+        </CardContent>
+      </Card>
+
+       {/* Tableau Frais & Plans de paiement */}
+       <Card>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-center">Code</TableHead>
+                    <TableHead className="text-center">Nom</TableHead>
+                    <TableHead className="text-center">Montant</TableHead>
+                    <TableHead className="text-center">Réduction</TableHead>
+                    <TableHead className="text-center">Net</TableHead>
+                    <TableHead className="text-center">Plan</TableHead>
+                    <TableHead className="flex items-center justify-center"><Icons.Menu className="w-4 h-4"/></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {fraisPlans.map((item, idx) => (
+                    <TableRow key={idx} className="text-center">
+                      <TableCell className="font-medium">{item.code}</TableCell>
+                      <TableCell>{item.nom}</TableCell>
+                      <TableCell>{item.montant}</TableCell>
+                      <TableCell>
+                        {item.reduction}
+                      </TableCell>
+                      <TableCell className="">
+                        {item.net}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{item.plan}</Badge>
+                      </TableCell>
+                      <TableCell className="flex items-center justify-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Icons.Settings className="w-4 h-4 cursor-pointer" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuGroup>
+                              <DropdownMenuItem>
+                                <Icons.PencilIcon />
+                                Modifier
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Icons.Copy />
+                                Cloner
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                              <DropdownMenuItem variant="destructive">
+                                <Icons.TrashIcon />
+                                Supprimer
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+      </Card>
+
+      <Card className="py-3">
+        <CardContent>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  Afficher Par
+                </span>
+                <Select
+                  value={`${pageSize}`}
+                  onValueChange={(value) => {
+                    setPageSize(Number(value));
+                    // Ici tu peux aussi mettre à jour table.setPageSize si tu ajoutes pagination réelle
+                  }}
+                >
+                  <SelectTrigger className="w-20">
+                    <SelectValue placeholder={pageSize} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="30">30</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious href="#" />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#" isActive>
+                        2
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">3</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext href="#" />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </div>
+        </CardContent>
+      </Card>
+
+
     </div>
   )
   return (

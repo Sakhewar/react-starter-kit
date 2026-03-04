@@ -76,7 +76,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'Globe',
                         'description' => null,
                         'order'       => 1,
-                        'link'        => '/countries',
+                        'link'        => '/pays',
                         'permissions' => ['pays'],
                     ],
                     [
@@ -85,7 +85,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'CalendarCheck',
                         'description' => null,
                         'order'       => 2,
-                        'link'        => '/payment-terms',
+                        'link'        => '/modalitepaiement',
                         'permissions' => ['modalitepaiement'],
                     ],
                     [
@@ -94,7 +94,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'CreditCard',
                         'description' => null,
                         'order'       => 3,
-                        'link'        => '/payment-methods',
+                        'link'        => '/modepaiement',
                         'permissions' => ['modepaiement'],
                     ],
                     [
@@ -103,7 +103,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'UsersRound',
                         'description' => null,
                         'order'       => 4,
-                        'link'        => '/customer-types',
+                        'link'        => '/typeclient',
                         'permissions' => ['typeclient'],
                     ],
                     [
@@ -112,7 +112,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'Users',
                         'description' => null,
                         'order'       => 5,
-                        'link'        => '/customers',
+                        'link'        => '/client',
                         'permissions' => ['client'],
                     ],
                     [
@@ -121,7 +121,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'Truck',
                         'description' => null,
                         'order'       => 6,
-                        'link'        => '/suppliers',
+                        'link'        => '/fournisseur',
                         'permissions' => ['fournisseur'],
                     ]
                 ]
@@ -141,7 +141,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'ShieldCheck',
                         'description' => null,
                         'order'       => 1,
-                        'link'        => '/roles-permissions',
+                        'link'        => '/role',
                         'permissions' => ['role'],
                     ],
                     [
@@ -159,7 +159,7 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'Settings',
                         'description' => null,
                         'order'       => 3,
-                        'link'        => '/preferences',
+                        'link'        => '/preference',
                         'permissions' => ['preference'],
                     ],
                 ]
