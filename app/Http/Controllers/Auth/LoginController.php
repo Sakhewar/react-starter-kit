@@ -19,7 +19,16 @@ class LoginController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
-        ]);
+        ],
+        [
+            'email.required' => 'L\'adresse e-mail est requise.',
+            'email.email' => 'L\'adresse e-mail doit être valide.',
+            'password.required' => 'Le mot de passe est requis.',
+        ]
+        );
+
+        //Change the error message to be in french
+        
 
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();

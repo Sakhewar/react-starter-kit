@@ -27,7 +27,7 @@ class HomeController extends Controller
 
     public function getModules()
     {
-        if (!Auth::check())
+        if (Auth::check())
         {
             $modules_access = array();
             foreach ($this->modules as $module)
@@ -37,8 +37,6 @@ class HomeController extends Controller
                 $all_pages_col = array();
                 foreach($module->pages as $keyPage => $page)
                 {
-                     //if ($module->id==5 && $keyPage==3)
-                        //dd($module->pages, 'ja', $page->permissions, Outil::hasOnePermissionOf($page->permissions));
                     $modules_col = array();
                     foreach($module->modules as $keySubModule => $SubModule)
                     {
@@ -67,24 +65,21 @@ class HomeController extends Controller
                         array_push($pages_col, $page);
                         array_push($all_pages_col, $page);
                         $can_access = true;
-                        // break;
                     }
                 }
+                
                 if ($can_access)
                 {
                     $module['pages_col'] = $pages_col;
                     $module['all_pages_col'] = $all_pages_col;
                     $module['modules_col'] = $modules_col;
-                    //dd($module, $pages_col, $all_pages_col);
-                    //if ($module->id==5)
-                    //    dd($can_access, $page, Outil::hasOnePermissionOf($page->permissions));
+
                     array_push($modules_access, $module);
                 }
             }
 
-            // dd($modules_access, $this->modules);
-            // $this->modules = $this->modules;
-            return $this->modules;
+            //dd($modules_access, $this->modules);
+            $this->modules = $modules_access;
         }
     }
 
