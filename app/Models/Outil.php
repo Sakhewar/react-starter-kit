@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Spatie\Permission\Models\Permission;
+
 class Outil extends Model
 {
     public static function listenerUsers(&$table, $add = true)
@@ -20,7 +22,6 @@ class Outil extends Model
 
     public static function hasOnePermissionOf(array $models)
     {
-        return true;
         $user = auth()->user();
         if (!$user)
         {
@@ -40,7 +41,7 @@ class Outil extends Model
                 })
                 ->pluck('name');
         }
-
+        
         // Aucun modèle => pas de restriction
         if ($permissions->isEmpty())
         {

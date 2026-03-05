@@ -1,4 +1,4 @@
-import { usePage } from "@inertiajs/react"
+import { router, useForm, usePage } from "@inertiajs/react"
 import { Bell } from "lucide-react"
 import {
     DropdownMenu,
@@ -13,6 +13,10 @@ import { ThemeToggle } from "./ThemeToggle"
 
 export default function AppHeader() {
     const { breadcrumb, auth } = usePage<{ breadcrumb?: string[]; auth: { user: { name: string } } }>().props
+
+    const logout = () => {
+        router.post('/logout');
+    };
 
     return (
         <header className="h-16 border-b bg-background flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-10">
@@ -43,9 +47,9 @@ export default function AppHeader() {
                 <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem>Profil</DropdownMenuItem>
                     <DropdownMenuItem>Paramètres</DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                    <a href="/logout">Déconnexion</a>
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                        Déconnexion
+                        </DropdownMenuItem>
                 </DropdownMenuContent>
                 </DropdownMenu>
             </div>
