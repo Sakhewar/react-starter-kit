@@ -1,106 +1,128 @@
-// resources/js/Pages/Auth/Login.tsx
 "use client";
 
 import { useForm, Head, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react"; // ← Ajout de Loader2
+import { route } from "ziggy-js";
 
-export default function Login({ status, errors: serverErrors }: { status?: string; errors?: Record<string, string> })
-{
-  const { data, setData, post, processing, errors } = useForm({
+export default function Login({ status, errors: serverErrors }: { status?: string; errors?: Record<string, string> }) {
+  const { data, setData, processing, errors } = useForm({
     email: "",
     password: "",
     remember: false,
   });
 
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.post('login', data);
+    router.post("login", data);
   };
 
-  console.log("diop log", {status, serverErrors});
-  
+  const forgotPassword = () => {
+    router.visit(route("/forgot-password"));
+    //router.post("forgot-password", { email: data.email });
+  };
 
   return (
     <>
       <Head title="Login" />
 
       <div className="min-h-screen bg-background flex flex-col lg:flex-row">
-        {/* Partie gauche : illustration / dashboard preview */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 to-white items-center justify-center p-12 relative overflow-hidden">
-          
+        {/* Partie gauche : illustration - 70% */}
+        <div className="hidden lg:flex lg:w-[60%] md:w-[60%] bg-gradient-to-br from-gray-900 to-gray-700 items-center justify-center p-12 relative overflow-hidden">
+          <div className="text-center text-white space-y-4">
+            <h1 className="text-4xl font-bold">Bienvenue sur OSP</h1>
+            <p className="text-lg">Votre plateforme de gestion avancée</p>
+          </div>
         </div>
 
-        {/* Partie droite : formulaire de connexion */}
-        <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-background">
-          <div className="w-full max-w-md space-y-8">
-            {/* Header */}
-            <div className="text-center">
-              <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600">
-                <span className="text-lg font-bold text-white">OSP</span>
+        {/* Partie droite : formulaire - 30% */}
+        <div className="flex-1 lg:w-[40%] flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-gray-50 to-gray-100">
+          <Card className="w-full max-w-md shadow-lg border-0 bg-white/90 backdrop-blur-sm">
+            <CardHeader className="space-y-1">
+              <div className="flex justify-center mb-4">
+                <div className="flex items-center justify-center">
+                  <span className="text-sm font-bold">OSP Hope VO 🚀</span>
+                </div>
               </div>
-            </div>
+              <CardTitle className="text-lg font-bold text-center">Connexion</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <Separator />
 
-            <Separator />
-
-            {/* Formulaire */}
-            <form onSubmit={submit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">Adresse Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Entrer votre adresse email"
-                  value={data.email}
-                  onChange={(e) => setData("email", e.target.value)}
-                  disabled={processing}
-                />
-                {serverErrors && serverErrors.email && <p className="text-sm text-destructive">{serverErrors.email}</p>}
-              </div>
-
-              <div className="relative">
+              <form onSubmit={submit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Adresse Email *</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={data.password}
-                    onChange={(e) => setData("password", e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder="Entrer votre adresse email"
+                    value={data.email}
+                    onChange={(e) => setData("email", e.target.value)}
                     disabled={processing}
-                    className="" // espace pour l'icône œil
+                    className="py-6"
                   />
+                  {serverErrors?.email && <p className="text-sm text-destructive">{serverErrors.email}</p>}
+                </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="password">Mot de passe *</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={data.password}
+                      onChange={(e) => setData("password", e.target.value)}
+                      disabled={processing}
+                      className="py-6"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                {serverErrors?.password && <span className="text-sm text-destructive">{serverErrors.password}</span>}
+
+                <div className="flex items-center justify-end">
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
-                    tabIndex={-1} // évite que le bouton soit focusable au tab
+                    onClick={forgotPassword}
+                    className="text-sm text-primary hover:underline"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    Mot de passe oublié ?
                   </button>
                 </div>
 
-              <div className="flex items-center justify-end">
-                  <a href="/" className="text-sm text-primary hover:underline">
-                    Mot de passe oublié ?
-                  </a>
-                </div>
-
-              <Button type="submit" className="w-full cursor-pointer" disabled={processing}>
-                {"Se connecter"}
-              </Button>
-            </form>
-          </div>
+                <Button
+                  type="submit"
+                  className="w-full py-5"
+                  disabled={processing}
+                >
+                  {processing ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Connexion en cours...
+                    </>
+                  ) : (
+                    "Se connecter"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>

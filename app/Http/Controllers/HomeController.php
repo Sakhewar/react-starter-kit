@@ -156,7 +156,6 @@ class HomeController extends Controller
         }
 
         $retour['prefixepermission']       = $prefixepermission;
-        $retour['modules']                 = $this->modules;
         $retour['page']                    = $getPage;
         $retour['breadcrumb']              = $breadcrumb;
         $retour['active_link']             = "/" . $namepage;

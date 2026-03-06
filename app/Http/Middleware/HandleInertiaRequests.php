@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Module;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,14 +34,73 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
+    protected  $modules;
+
+    public function __construct()
+    {
+        $this->modules = Module::with(['modules', 'pages', 'mode_link'])->whereNull('module_id')->orderBy('order')->get();
+    }
+
+     protected function getModulesNew(array $modules, $user): array
+    {
+        if (!$user)
+        {
+            return [];
+        }
+
+        $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
+
+        $filteredModules = [];
+
+        foreach ($modules as $module)
+        {
+            $visiblePages = [];
+
+            foreach ($module['pages'] ?? [] as $page)
+            {
+                $pagePermissions = $page['permissions'] ?? []; // ex: ['dashboard']
+
+                $pageIsVisible = false;
+
+                foreach ($pagePermissions as $requiredKeyword)
+                {
+                    foreach ($userPermissions as $userPerm)
+                    {
+                        if (stripos($userPerm, $requiredKeyword) !== false)
+                        {
+                            $pageIsVisible = true;
+                        }
+                    }
+                }
+
+                if ($pageIsVisible)
+                {
+                    $visiblePages[] = $page;
+                }
+            }
+
+            // Module visible si au moins une page l'est
+            if (!empty($visiblePages))
+            {
+                $moduleCopy = $module;
+                $moduleCopy['pages'] = $visiblePages;
+                $filteredModules[] = $moduleCopy;
+            }
+        }
+
+        return $filteredModules;
+    }
     public function share(Request $request): array
     {
-        return [
+        $filteredModules = $this->getModulesNew($this->modules->toArray(), $request->user());
+        $rtr = [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'modules' => $filteredModules,
         ];
+        return $rtr;
     }
 }

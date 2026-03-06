@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client';
 import '../css/app.css';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { route } from 'ziggy-js';
+import { Ziggy } from '../js/ziggy';          // ← Importe Ziggy
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

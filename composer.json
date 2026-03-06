@@ -15,7 +15,9 @@
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.11",
-        "spatie/laravel-permission": "^6.24"
+        "spatie/laravel-permission": "^6.24",
+        "tightenco/ziggy": "^2.6",
+        "rebing/graphql-laravel": "^9.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -91,6 +93,18 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "config-server-base": [
+            "cp GraphQLController_local.php vendor/rebing/graphql-laravel/src/GraphQLController.php",
+            "sudo chmod -R 777 storage/ bootstrap/cache",
+            "rm -rf bootstrap/cache/* storage/framework/views/*",
+            "php artisan clear-compiled",
+            "composer dumpautoload",
+            "php artisan optimize:clear"
+        ],
+        "config-server-mac": [
+            "@config-server-base",
+            "sudo chown -R _www:_www storage bootstrap/cache"
         ]
     },
     "extra": {

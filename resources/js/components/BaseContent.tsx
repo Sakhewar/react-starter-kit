@@ -34,11 +34,51 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 import { Column, columnConfigs } from "@/pages/configs/attributes";
+import { fetchData } from '@/utils/graphql';
 
+// Exemple avec typage
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
+interface UsersQueryResponse {
+  users: User[];
+}
+
+const GET_USERS = `
+  query GetPays {
+    pays {
+      id
+      nom
+      display_text
+    }
+  }
+`;
 export default function BaseContent({namepage, page, ...props} : { namepage: string, page: any }) {
   const [pageSize, setPageSize] = React.useState(10);
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const [users, setUsers] = React.useState<User[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function loadUsers() {
+      try {
+        const data = await fetchData<UsersQueryResponse>(GET_USERS);
+        setUsers(data.users);
+      } catch (err: any) {
+        setError(err.message);
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadUsers();
+  }, []);
 
   const PageIcon = page && page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
