@@ -6,7 +6,7 @@ use App\RefactoringItems\RefactGraphQLType;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use GraphQL\Type\Definition\Type;
 
-class PaysType extends RefactGraphQLType
+class ProvenanceType extends RefactGraphQLType
 {
     protected function resolveFields(): array
     {

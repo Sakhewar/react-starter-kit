@@ -165,6 +165,14 @@ return [
      */
     'cursor_pagination_type' => Rebing\GraphQL\Support\CursorPaginationType::class,
 
+    'graphiql' => [
+        'prefix' => '/graphiql',
+        'controller' => \Rebing\GraphQL\GraphQLController::class.'@graphiql',
+        'middleware' => [],
+        'view' => 'graphql::graphiql',
+        'display' => env('ENABLE_GRAPHIQL', true),
+    ],
+
     /*
      * Overrides the default field resolver
      * See http://webonyx.github.io/graphql-php/data-fetching/#default-field-resolver

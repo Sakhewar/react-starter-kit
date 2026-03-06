@@ -9,11 +9,13 @@ use GraphQL\Type\Definition\Type;
 class PaysQuery extends RefactGraphQLQuery
 {
 
+
     public $attributes = [
         'name' => 'pays',
+        'modelType' => 'ProvenanceType',
+        'paginationType' => 'ProvenancePaginatedType',
         'description' => 'Retourne la liste des pays',
     ];
-    
     public function args(): array
     {
         return $this->addArgs([
