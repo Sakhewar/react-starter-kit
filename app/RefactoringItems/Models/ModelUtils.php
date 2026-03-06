@@ -13,43 +13,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait ModelUtils
 {
-    public function findProduit($needle, string $field = 'declinaison_produit_id')
-    {
-        return $this->produits()->wherePivot($field, $needle)->first();
-    }
-
-    public function saveProduits(array $produits, $key = 'declinaison_produit_id')
-    {
-        $this->produits()->sync(getSyncableArray($produits, $key));
-    }
-
-    /**
-     * Verifie si le produit est en stock
-     *
-     * @param integer $produitId
-     * @param integer $toSubstract
-     * @return void
-     */
-    public function haveEnoughtInStock(int $produitId, int $toSubstract): bool
-    {
-        if (method_exists(get_called_class(), 'depot'))
-        {
-            $produit = get_called_class() == Depot::class ?
-                $this->findProduit($produitId) :
-                $this->depot->findProduit($produitId);
-
-            if (
-                !is_null($produit) &&
-                isset($produit->details->qte) &&
-                $produit->details->qte >= $toSubstract
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Permet de recuperer les relations d'un model
      *

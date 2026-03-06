@@ -2,7 +2,7 @@
 
 namespace App\RefactoringItems;
 
-use App\Models\{Outil};
+use App\Models\{Model, Outil};
 use ReflectionClass;
 use GraphQL\Language\Parser;
 use Illuminate\Support\Str;
@@ -121,7 +121,7 @@ class RefactGraphQLQuery extends Query
             $refl = new ReflectionClass($this->model->getModel());
         }
 
-        // dd($refl->getName());
+        //dd($refl->getName());
 
         // $functionCall = 'for' . $this->modelType;
 

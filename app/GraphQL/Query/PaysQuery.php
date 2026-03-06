@@ -13,6 +13,7 @@ class PaysQuery extends RefactGraphQLQuery
         'name' => 'pays',
         'description' => 'Retourne la liste des pays',
     ];
+    
     public function args(): array
     {
         return $this->addArgs([

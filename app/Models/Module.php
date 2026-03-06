@@ -9,12 +9,6 @@ class Module extends Model
         return $this->hasManyThrough(Page::class, Module::class)->orderBy('pages.order');
     }
 
-
-    public function pages()
-    {
-        return $this->hasMany(Page::class)->orderBy('order');
-    }
-
     public function all_pages()
     {
         $pages = $this->sub_pages->toArray();
@@ -23,16 +17,6 @@ class Module extends Model
             array_push($pages, $page);
         }
         return $pages;
-    }
-
-    public function modules()
-    {
-        return $this->hasMany(Module::class)->orderBy('order');
-    }
-
-    public function mode_link()
-    {
-        return $this->belongsTo(ModeLink::class);
     }
 
     public function permissions()

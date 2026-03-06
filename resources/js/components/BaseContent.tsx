@@ -44,15 +44,15 @@ interface User {
 }
 
 interface UsersQueryResponse {
-  users: User[];
+  pays: User[];
 }
 
 const GET_USERS = `
   query GetPays {
     pays {
       id
-      nom
-      display_text
+      libelle
+      description
     }
   }
 `;
@@ -68,7 +68,7 @@ export default function BaseContent({namepage, page, ...props} : { namepage: str
     async function loadUsers() {
       try {
         const data = await fetchData<UsersQueryResponse>(GET_USERS);
-        setUsers(data.users);
+        setUsers(data.pays);
       } catch (err: any) {
         setError(err.message);
         console.error(err);
@@ -79,6 +79,9 @@ export default function BaseContent({namepage, page, ...props} : { namepage: str
 
     loadUsers();
   }, []);
+
+  console.log("diop log - users:", users);
+  
 
   const PageIcon = page && page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
@@ -192,14 +195,14 @@ export default function BaseContent({namepage, page, ...props} : { namepage: str
               </TableHeader>
 
               <TableBody>
-                {fraisPlans.length === 0 ? (
+                {users?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={columns.length} className="h-24 text-center">
                       Aucun résultat
                     </TableCell>
                   </TableRow>
                 ) : (
-                  fraisPlans.map((row: any, idx: number) => (
+                  users?.map((row: any, idx: number) => (
                     <TableRow key={row.id ?? idx} className="text-center">
                       {columns.map((col) => (
                         <TableCell key={col.key} className={col.className}>

@@ -3,7 +3,7 @@
 namespace App\RefactoringItems;
 
 use App\Models\Outil;
-//use App\Traits\GraphQLDefaultFields;
+use App\Traits\GraphQLDefaultFields;
 use Carbon\Carbon;
 use GraphQL\Type\Definition\Type;
 use Illuminate\Support\Facades\{Log};
@@ -14,7 +14,7 @@ use ReflectionClass;
 
 abstract class RefactGraphQLType extends GraphQLType
 {
-    //use GraphQLDefaultFields;
+    use GraphQLDefaultFields;
 
     protected $attributes = [];
     protected $column;

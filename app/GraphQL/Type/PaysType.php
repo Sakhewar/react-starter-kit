@@ -12,11 +12,12 @@ class PaysType extends RefactGraphQLType
     {
         return [
             'id'                                 => ['type' => Type::int()],
-            'nom'                                => ['type' => Type::string()],
+            'libelle'                            => ['type' => Type::string()],
             'cedeao'                             => ['type' => Type::boolean()],
-            'display_text'                       => ['type' => Type::string(), 'alias' => 'nom'],
+            'display_text'                       => ['type' => Type::string(), 'alias' => 'libelle'],
             'indic'                              => ['type' => Type::string()],
             'abreviation'                        => ['type' => Type::string()],
+            'description'                        => ['type' => Type::string(), 'alias' => 'libelle'],
         ];
     }
 }

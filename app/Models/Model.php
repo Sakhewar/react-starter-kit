@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class Model extends EloquentModel
 {
-    // use HasFactory;
-    // use HasModelRelationships;
-    // use ModelUtils;
-    // use Trackable;
+    use HasFactory;
+    use HasModelRelationships;
+    use ModelUtils;
+    use Trackable;
 
     /**
      * The attributes that aren't mass assignable.
