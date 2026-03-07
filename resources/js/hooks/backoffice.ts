@@ -1,7 +1,9 @@
 // src/stores/globalStore.ts
-import { create } from 'zustand';
+import { create, useStore } from 'zustand';
 import { graphqlGet } from '@/utils/graphql';
 import listofAttributes from '@/configs/requestAttribute';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 interface EntityItem {
   id: number | string;
@@ -30,7 +32,8 @@ interface InitOptions {
 
 interface GlobalState {
   dataPage: Record<string, PaginatedResponse<EntityItem>>;
-
+  updateItem: any;
+  deleteItem: any;
   isLoading: boolean;
   error: string | null;
   errors: Record<string, string>; // Erreurs par entity pour plus de robustesse
@@ -43,7 +46,8 @@ interface GlobalState {
 
 export const useGlobalStore = create<GlobalState>((set, get) => ({
   dataPage: {}, // Init vide
-
+  updateItem: null,
+  deleteItem: null,
   isLoading: false,
   error: null,
   errors: {}, // Erreurs spécifiques
@@ -61,10 +65,15 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
     } = options;
 
     const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
-    const currentTemplateUrl = page.link;
+    const currentTemplateUrl = page?.link;
 
     // Évite rechargement inutile si même attributeName et pas force
     if (!force && get().lastInitialized === attributeName)
+    {
+      return;
+    }
+
+    if(!currentTemplateUrl)
     {
       return;
     }
@@ -76,7 +85,7 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
     
     if (!onlyPageChange)
     {
-      set({ dataPage: {} });
+      set({ dataPage: {}, updateItem: null});
 
       //Pour vider le dataPage apres chaque changement de page
   
@@ -213,6 +222,8 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
   reset: () => {
     set({
       dataPage: {},
+      updateItem: null,
+      deleteItem: null,
       isLoading: false,
       error: null,
       errors: {},
@@ -221,15 +232,104 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
   },
 }));
 
-// Reste du fichier (Optionals et can)
-interface Optionals
+
+export function can(name: string, permissions? : any [])
 {
-  permissions?: { name: string }[];
+  const perms = permissions || useGlobalStore.getState().dataPage.permissions;
+
+  if (Array.isArray(perms))
+  {
+    return perms.some((permission) => permission.name === name);
+  }
+
+  return false;
 }
 
-export function can(name: string, optionals: Optionals = {})
+export async function addElement(type: string, data : Record<string, any>)
 {
-  const permissions = optionals.permissions || [];
-  
-  return Array.isArray(permissions) && (permissions as { name: string }[]).some((permission) => permission.name === name);
+  let rtr : Record<string, any>  = {};
+
+  return axios.post(type, data).then((response) =>
+  { 
+    if(response && response.data)
+    {
+      let dataRes = response.data;
+      if(dataRes.errors || dataRes.data.errors)
+      {
+        toast.error(dataRes.errors || dataRes.data.errors, {position:'top-right'})
+        rtr['success'] = false;
+      }
+      else
+      {
+        toast.success(`${data.id == null ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-right'})
+        rtr['success'] = true;
+      }
+    }
+    return {data: rtr};
+  }).catch((error) =>
+  {
+    if(error.response && error.response.data)
+    {
+      if(error.response.data.message)
+      {
+        toast.error(error.response.data.message, {position:'top-right'});
+        rtr['success'] = false;
+      }
+    }
+    return {data: rtr};
+  })
+} 
+
+export async function updateElement(type: string, id: number)
+{
+  const goodType = !type.endsWith("s") ? type + "s" : type;
+  const data = await graphqlGet<PaginatedResponse<EntityItem>>({
+    entity: goodType,
+    fields: listofAttributes[goodType],
+    args: { id: id },
+  });
+
+  if(data && Array.isArray(data) && data.length === 1)
+  {
+    return data[0];
+  }
+  else
+  {
+    toast.error("Une erreur est survenue !", {position:'top-right'});
+  }
 }
+
+export async function deleteElement(type: string, id: number)
+{
+  let rtr : Record<string, any>  = {};
+
+  return axios.post(`/${type}/delete/${id}`).then((response) =>
+  { 
+    if(response && response.data)
+    {
+      let data = response.data;
+      if(data.errors || data.data.errors)
+      {
+        toast.error(data.errors || data.data.errors, {position:'top-right'})
+        rtr['success'] = false;
+      }
+      else
+      {
+        toast.success('Suppression Effectuée avec succés !', {position:'top-right'})
+        rtr['success'] = true;
+      }
+    }
+    return rtr;
+  }).catch((error) =>
+  {
+    if(error.response && error.response.data)
+    {
+      if(error.response.data.message)
+      {
+        toast.error(error.response.data.message, {position:'top-right'});
+        rtr['success'] = false;
+      }
+    }
+    return rtr;
+  })
+} 

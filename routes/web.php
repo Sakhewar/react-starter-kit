@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ViewController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -31,12 +32,13 @@ Route::middleware('auth')->group(function ()
 
     Route::get('/pages/{namepage}/{prefixepermission?}', [HomeController::class, 'renderPage'])->name('page.render');
 
+    // Save, Import, Statut, Delete Routes
+    Route::post('/{table_name}', [ViewController::class, 'redirectToController']);
+    Route::post('/{table_name}/{methode?}', [ViewController::class, 'redirectToController']);
+    Route::post('/{table_name}/{methode?}/{id?}', [ViewController::class, 'redirectToController']);
+    Route::get('/{table_name}.{methode?}/{id?}', [ViewController::class, 'redirectToController']);
+
 });
 
 
 
-// // Save, Import, Statut, Delete Routes
-// Route::post('/{table_name}', 'ViewController@redirectToController');
-// Route::post('/{table_name}/{methode?}', 'ViewController@redirectToController');
-// Route::post('/{table_name}/{methode?}/{id?}', 'ViewController@redirectToController');
-//Route::get('/{table_name}.{methode?}/{id?}', 'ViewController@redirectToController');

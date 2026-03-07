@@ -10,6 +10,7 @@ import BaseContent from "@/components/BaseContent";
 import AppHeader from "@/components/AppHeader";
 import { useGlobalStore } from "@/hooks/backoffice";
 import { useEffect } from "react";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function MAinEntry()
 {
@@ -45,6 +46,7 @@ export default function MAinEntry()
           </div>
         </main>
       </div>
+      <Toaster richColors />
     </div>
   );
 }

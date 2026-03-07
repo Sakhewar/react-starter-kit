@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\Handler;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -30,4 +31,13 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
+        $exceptions->render(function (Throwable $e, $request) {
+
+            // Vérifie si l'utilisateur est connecté
+            if (!auth()->check()) {
+                return;
+            }
+    
+            return Handler::formatResponseError($e);
+        });
     })->create();

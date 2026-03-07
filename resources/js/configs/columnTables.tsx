@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Pencil, Copy, Trash2, Settings } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { Badge } from "@/components/ui/badge";
-import { can } from "@/hooks/backoffice";
+import { can, updateElement, useGlobalStore } from "@/hooks/backoffice";
 
 export const columnConfigs: Record<string, Column[]> =
 {
@@ -259,13 +259,18 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName}:
       onClick: () => {
         if (key === "delete")
         {
-          if (confirm(`Supprimer cet élément (${attributeName}) ?`)) {
-            router.delete(`/${attributeName}/${row.id}`);
-          }
+          useGlobalStore.setState((state) => ({ ...state, deleteItem: row }));
         }
-        else
+        else if (key === "edit" || key === "clone" )
         {
-          router.visit(`/${attributeName}/${row.id}/${key}`);
+          updateElement(attributeName, row.id).then((data)=>
+          {
+            if(key === "clone")
+            {
+              data.id = null;
+            }
+            useGlobalStore.setState((state) => ({ ...state, updateItem: data }));
+          });
         }
       },
     }));

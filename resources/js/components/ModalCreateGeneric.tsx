@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,6 +20,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils"; // fonction utilitaire shadcn pour merger className
+import { route } from "ziggy-js";
+import { addElement } from "@/hooks/backoffice";
+
 
 export interface FieldConfig {
   name: string;
@@ -43,54 +46,74 @@ interface ModalCreateGenericProps {
   entity: string; // ex: 'pays', 'client' → route `${entity}.store`
   fields: FieldConfig[];
   onSuccess?: (newItem: any) => void;
-  children?: React.ReactNode; // custom trigger
+  updateItem?: any,
+  isOpen : boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function ModalCreateGeneric({
-  triggerText = "Ajouter",
   title,
-  description,
   entity,
   fields,
   onSuccess,
-  children,
-}: ModalCreateGenericProps) {
-  const [open, setOpen] = React.useState(false);
+  updateItem,
+  isOpen,
+  onOpenChange
+}: ModalCreateGenericProps){
+
+  //Ajouter un champ id s'il est pas present dans fields
+  if (!fields.some(f => f.name === "id"))
+  {
+    fields.unshift({
+      name: "id",
+      label: "id",
+      type: "number",
+      placeholder: "id",
+      required: false,
+      defaultValue: "",
+      inputClassName: "hidden",
+      labelClassName: "hidden",
+      containerClassName: "hidden",
+    });
+  }
+  console.log("diop log", updateItem);
+  
 
   const { data, setData, post, processing, errors, reset } = useForm(
     Object.fromEntries(fields.map(f => [f.name, f.defaultValue ?? ""]))
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    if(updateItem != null)
+    {
+      setData(Object.fromEntries(fields.map(f => [f.name,   updateItem?.[f.name] ?? f.defaultValue ?? ""])));
+    }
+  },[updateItem])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // post(route(`${entity}.store`), {
-    //   onSuccess: (page: any) => {
-    //     reset();
-    //     setOpen(false);
-    //     onSuccess?.(page.props.newItem);
-    //   },
-    //   onError: (err) => {
-    //     console.error("Erreur création :", err);
-    //   },
-    // });
+    const addElt = await addElement(`/${entity}`, data);
+
+    if(addElt && addElt.data.success == true)
+    {
+      onSuccess?.(addElt.data);
+      onOpenChange(false);
+      reset();
+    }
   };
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children || (
-          <Button variant="default">
-            <Plus className="mr-2 h-4 w-4" />
-            {triggerText}
-          </Button>
-        )}
-      </DialogTrigger>
+  const handleCloseModal = function(val:boolean = false)
+  {
+    onOpenChange(val);
+    reset();
+  }
 
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+  return (
+    <Dialog open={isOpen} onOpenChange={handleCloseModal}>
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
@@ -173,12 +196,12 @@ export function ModalCreateGeneric({
           ))}
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={processing}>
+            <Button type="button" className="cursor-pointer" variant="outline" onClick={()=>handleCloseModal(!isOpen)} disabled={processing}>
               Annuler
             </Button>
-            <Button type="submit" disabled={processing}>
+            <Button type="submit" className="cursor-pointer" disabled={processing}>
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Créer
+              Valider
             </Button>
           </DialogFooter>
         </form>

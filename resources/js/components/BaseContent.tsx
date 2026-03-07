@@ -30,18 +30,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton"; // ← important !
 import { cn } from "@/lib/utils"; // si tu as cette fonction utilitaire
 
 import { Column, columnConfigs } from "@/configs/columnTables";
-import { graphqlGet } from '@/utils/graphql';
 import { ModalCreateGeneric } from "./ModalCreateGeneric";
 
 import * as Icons from "lucide-react";
 import { fieldModals } from "@/configs/fieldModal";
-import { can, useGlobalStore } from "@/hooks/backoffice";
+import { can, deleteElement, useGlobalStore } from "@/hooks/backoffice";
 
 import { useEffect, useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 interface EntityItem {
   id: number | string;
@@ -66,7 +67,9 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const [items, setItems] = useState<EntityItem[]>([]);
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [refreshList, setRefreshList] = useState(0);
 
   const columns: Column[] = columnConfigs[attributeName] ?? [];
   
@@ -74,7 +77,9 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
 
   const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
 
-  const { initialize, dataPage, isLoading: globalLoading, error: globalError } = useGlobalStore();
+  const { initialize, dataPage, isLoading: globalLoading, error: globalError, updateItem, deleteItem} = useGlobalStore();
+
+  const permissionPages: any = dataPage['permissions'] ?? [];
 
   // Premier effect : synchronisation des states locaux quand dataPage[goodType] change
   useEffect(() =>
@@ -90,7 +95,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
     {
       setLoading(true);
     }
-    setError(globalError);
   }, [dataPage[goodType], globalError]);
 
   useEffect(() =>
@@ -101,7 +105,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       return;
     }
 
-    const entityData = dataPage[goodType];
     initialize({
       page,
       attributeName,
@@ -110,7 +113,17 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       pageSize,
       force: true, // Force pour refresh sur pagination
     });
-  }, [attributeName, currentPage, pageSize, initialize]); 
+  }, [attributeName, currentPage, pageSize, initialize, refreshList]); 
+
+  useEffect(()=>
+  {
+    setIsModalOpen(updateItem != null);
+    
+  },[updateItem])
+
+  useEffect(()=>{
+    setIsDialogOpen(deleteItem != null);
+  },[deleteItem])
 
   const PageIcon = page?.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
@@ -136,21 +149,37 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             </Badge>
           </div>
 
-          {can(`creation-${attributeName}`, {permissions: Array.isArray(dataPage['permissions']) ? dataPage['permissions'] : []}) && <ModalCreateGeneric
-            title={`Ajouter un ${namepage}`}
-            description={`Remplissez les informations pour créer un nouveau ${namepage.toLowerCase()}.`}
-            entity={attributeName}
-            fields={fieldModal}
-            onSuccess={(newItem) => {
-              // Tu peux ici soit : recharger la page courante, soit ajouter en premier
-              setCurrentPage(1); // le plus simple pour l'instant
-            }}
-          >
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter
-            </Button>
-          </ModalCreateGeneric>}
+          {can(`creation-${attributeName}`, permissionPages) && <div className="">
+            <HoverCard openDelay={80} closeDelay={150}>
+                <HoverCardTrigger asChild>
+                  <Button className="cursor-pointer">
+                    <Plus className="h-4 w-4" />
+                    Ajouter
+                    <ChevronDown className="h-4 w-4 opacity-70" />
+                  </Button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-45 p-2" align="end" sideOffset={8}>
+                <div className="flex flex-col">
+                  <Button variant="ghost" className="justify-start px-4 py-2 rounded-none hover:bg-accent"
+                    onClick={() => setIsModalOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter un item
+                  </Button>
+
+                  <Button variant="ghost" className="justify-start px-4 py-2 rounded-none hover:bg-accent" onClick={() => console.log('Export Excel cliqué')}>
+                    <FaRegFileExcel className="mr-2 h-4 w-4 text-green-600" />
+                    Import Excel
+                  </Button>
+
+                  <Button variant="ghost" className="justify-start px-4 py-2 rounded-none hover:bg-accent"
+                    onClick={() => console.log('Trame Word cliquée')}>
+                    <FaRegFileExcel className="mr-2 h-4 w-4 text-green-600" />
+                    Trame Excel
+                  </Button>
+                </div>
+                </HoverCardContent>
+              </HoverCard>
+          </div>}
         </div>
 
         {/* Filtres / exports */}
@@ -235,7 +264,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             {/* Gauche : select page size */}
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground whitespace-nowrap hidden sm:block">
-                Lignes par page
+                Afficher par
               </span>
               <Select
                 value={pageSize.toString()}
@@ -260,15 +289,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             {/* Pagination */}
             <Pagination className="justify-center sm:justify-end">
               <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage > 1) setCurrentPage(currentPage - 1);
-                    }}
-                  />
-                </PaginationItem>
 
                 {Array.from({ length: Math.min(metadata?.last_page ?? 1, 7) }, (_, i) => {
                   const pageNum = i + 1;
@@ -293,22 +313,32 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                     <PaginationEllipsis />
                   </PaginationItem>
                 )}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage < (metadata?.last_page ?? 1))
-                        setCurrentPage(currentPage + 1);
-                    }}
-                  />
-                </PaginationItem>
               </PaginationContent>
             </Pagination>
           </div>
         </div>
       </div>
+
+      {/* Modal ouvert manuellement via state */}
+      <ModalCreateGeneric
+          title={namepage}
+          entity={attributeName}
+          fields={fieldModal}
+          updateItem={updateItem}
+          onSuccess={(newItem) => {
+            console.log("Nouveau créé :", newItem);
+            setRefreshList((prev) => prev + 1)
+          }}
+          isOpen={isModalOpen} // ← Contrôle via state
+          onOpenChange={() => {setIsModalOpen(!isModalOpen); useGlobalStore.setState((state) => ({ ...state, updateItem: null }));}}
+        />
+
+        <ConfirmDialog
+            open={isDialogOpen}
+            onConfirm={()=>{deleteElement(attributeName, deleteItem?.id).then((data) => {data && data.success && (setIsDialogOpen(false),setRefreshList((prev) => prev + 1));
+            })}}
+            onOpenChange={() => {setIsDialogOpen(!isDialogOpen); useGlobalStore.setState((state) => ({ ...state, deleteItem: null }));}}
+          />
     </div>
   );
 }

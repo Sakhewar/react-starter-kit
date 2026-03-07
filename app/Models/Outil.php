@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\RtEvent;
 use Carbon\Carbon;
 use Spatie\Permission\Models\Permission;
 
@@ -196,5 +197,11 @@ class Outil extends Model
         }
 
         return $image;
+    }
+
+    public static function publishEvent($data)
+    {
+        $eventRT = new RtEvent($data);
+        event($eventRT);
     }
 }
