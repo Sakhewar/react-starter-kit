@@ -21,7 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils"; // fonction utilitaire shadcn pour merger className
 
-interface FieldConfig {
+export interface FieldConfig {
   name: string;
   label: string;
   type?: "text" | "email" | "number" | "textarea" | "select" | "checkbox" | "date";

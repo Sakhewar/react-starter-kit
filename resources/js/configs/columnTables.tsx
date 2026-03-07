@@ -24,7 +24,7 @@ export const columnConfigs: Record<string, Column[]> =
 
   modalitepaiement : [
       { key: "libelle", label: "Libellé", className: "" },
-      { key : "nb_jours", label : "Nombre de jours"},
+      { key : "nbre_jour", label : "Nombre de jours"},
       { key: "description", label: "Description" },
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (

@@ -30,25 +30,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import * as Icons from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton"; // ← important !
+import { cn } from "@/lib/utils"; // si tu as cette fonction utilitaire
 
 import { Column, columnConfigs } from "@/configs/columnTables";
-import { graphqlGet } from '@/utils/graphql'; // ← ta fonction GET
-
-// Import du modal générique
+import { graphqlGet } from '@/utils/graphql';
 import { ModalCreateGeneric } from "./ModalCreateGeneric";
 
-// Typage générique pour les données (à affiner par entité si besoin)
+import * as Icons from "lucide-react";
+import { fieldModals } from "@/configs/fieldModal";
+
 interface EntityItem {
   id: number | string;
   [key: string]: any;
 }
-
 
 interface PaginatedResponse<T> {
   data: T[];
@@ -61,62 +56,53 @@ interface PaginatedResponse<T> {
   };
 }
 
-export default function BaseContent({namepage, page, ...props} : { namepage: string, page: any }) {
+export default function BaseContent({attributeName, namepage,page,...props}:{attributeName:string, namepage: string;page: any;})
+{
   const [pageSize, setPageSize] = React.useState(10);
-  const [isOpen, setIsOpen] = React.useState(false);
-
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [items, setItems] = React.useState<EntityItem[]>([]);
+  const [metadata, setMetadata] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState(1);
-  const [metadata, setMetadata] = React.useState<any>(null);
-  const [items, setItems] = React.useState<EntityItem[]>([]);
-
-
-
-  const attributeName = String(page?.link || "").replaceAll("/", "");
-
   const columns: Column[] = columnConfigs[attributeName] ?? [];
-
-  console.log("diop log - attributeName:", attributeName, page?.link);
-
   
+  const fieldModal = fieldModals[attributeName] ?? [];
+
   React.useEffect(() => {
     async function loadData() {
       if (!attributeName || columns.length === 0) {
         setLoading(false);
         return;
       }
-
+  
       try {
         setLoading(true);
         setError(null);
-
-        // Champs à récupérer (on filtre les clés simples, on gère les relations imbriquées dans le rendu)
+  
         const fields = columns
           .map((col) => col.key)
           .filter((key) => key !== "actions" && !key.includes("."));
-
-        const result = await graphqlGet<PaginatedResponse<EntityItem>>({
-          entity: attributeName,
+  
+        // On lance la vraie requête
+        const resultPromise = graphqlGet<PaginatedResponse<EntityItem>>({
+          entity: `${!attributeName.endsWith("s") ? attributeName + "s" : attributeName}`,
           fields,
           args: {
             page: currentPage,
             count: pageSize,
-            // Ajoute ici tes filtres dynamiques si besoin
-            // search: searchValue,
-            // filter: { status: 'active' }
           },
         });
-
+        // On crée une promesse qui attend au minimum 1000ms
+        const minDelayPromise = new Promise((resolve) =>
+          setTimeout(resolve, 1000/2.5)
+        );
+  
+        // On attend que LES DEUX soient terminées (la requête + le délai)
+        const [result] = await Promise.all([resultPromise, minDelayPromise]);
+  
         setItems(result.data);
         setMetadata(result.metadata);
-
-        console.log("diop log - items:", result.data);
-        console.log("diop log - metadata:", result.metadata);
-        console.log("diop log - totalPages:", result.metadata?.last_page);
-
       } catch (err: any) {
         setError(err.message || `Erreur lors du chargement de ${namepage}`);
         console.error("Erreur GraphQL :", err);
@@ -124,17 +110,11 @@ export default function BaseContent({namepage, page, ...props} : { namepage: str
         setLoading(false);
       }
     }
-
+  
     loadData();
   }, [attributeName, currentPage, pageSize, columns]);
 
-  console.log("diop log - users:", items);
-
-  const PageIcon = page && page.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
-
-
-
-
+  const PageIcon = page?.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
   if (columns.length === 0) {
     return (
@@ -146,159 +126,189 @@ export default function BaseContent({namepage, page, ...props} : { namepage: str
 
   return (
     <div className="flex flex-col h-full relative">
-      {/* Contenu scrollable */}
-      <div className="flex-1 overflow-y-auto space-y-6 pb-20"> {/* pb-20 pour laisser de la place au footer fixe */}
-
-        <div className="flex items-center justify-between gap-4">
+      {/* Contenu principal scrollable */}
+      <div className="flex-1 overflow-y-auto space-y-6 pb-24 md:pb-20">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            {PageIcon && <PageIcon className="w-4 h-4" />}
-            <h1 className="text-sm sm:text-sm md:text-md lg:text-lg tracking-tight">
-              {namepage}
-            </h1>
-            <Badge className="ring-black-200 rounded-0">{metadata?.total ? metadata?.total: 0}</Badge>
+            {PageIcon && <PageIcon className="w-5 h-5" />}
+            <h1 className="text-lg font-semibold tracking-tight">{namepage}</h1>
+            <Badge variant="outline" className="font-normal">
+              {metadata?.total ?? 0}
+            </Badge>
           </div>
 
-          <div className="">
-            {/* Appel au modal générique au lieu de HoverCard */}
-            <ModalCreateGeneric
-              title={`Ajouter un ${namepage}`}
-              description={`Remplissez les informations pour créer un nouveau ${namepage.toLowerCase()}.`}
-              entity={attributeName} // ex: 'pays'
-              fields={[
-                { name: "libelle", label: "Libellé", type: "text", required: true },
-                { name: "description", label: "Description", type: "textarea" },
-                // Ajoute tes champs ici selon columns
-              ]}
-              onSuccess={(newItem) => {
-                console.log("Nouveau créé :", newItem);
-                // Optionnel : recharge la liste
-                // loadUsers();
-              }}
-            >
-              <Button>
-                <Plus className="h-4 w-4" />
-                Ajouter
-                <ChevronDown className="h-4 w-4 opacity-70" />
-              </Button>
-            </ModalCreateGeneric>
-          </div>
+          <ModalCreateGeneric
+            title={`Ajouter un ${namepage}`}
+            description={`Remplissez les informations pour créer un nouveau ${namepage.toLowerCase()}.`}
+            entity={attributeName}
+            fields={fieldModal}
+            onSuccess={(newItem) => {
+              // Tu peux ici soit : recharger la page courante, soit ajouter en premier
+              setCurrentPage(1); // le plus simple pour l'instant
+            }}
+          >
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter
+            </Button>
+          </ModalCreateGeneric>
         </div>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex justify-between">
-              <p className="text-sm text-muted-foreground">Filtrer par periode</p>
-              <div className="flex items-center gap-2 cursor-pointer">
-                <FaRegFileExcel className="text-green-600 text-2xl" />
-                <FaRegFileWord className="text-blue-600 text-2xl" />
-              </div>
+        {/* Filtres / exports */}
+        <Card className="shadow-sm">
+          <CardContent className="flex justify-between items-center">
+            <p className="text-sm text-muted-foreground">Filtrer par période</p>
+            <div className="flex gap-3">
+              <FaRegFileExcel className="text-green-600 text-2xl cursor-pointer hover:opacity-80 transition" />
+              <FaRegFileWord className="text-blue-600 text-2xl cursor-pointer hover:opacity-80 transition" />
             </div>
           </CardContent>
         </Card>
 
-        {/* Tableau scrollable interne si besoin */}
-        <Card>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {columns.map((col) => (
-                    <TableHead key={col.key} className={col.className + " text-center"}>
-                      {col.label}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {items?.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      Aucun résultat
-                    </TableCell>
+        {/* Tableau avec skeleton */}
+        <Card className="shadow-sm overflow-hidden">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40">
+                    {columns.map((col) => (
+                      <TableHead key={col.key} className={cn("text-center", col.className)}>
+                        {col.label}
+                      </TableHead>
+                    ))}
                   </TableRow>
-                ) : (
-                  items?.map((row: any, idx: number) => (
-                    <TableRow key={row.id ?? idx}>
-                      {columns.map((col) => (
-                        <TableCell key={col.key} className={col.className}>
-                          {col.render ? col.render(row[col.key], row, {namepage: namepage, attributeName : attributeName}) : (row[col.key] ?? "—")}
-                        </TableCell>
-                      ))}
+                </TableHeader>
+
+                <TableBody>
+                {loading ? (
+                    // Loader central au lieu de skeletons
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-32 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <Icons.Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <p className="mt-2 text-sm text-muted-foreground">Chargement des données...</p>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                  ) :  items.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">
+                        Aucun résultat trouvé
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    // Données avec légère animation d'apparition
+                    items.map((row, idx) => (
+                      <TableRow
+                        key={row.id ?? idx}
+                        className={cn(
+                          "transition-opacity duration-300 text-center",
+                          loading ? "opacity-0" : "opacity-100"
+                        )}
+                      >
+                        {columns.map((col) => (
+                          <TableCell key={col.key} className={cn("py-3", col.className)}>
+                            {col.render
+                              ? col.render(row[col.key], row, { namepage, attributeName })
+                              : (row[col.key] ?? "—")}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Pagination fixe en bas */}
-      <div className="fixed bottom-0 w-[78%] bg-background border-t shadow-md p-4 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              Afficher Par
-            </span>
-            <Select
-              value={`${pageSize}`}
-              onValueChange={(value) => {
-                setPageSize(Number(value));
-              }}
-            >
-              <SelectTrigger className="w-20">
-                <SelectValue placeholder={pageSize} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="30">30</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      {/* Pagination fixe en bas – largeur totale moins sidebar */}
+      <div
+        className={cn(
+          "fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width,280px)] bg-background border-t shadow-sm z-20",
+          "transition-all duration-200"
+        )}
+      >
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Gauche : select page size */}
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground whitespace-nowrap hidden sm:block">
+                Lignes par page
+              </span>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(v) => {
+                  setPageSize(Number(v));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-20 h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[10, 25, 50, 100].map((size) => (
+                    <SelectItem key={size} value={size.toString()}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (currentPage > 1) setCurrentPage(currentPage - 1);
-                      }}
-                    />
-                  </PaginationItem>
+            {/* Pagination */}
+            <Pagination className="justify-center sm:justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) setCurrentPage(currentPage - 1);
+                    }}
+                  />
+                </PaginationItem>
 
-                  {Array.from({ length: Math.min(metadata?.last_page, 5) }, (_, i) => (
-                    <PaginationItem key={i}>
+                {Array.from({ length: Math.min(metadata?.last_page ?? 1, 7) }, (_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <PaginationItem key={pageNum}>
                       <PaginationLink
                         href="#"
-                        isActive={currentPage === i + 1}
+                        isActive={currentPage === pageNum}
                         onClick={(e) => {
                           e.preventDefault();
-                          setCurrentPage(i + 1);
+                          setCurrentPage(pageNum);
                         }}
                       >
-                        {i + 1}
+                        {pageNum}
                       </PaginationLink>
                     </PaginationItem>
-                  ))}
+                  );
+                })}
 
-                  {metadata?.last_page > 5 && <PaginationItem><PaginationEllipsis /></PaginationItem>}
-
+                {metadata?.last_page > 7 && (
                   <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (currentPage < metadata?.last_page) setCurrentPage(currentPage + 1);
-                      }}
-                    />
+                    <PaginationEllipsis />
                   </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < (metadata?.last_page ?? 1))
+                        setCurrentPage(currentPage + 1);
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
         </div>
       </div>
     </div>
