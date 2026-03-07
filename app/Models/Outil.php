@@ -133,4 +133,68 @@ class Outil extends Model
     {
         return config('database.default') == "mysql" ? "like" : "ilike";
     }
+
+    public static function getCurrentEnv()
+    {
+        return config('env.APP_ENV_FOR');
+    }
+
+    public static function getAPI()
+    {
+        return config('env.APP_URL_BACK');
+    }
+
+    public static function getMsgError()
+    {
+        return config('env.MSG_ERROR');
+    }
+
+    public static function getResponseError(\Exception $e)
+    {
+        return response()->json(array(
+            'errors'          => [$e->getCode() == 0 ? $e->getMessage() : config('env.MSG_ERROR')],
+            'errors_debug'    => [$e->getMessage()],
+            'errors_line'     => [$e->getLine()],
+            'errors_trace'    => [$e->getTrace()],
+        ));
+    }
+
+    // Format Date
+    public static function formatDate($fr = false, $optionals = ['getSeparator' => false, 'withHours' => true])
+    {
+
+        if (!isset($optionals['getSeparator']) || !$optionals['getSeparator']) {
+            return ($fr ? "d/m/Y" : "Y-m-d") . (!isset($optionals['withHours']) || $optionals['withHours'] ? " H:i:s" : "");
+        } else {
+            return "/";
+        }
+    }
+
+    // Format Price
+    public static function formatWithThousandSeparator($valeur)
+    {
+        return number_format($valeur, 0, '.', ' ');
+    }
+
+    public static function resolveImageField($image, $elseDefault = true)
+    {
+        if (!isset($image))
+        {
+            if ($elseDefault)
+            {
+                $image = "/assets/images/upload.jpg";
+            }
+        } else {
+            if (!str_contains($image, "?date")) {
+                // In the event that an image exists in the database, in versioning
+                $image = $image . '?date=' . (date('Y-m-d H:i'));
+            }
+        }
+
+        if (isset($image) && !str_contains($image, "http")) {
+            return self::getAPI() . $image;
+        }
+
+        return $image;
+    }
 }

@@ -39,6 +39,9 @@ import { ModalCreateGeneric } from "./ModalCreateGeneric";
 
 import * as Icons from "lucide-react";
 import { fieldModals } from "@/configs/fieldModal";
+import { can, useGlobalStore } from "@/hooks/backoffice";
+
+import { useEffect, useState } from "react";
 
 interface EntityItem {
   id: number | string;
@@ -58,61 +61,56 @@ interface PaginatedResponse<T> {
 
 export default function BaseContent({attributeName, namepage,page,...props}:{attributeName:string, namepage: string;page: any;})
 {
-  const [pageSize, setPageSize] = React.useState(10);
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [items, setItems] = React.useState<EntityItem[]>([]);
-  const [metadata, setMetadata] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState<EntityItem[]>([]);
+  const [metadata, setMetadata] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const columns: Column[] = columnConfigs[attributeName] ?? [];
   
   const fieldModal = fieldModals[attributeName] ?? [];
 
-  React.useEffect(() => {
-    async function loadData() {
-      if (!attributeName || columns.length === 0) {
-        setLoading(false);
-        return;
-      }
-  
-      try {
-        setLoading(true);
-        setError(null);
-  
-        const fields = columns
-          .map((col) => col.key)
-          .filter((key) => key !== "actions" && !key.includes("."));
-  
-        // On lance la vraie requête
-        const resultPromise = graphqlGet<PaginatedResponse<EntityItem>>({
-          entity: `${!attributeName.endsWith("s") ? attributeName + "s" : attributeName}`,
-          fields,
-          args: {
-            page: currentPage,
-            count: pageSize,
-          },
-        });
-        // On crée une promesse qui attend au minimum 1000ms
-        const minDelayPromise = new Promise((resolve) =>
-          setTimeout(resolve, 1000/2.5)
-        );
-  
-        // On attend que LES DEUX soient terminées (la requête + le délai)
-        const [result] = await Promise.all([resultPromise, minDelayPromise]);
-  
-        setItems(result.data);
-        setMetadata(result.metadata);
-      } catch (err: any) {
-        setError(err.message || `Erreur lors du chargement de ${namepage}`);
-        console.error("Erreur GraphQL :", err);
-      } finally {
-        setLoading(false);
-      }
+  const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
+
+  const { initialize, dataPage, isLoading: globalLoading, error: globalError } = useGlobalStore();
+
+  // Premier effect : synchronisation des states locaux quand dataPage[goodType] change
+  useEffect(() =>
+  {
+    const entityData = dataPage[goodType];
+    if (entityData)
+    {
+      setItems(entityData.data);
+      setMetadata(entityData.metadata);
+      setLoading(false);
     }
-  
-    loadData();
-  }, [attributeName, currentPage, pageSize, columns]);
+    else
+    {
+      setLoading(true);
+    }
+    setError(globalError);
+  }, [dataPage[goodType], globalError]);
+
+  useEffect(() =>
+  {
+    if (!attributeName || columns.length === 0)
+    {
+      setLoading(false);
+      return;
+    }
+
+    const entityData = dataPage[goodType];
+    initialize({
+      page,
+      attributeName,
+      onlyPageChange: true,
+      currentPage,
+      pageSize,
+      force: true, // Force pour refresh sur pagination
+    });
+  }, [attributeName, currentPage, pageSize, initialize]); 
 
   const PageIcon = page?.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
@@ -138,7 +136,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             </Badge>
           </div>
 
-          <ModalCreateGeneric
+          {can(`creation-${attributeName}`, {permissions: Array.isArray(dataPage['permissions']) ? dataPage['permissions'] : []}) && <ModalCreateGeneric
             title={`Ajouter un ${namepage}`}
             description={`Remplissez les informations pour créer un nouveau ${namepage.toLowerCase()}.`}
             entity={attributeName}
@@ -152,7 +150,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
               <Plus className="h-4 w-4 mr-2" />
               Ajouter
             </Button>
-          </ModalCreateGeneric>
+          </ModalCreateGeneric>}
         </div>
 
         {/* Filtres / exports */}

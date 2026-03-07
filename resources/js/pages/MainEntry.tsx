@@ -8,18 +8,25 @@ import AppSidebar from "@/components/AppSideBar";
 import * as Views from "./views";
 import BaseContent from "@/components/BaseContent";
 import AppHeader from "@/components/AppHeader";
+import { useGlobalStore } from "@/hooks/backoffice";
+import { useEffect } from "react";
 
 export default function MAinEntry()
 {
-  const { namepage, page } = usePage().props;
-  const { auth, breadcrumb } = usePage<{
-    auth: { user: { name: string } };
-    breadcrumb: string[];
-  }>().props;
+
+  const { namepage, page } = usePage<{auth: { user: { name: string } }; breadcrumb: string[]; namepage:string; page : any}>().props;
 
   const attributeName = String(page?.link || "").replaceAll("/", "");
-  const DynamicComponent = Views[namepage] || null;
+  const DynamicComponent = (namepage in Views ? Views[namepage as keyof typeof Views] : null);
 
+  const { initialize, reset} = useGlobalStore();
+
+  useEffect(() =>
+  {
+    reset();
+    initialize({attributeName,page,onlyPageChange:false, force:true});
+  }, [attributeName, namepage, initialize]);
+  
   return (
     <div className="h-screen w-full flex overflow-hidden bg-background">
         <div className="hidden md:block h-full">

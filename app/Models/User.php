@@ -50,4 +50,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getImageAttribute()
+    {
+        return Outil::resolveImageField($this->attributes['image']);
+    }
 }

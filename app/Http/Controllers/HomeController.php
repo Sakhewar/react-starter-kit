@@ -156,7 +156,8 @@ class HomeController extends Controller
         }
 
         $retour['prefixepermission']       = $prefixepermission;
-        $retour['page']                    = $getPage;
+        //Dans page only link
+        $retour['page']                    = ['link' => $getPage->link, 'title' => $getPage->title];
         $retour['breadcrumb']              = $breadcrumb;
         $retour['active_link']             = "/" . $namepage;
         $retour['namepage']                = \Illuminate\Support\Str::studly($namepage);

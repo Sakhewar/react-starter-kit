@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Pencil, Copy, Trash2, Settings } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { Badge } from "@/components/ui/badge";
+import { can } from "@/hooks/backoffice";
 
 export const columnConfigs: Record<string, Column[]> =
 {
@@ -16,7 +17,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "description", label: "Description" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions row={row} config={{edit: false, clone: false}} attributeName={extra?.attributeName ?? "default"}
+        <RowActions row={row} config={{delete: can('suppression-pays'), edit: can('modification-pays'), clone: can('creation-pays')}} attributeName={extra?.attributeName ?? "default"}
         />
       ),
     },

@@ -2,9 +2,10 @@
 import axios from 'axios';
 
 interface GraphQLParams {
-  entity: string;                  // ex: 'pays', 'factures', 'preferences'
-  fields: string[];                // ex: ['id', 'libelle', 'description']
-  args?: Record<string, any>;      // ex: { page: 1, count: 10, search: 'sen' }
+  entity: string;                  
+  fields: string;                
+  args?: Record<string, any>;
+  callback?: (data: any) => void;
 }
 
 /**
@@ -17,8 +18,9 @@ export async function graphqlGet<T = any>({
   entity,
   fields,
   args = {},
+  callback = undefined,
 }: GraphQLParams): Promise<T> {
-  const fieldsString = fields.join(',');
+  const fieldsString = fields;
 
   // Construit les arguments (page:1,count:10,search:"sen",etc.)
   let argsString = '';
@@ -50,12 +52,8 @@ export async function graphqlGet<T = any>({
 
   const query = `{ ${queryBody} }`;
 
-  console.log('Requête GraphQL générée :', query);
-
   const encoded = encodeURIComponent(query.trim());
   const url = `/graphql?query=${encoded}`;
-
-  console.log('URL complète :', url);
 
   try {
     const response = await axios.get(url, {

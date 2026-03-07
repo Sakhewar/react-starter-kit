@@ -24,6 +24,7 @@ export default function AppHeader() {
             <div className="flex items-center gap-4">
                 <MobileSidebar />
                 {/* Breadcrumb ou titre rapide si tu veux */}
+                {breadcrumb && <div className="hidden md:block text-sm text-muted-foreground">{breadcrumb.join(' / ')}</div>}
             </div>
 
             {/* Droite */}
@@ -40,7 +41,7 @@ export default function AppHeader() {
                 <DropdownMenuTrigger asChild>
                     <button className="flex items-center gap-2 hover:bg-muted px-2 py-1 rounded-lg transition">
                     <Avatar className="w-8 h-8">
-                        <AvatarFallback>{auth?.user?.name?.charAt(0)}</AvatarFallback>
+                        <img src={auth?.user?.image}></img>
                     </Avatar>
                     </button>
                 </DropdownMenuTrigger>
