@@ -83,7 +83,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     }
                   }}
                   className={cn(
-                    "flex w-full items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
+                    "flex w-full items-center justify-between px-3 py-2.5 rounded-md text-[13px] font-medium transition-colors",
                     hasActiveChild || isOpen ? "bg-accent text-accent-foreground" : "hover:bg-accent/50 text-muted-foreground",
                     module.pages?.length === 1 ? "cursor-pointer" : ""
                   )}
@@ -121,7 +121,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                             key={pIdx}
                             href={`/pages${page.link}`}
                             className={cn(
-                              "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-sm transition-colors",
+                              "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[13px] transition-colors",
                               active
                                 ? "bg-accent text-accent-foreground font-medium"
                                 : "text-muted-foreground hover:bg-accent/50"

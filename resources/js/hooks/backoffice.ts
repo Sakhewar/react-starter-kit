@@ -27,6 +27,7 @@ interface InitOptions {
   currentPage?: number;     // Page actuelle pour pagination
   pageSize?: number;        // Taille de page pour pagination
   force?: boolean;          // Pour forcer même si lastInitialized === attributeName
+  filters?: Record<string, any>;
   // Ajoute d'autres options si besoin (filters, search, etc.)
 }
 
@@ -37,7 +38,7 @@ interface GlobalState {
   isLoading: boolean;
   error: string | null;
   errors: Record<string, string>; // Erreurs par entity pour plus de robustesse
-  lastInitialized: string | null; // attributeName pour savoir pour quelle page
+  lastInitialized: string | null; // attributeName pour savoir pour quelle page,
 
   initialize: (options: InitOptions) => Promise<void>;
 
@@ -61,7 +62,8 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
       onlyPageChange = false, 
       currentPage = 1, 
       pageSize = defaultCount, 
-      force = false 
+      force = false,
+      filters = {}
     } = options;
 
     const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
@@ -103,7 +105,7 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
     {
       // Requête pour l'entité principale (avec pagination dynamique)
       pageChangeNeeds.push(
-        {entity: goodType,fields: (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],args: { page: currentPage, count: pageSize }
+        {entity: goodType,fields: (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],args: {...filters, page: currentPage, count: pageSize }
       });
 
     }
@@ -261,7 +263,9 @@ export async function addElement(type: string, data : Record<string, any>)
       }
       else
       {
-        toast.success(`${data.id == null ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-right'})
+        console.log("diop log", data);
+        
+        toast.success(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-right'})
         rtr['success'] = true;
       }
     }

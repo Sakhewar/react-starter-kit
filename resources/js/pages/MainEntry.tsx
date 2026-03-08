@@ -39,7 +39,7 @@ export default function MAinEntry()
         <AppHeader />
         
         <main className="flex-1 overflow-y-auto">
-          <div className="p-4 md:p-6 lg:p-8">
+          <div className="p-4 md:p-6 lg:py-6 lg:px-8">
             {DynamicComponent && <DynamicComponent page={page} />}
 
             {!DynamicComponent && <BaseContent page={page} attributeName={attributeName} namepage={page?.title ?? ""} />}

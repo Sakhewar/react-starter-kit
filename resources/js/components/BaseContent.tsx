@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaRegFileExcel, FaRegFileWord } from "react-icons/fa";
+import { FaRegFileExcel, FaRegFilePdf, FaRegFileWord, FaTimes } from "react-icons/fa";
 import {
   Pagination,
   PaginationContent,
@@ -43,6 +43,10 @@ import { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ConfirmDialog } from "./ConfirmDialog";
+import PaginationComponent from "./PaginationComponent";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "./ui/input-group";
+import { Input } from "./ui/input";
+import { useForm } from "@inertiajs/react";
 
 interface EntityItem {
   id: number | string;
@@ -70,6 +74,10 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [refreshList, setRefreshList] = useState(0);
+  const [filters, setFilters] = useState({});
+  const { data, setData, reset } = useForm({
+    search: "",
+  });
 
   const columns: Column[] = columnConfigs[attributeName] ?? [];
   
@@ -111,9 +119,10 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       onlyPageChange: true,
       currentPage,
       pageSize,
+      filters: filters,
       force: true, // Force pour refresh sur pagination
     });
-  }, [attributeName, currentPage, pageSize, initialize, refreshList]); 
+  }, [attributeName, currentPage, pageSize, initialize, refreshList,filters]); 
 
   useEffect(()=>
   {
@@ -138,13 +147,13 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   return (
     <div className="flex flex-col h-full relative">
       {/* Contenu principal scrollable */}
-      <div className="flex-1 overflow-y-auto space-y-6 pb-24 md:pb-20">
+      <div className="flex-1 overflow-y-auto space-y-6 md:pb-20">
         {/* Header */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             {PageIcon && <PageIcon className="w-5 h-5" />}
             <h1 className="text-lg font-semibold tracking-tight">{namepage}</h1>
-            <Badge variant="outline" className="font-normal">
+            <Badge variant="default" className="font-normal rounded-[4px]">
               {metadata?.total ?? 0}
             </Badge>
           </div>
@@ -183,25 +192,60 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
         </div>
 
         {/* Filtres / exports */}
-        <Card className="shadow-sm">
-          <CardContent className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">Filtrer par période</p>
-            <div className="flex gap-3">
-              <FaRegFileExcel className="text-green-600 text-2xl cursor-pointer hover:opacity-80 transition" />
-              <FaRegFileWord className="text-blue-600 text-2xl cursor-pointer hover:opacity-80 transition" />
+        <Card className="shadow-sm py-3 rounded-[7px]">
+          <CardContent className="flex px-2 justify-between items-center">
+            <div className="flex w-full gap-2 items-center">
+              <form onSubmit={(e)=>{e.preventDefault(),setFilters({...filters,...data}) }} className="flex w-full max-w-lg">
+                <div className="relative w-full">
+                  <Input
+                    type="search"
+                    className="pr-9
+                      [&::-webkit-search-cancel-button]:hidden
+                      [&::-ms-clear]:hidden
+                      rounded-md border border-gray-300 px-3 py-2
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
+                    "
+                    value={data.search}
+                    onChange={(e) => setData({ ...data, search: e.target.value })}
+                    placeholder="Rechercher par libelle, description ..."
+                  />
+                  <Icons.Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                </div>
+              </form>
+              <Button size="sm" variant="destructive" onClick={()=>{reset(), setFilters({})}} className="text-[12px]">
+                Annuler
+              </Button>
+            </div>
+
+
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2 items-center">
+                <Button size="xs" variant="link">
+                  <FaRegFileExcel className="text-green-600 text-sm cursor-pointer hover:opacity-80 transition" />
+                  Excel
+                </Button>
+                <Button size="xs" variant="link">
+                  <FaRegFilePdf className="text-red-600 text-sm cursor-pointer hover:opacity-80 transition" />
+                  Pdf
+                </Button>
+              </div>
+              <Button size="xs" className="p-4 cursor-pointer hover:opacity-80 transition" variant="outline">
+                Autres filtres
+                <Icons.ArrowUpRightIcon />
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Tableau avec skeleton */}
-        <Card className="shadow-sm overflow-hidden">
+        <Card className="shadow-sm p-0 rounded-[7px] overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted/40">
+                  <TableRow className="bg-black hover:bg-black">
                     {columns.map((col) => (
-                      <TableHead key={col.key} className={cn("text-center", col.className)}>
+                      <TableHead key={col.key} className={cn("text-center text-white", col.className)}>
                         {col.label}
                       </TableHead>
                     ))}
@@ -212,7 +256,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                 {loading ? (
                     // Loader central au lieu de skeletons
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-32 text-center">
+                      <TableCell colSpan={columns.length} className="h-20 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <Icons.Loader2 className="h-8 w-8 animate-spin text-primary" />
                           <p className="mt-2 text-sm text-muted-foreground">Chargement des données...</p>
@@ -221,7 +265,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                     </TableRow>
                   ) :  items.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">
+                      <TableCell colSpan={columns.length} className="h-20 text-center text-muted-foreground">
                         Aucun résultat trouvé
                       </TableCell>
                     </TableRow>
@@ -236,7 +280,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                         )}
                       >
                         {columns.map((col) => (
-                          <TableCell key={col.key} className={cn("py-3", col.className)}>
+                          <TableCell key={col.key} className={cn("py-1 text-[13px] font-bold", col.className)}>
                             {col.render
                               ? col.render(row[col.key], row, { namepage, attributeName })
                               : (row[col.key] ?? "—")}
@@ -260,12 +304,12 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
         )}
       >
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Gauche : select page size */}
+          <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground whitespace-nowrap hidden sm:block">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">
                 Afficher par
               </span>
+
               <Select
                 value={pageSize.toString()}
                 onValueChange={(v) => {
@@ -276,6 +320,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                 <SelectTrigger className="w-20 h-9">
                   <SelectValue />
                 </SelectTrigger>
+
                 <SelectContent>
                   {[10, 25, 50, 100].map((size) => (
                     <SelectItem key={size} value={size.toString()}>
@@ -286,35 +331,10 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
               </Select>
             </div>
 
-            {/* Pagination */}
-            <Pagination className="justify-center sm:justify-end">
-              <PaginationContent>
+            <div className="flex items-center">
+              <PaginationComponent groupSize={6} currentPage={currentPage} totalPages={metadata?.last_page} setCurrentPage={setCurrentPage} />
+            </div>
 
-                {Array.from({ length: Math.min(metadata?.last_page ?? 1, 7) }, (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <PaginationItem key={pageNum}>
-                      <PaginationLink
-                        href="#"
-                        isActive={currentPage === pageNum}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCurrentPage(pageNum);
-                        }}
-                      >
-                        {pageNum}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-
-                {metadata?.last_page > 7 && (
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )}
-              </PaginationContent>
-            </Pagination>
           </div>
         </div>
       </div>
@@ -339,6 +359,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             })}}
             onOpenChange={() => {setIsDialogOpen(!isDialogOpen); useGlobalStore.setState((state) => ({ ...state, deleteItem: null }));}}
           />
-    </div>
+      </div>
   );
 }

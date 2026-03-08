@@ -22,6 +22,8 @@ import { Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils"; // fonction utilitaire shadcn pour merger className
 import { route } from "ziggy-js";
 import { addElement } from "@/hooks/backoffice";
+import { Separator } from "radix-ui";
+import { FieldSeparator } from "./ui/field";
 
 
 export interface FieldConfig {
@@ -115,6 +117,7 @@ export function ModalCreateGeneric({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
+        <FieldSeparator />
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
           {fields.map((field) => (

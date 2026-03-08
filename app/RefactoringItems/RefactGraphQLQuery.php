@@ -45,6 +45,7 @@ class RefactGraphQLQuery extends Query
         'name',
         'nom',
         'prenom',
+        'libelle',
         'description',
         'numero_telephone',
         'telephone',
