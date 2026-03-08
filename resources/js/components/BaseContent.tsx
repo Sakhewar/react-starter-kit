@@ -47,6 +47,7 @@ import PaginationComponent from "./PaginationComponent";
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "./ui/input-group";
 import { Input } from "./ui/input";
 import { useForm } from "@inertiajs/react";
+import { MoreFilters } from "./MoreFilters";
 
 interface EntityItem {
   id: number | string;
@@ -72,6 +73,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const [metadata, setMetadata] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isMoreFilterOpen, setIsMoreFilterOpen] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [refreshList, setRefreshList] = useState(0);
   const [filters, setFilters] = useState({});
@@ -212,7 +214,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                   <Icons.Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 </div>
               </form>
-              <Button size="sm" variant="destructive" onClick={()=>{reset(), setFilters({})}} className="text-[12px]">
+              <Button size="sm" variant="destructive" onClick={()=>{reset(), setFilters({})}} className="cursor-pointer text-[12px]">
                 Annuler
               </Button>
             </div>
@@ -229,7 +231,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                   Pdf
                 </Button>
               </div>
-              <Button size="xs" className="p-4 cursor-pointer hover:opacity-80 transition" variant="outline">
+              <Button size="xs" className="p-4 cursor-pointer hover:opacity-80 transition" variant="outline" onClick={()=>{setIsMoreFilterOpen(!isMoreFilterOpen)}}>
                 Autres filtres
                 <Icons.ArrowUpRightIcon />
               </Button>
@@ -299,11 +301,11 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       {/* Pagination fixe en bas – largeur totale moins sidebar */}
       <div
         className={cn(
-          "fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width,280px)] bg-background border-t shadow-sm z-20",
+          "fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width,287px)] bg-background border-t shadow-sm z-20",
           "transition-all duration-200"
         )}
       >
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-[13.5px]">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground whitespace-nowrap">
@@ -338,6 +340,8 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
           </div>
         </div>
       </div>
+
+      <MoreFilters data={data} setData={setData} open = {isMoreFilterOpen} onOpenChange={()=> setIsMoreFilterOpen(!isMoreFilterOpen)} handleSubmit={()=>setFilters({...filters,...data})} />
 
       {/* Modal ouvert manuellement via state */}
       <ModalCreateGeneric

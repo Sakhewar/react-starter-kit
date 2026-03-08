@@ -258,14 +258,14 @@ export async function addElement(type: string, data : Record<string, any>)
       let dataRes = response.data;
       if(dataRes.errors || dataRes.data.errors)
       {
-        toast.error(dataRes.errors || dataRes.data.errors, {position:'top-right'})
+        toast.error(dataRes.errors || dataRes.data.errors, {position:'top-center'})
         rtr['success'] = false;
       }
       else
       {
         console.log("diop log", data);
         
-        toast.success(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-right'})
+        toast.success(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-center'})
         rtr['success'] = true;
       }
     }
@@ -276,7 +276,7 @@ export async function addElement(type: string, data : Record<string, any>)
     {
       if(error.response.data.message)
       {
-        toast.error(error.response.data.message, {position:'top-right'});
+        toast.error(error.response.data.message, {position:'top-center'});
         rtr['success'] = false;
       }
     }
@@ -299,7 +299,7 @@ export async function updateElement(type: string, id: number)
   }
   else
   {
-    toast.error("Une erreur est survenue !", {position:'top-right'});
+    toast.error("Une erreur est survenue !", {position:'top-center'});
   }
 }
 
@@ -314,12 +314,12 @@ export async function deleteElement(type: string, id: number)
       let data = response.data;
       if(data.errors || data.data.errors)
       {
-        toast.error(data.errors || data.data.errors, {position:'top-right'})
+        toast.error(data.errors || data.data.errors, {position:'top-center'})
         rtr['success'] = false;
       }
       else
       {
-        toast.success('Suppression Effectuée avec succés !', {position:'top-right'})
+        toast.success('Suppression Effectuée avec succés !', {position:'top-center'})
         rtr['success'] = true;
       }
     }
@@ -330,7 +330,7 @@ export async function deleteElement(type: string, id: number)
     {
       if(error.response.data.message)
       {
-        toast.error(error.response.data.message, {position:'top-right'});
+        toast.error(error.response.data.message, {position:'top-center'});
         rtr['success'] = false;
       }
     }
