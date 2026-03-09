@@ -12,22 +12,33 @@ import { useGlobalStore } from "@/hooks/backoffice";
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import AuthGuard from "@/components/authGuard/authguard";
+import { useAuthStore } from "@/hooks/authStore";
 
 export default function MAinEntry()
 {
 
-  const { namepage, page } = usePage<{auth: { user: { name: string } }; breadcrumb: string[]; namepage:string; page : any}>().props;
+  const { namepage, page,auth} = usePage<{auth: { user: { name: string } }; breadcrumb: string[]; namepage:string; page : any}>().props;
 
   const attributeName = String(page?.link || "").replaceAll("/", "");
   const DynamicComponent = (namepage in Views ? Views[namepage as keyof typeof Views] : null);
 
   const { initialize, reset} = useGlobalStore();
+  const {afterLogin} = useAuthStore(); 
 
   useEffect(() =>
   {
     reset();
     initialize({attributeName,page,onlyPageChange:false, force:true});
   }, [attributeName, namepage, initialize]);
+
+  useEffect(()=>
+    {
+      if(auth.user != null)
+      {
+        afterLogin(auth.user);
+      }
+  
+    },[auth])
   
   return (
     <AuthGuard>

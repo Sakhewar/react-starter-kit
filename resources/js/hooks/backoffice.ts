@@ -4,7 +4,8 @@ import { generateArgsFilters, graphqlGet } from '@/utils/graphql';
 
 import axios from 'axios';
 import { toast } from 'sonner';
-import listofAttributes from '@/configs/listofAttributes';
+import listofAttributes from '@/configs/listOfAttributes';
+
 
 interface EntityItem {
   id: number | string;

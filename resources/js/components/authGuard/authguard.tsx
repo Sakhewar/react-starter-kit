@@ -16,11 +16,11 @@ export default function AuthGuard({ children } : { children: React.ReactNode })
         if (!isAuthenticated && !redirected.current)
         {
             redirected.current = true
-            router.visit("/login")
+            //router.visit("/login")
         }
     }, [isAuthenticated])
 
-    if (!isAuthenticated) return <Login />
+    //if (!isAuthenticated) return <Login />
 
     return children
 }

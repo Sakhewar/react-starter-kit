@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Head, router } from "@inertiajs/react";
+import { useForm, Head, router, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,7 @@ export default function Login({ status, errors: serverErrors }: { status?: strin
   const [showPassword, setShowPassword] = useState(false);
 
   const {afterLogin, isAuthenticated} = useAuthStore();
+  const {auth} = usePage().props;
 
 
     const redirected = useRef(false)
@@ -30,9 +31,20 @@ export default function Login({ status, errors: serverErrors }: { status?: strin
         if (isAuthenticated && !redirected.current)
         {
             redirected.current = true
-            router.visit("/")
+            //router.visit("/")
         }
     }, [isAuthenticated])
+
+    
+    useEffect(()=>
+    {
+      if(auth.user != null)
+      {
+        afterLogin(auth.user);
+      }
+  
+    },[auth])
+    console.log("diop log", auth);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
