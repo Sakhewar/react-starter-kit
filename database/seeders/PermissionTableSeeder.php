@@ -49,7 +49,7 @@ class PermissionTableSeeder extends Seeder
             ],
             [
                 "name" => "Pays",
-                "tag" => "pays",
+                "tag" => "provenance",
                 "permissions" =>
                 [
                     //array("name" => "liste" , "couleur" => "primary" , "display_name" => "Voir la liste des types de conteneurs"),

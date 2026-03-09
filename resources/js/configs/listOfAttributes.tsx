@@ -1,6 +1,6 @@
 var listofAttributes : Record<any,any> = 
 {
-    pays : [
+    provenances : [
         "id,libelle,description"
     ],
 
@@ -11,8 +11,13 @@ var listofAttributes : Record<any,any> =
     modepaiements : [
         "id,libelle,description",
     ],
+
     typeclients : [
         "id,libelle,description",
+    ],
+
+    users : [
+        "id,name,image,status,status_fr,email",
     ]
 }
 

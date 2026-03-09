@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PdfExcelController;
 use App\Http\Controllers\ViewController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,13 +25,10 @@ Route::middleware('auth')->group(function ()
 
     Route::get('/', [HomeController::class, 'renderPage']);
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-    Route::get('/page/{namepage}', [HomeController::class, 'namepage']);
-
-    //Route::get('/pages/{namepage}/{prefixepermission?}', [HomeController::class, 'namepage']);
-
     Route::get('/pages/{namepage}/{prefixepermission?}', [HomeController::class, 'renderPage'])->name('page.render');
+
+    Route::get('/generate-{queryname}-{type}', [PdfExcelController::class, 'generateListQueryName']);
+    Route::get('/generate-{queryname}-{type}/{id}', [PdfExcelController::class, 'generateListQueryName']);
 
     // Save, Import, Statut, Delete Routes
     Route::post('/{table_name}', [ViewController::class, 'redirectToController']);

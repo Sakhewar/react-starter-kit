@@ -78,9 +78,7 @@ export function ModalCreateGeneric({
       containerClassName: "hidden",
     });
   }
-  console.log("diop log", updateItem);
   
-
   const { data, setData, post, processing, errors, reset } = useForm(
     Object.fromEntries(fields.map(f => [f.name, f.defaultValue ?? ""]))
   );
@@ -183,7 +181,7 @@ export function ModalCreateGeneric({
                   id={field.name}
                   type={field.type || "text"}
                   placeholder={field.placeholder}
-                  value={data[field.name]}
+                  autoComplete="off"                  value={data[field.name]}
                   onChange={(e) => setData(field.name, e.target.value)}
                   disabled={processing}
                   className={field.inputClassName}

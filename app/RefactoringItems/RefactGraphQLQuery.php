@@ -150,7 +150,7 @@ class RefactGraphQLQuery extends Query
                 // ['nom',                 'like'],
                 // ['description',         'like'],
                 // ['status',                 '='],
-                ['date',                'date'],
+                ['date',                'date', 'created_at'],
             ]);
 
         // if (isset($args['search']))
@@ -319,12 +319,9 @@ class RefactGraphQLQuery extends Query
      *
      * @return  Illuminate\Database\Eloquent\Model|null;
      */
-    protected function setModelParam($get = 'model', $set)
+    protected function setModelParam($set, $get = 'model')
     {
-        $this->{$get} = $set;
-
-
-        // dd($this->{$get});
+    $this->{$get} = $set;
     }
 
     /**

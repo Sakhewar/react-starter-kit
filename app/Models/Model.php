@@ -21,4 +21,21 @@ class Model extends EloquentModel
      * @var string[]|bool
      */
     protected $guarded = ['id'];
+
+    public static $columnsExport =  [
+        [
+            "column_db"     => "libelle",
+            "column_excel"  => "Libellé",
+            "column_unique" => true,
+            "import"        => true,
+            "export"        => true,
+        ],
+        [
+            "column_db"     => "description",
+            "column_excel"  => "Description",
+            "column_unique" => true,
+            "import"        => true,
+            "export"        => true,
+        ],
+    ];
 }

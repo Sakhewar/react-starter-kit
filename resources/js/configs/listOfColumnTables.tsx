@@ -12,12 +12,12 @@ import { can, updateElement, useGlobalStore } from "@/hooks/backoffice";
 
 export const columnConfigs: Record<string, Column[]> =
 {
-  pays : [
+  provenance : [
     { key: "libelle", label: "Libellé", className: "" },
     { key: "description", label: "Description" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions row={row} config={{delete: can('suppression-pays'), edit: can('modification-pays'), clone: can('creation-pays')}} attributeName={extra?.attributeName ?? "default"}
+        <RowActions row={row} config={{delete: can('suppression-provenance'), edit: can('modification-provenance'), clone: can('creation-provenance')}} attributeName={extra?.attributeName ?? "default"}
         />
       ),
     },
@@ -104,8 +104,7 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "name", label: "Nom complet" },
       { key: "email", label: "Email" },
       { key: "role", label: "Rôle", render: (v) => <Badge>{v}</Badge> },
-      { key: "status", label: "Actif", render: (v) => <Badge>{v}</Badge> },
-      { key: "created_at",  label: "Inscrit le", render: (v) => new Date(v).toLocaleDateString("fr-SN")},
+      { key: "status_fr", label: "Actif", render: (v) => <Badge>{v}</Badge> },
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}

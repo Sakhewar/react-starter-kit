@@ -1,9 +1,10 @@
 // src/stores/globalStore.ts
 import { create, useStore } from 'zustand';
-import { graphqlGet } from '@/utils/graphql';
-import listofAttributes from '@/configs/requestAttribute';
+import { generateArgsFilters, graphqlGet } from '@/utils/graphql';
+
 import axios from 'axios';
 import { toast } from 'sonner';
+import listofAttributes from '@/configs/listofAttributes';
 
 interface EntityItem {
   id: number | string;
@@ -39,6 +40,7 @@ interface GlobalState {
   error: string | null;
   errors: Record<string, string>; // Erreurs par entity pour plus de robustesse
   lastInitialized: string | null; // attributeName pour savoir pour quelle page,
+  scope: Record<any, any>
 
   initialize: (options: InitOptions) => Promise<void>;
 
@@ -53,6 +55,7 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
   error: null,
   errors: {}, // Erreurs spécifiques
   lastInitialized: null,
+  scope: {},
 
   initialize: async (options: InitOptions) => {
     const defaultCount = 10;
@@ -262,9 +265,7 @@ export async function addElement(type: string, data : Record<string, any>)
         rtr['success'] = false;
       }
       else
-      {
-        console.log("diop log", data);
-        
+      { 
         toast.success(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-center'})
         rtr['success'] = true;
       }
@@ -336,4 +337,14 @@ export async function deleteElement(type: string, id: number)
     }
     return rtr;
   })
-} 
+}
+
+export async function exportToPdfOrExcel(type: string, typeExport: string, args: Record<string, any>)
+{
+  const goodType = !type.endsWith("s") ? type + "s" : type;
+  
+  const url = `/generate-${goodType}-${typeExport}?${generateArgsFilters(args, false)}`;
+
+  window.open(url, '_blank');
+  
+}

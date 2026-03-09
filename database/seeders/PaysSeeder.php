@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\{Pays};
+use App\Models\{Provenance};
 use Illuminate\Database\Seeder;
 
 class PaysSeeder extends Seeder
@@ -41,17 +41,17 @@ class PaysSeeder extends Seeder
             {
                 $cedeao = true;
             }
-            $pays = Pays::query()->where('libelle', $p)->first();
+            $pays = Provenance::query()->where('libelle', $p)->first();
             if (!isset($pays))
             {
-                $pays = new Pays();
+                $pays = new Provenance();
                 $pays->libelle = $p;
                
             }
 
             $pays->cedeao = $cedeao;
             $pays->save();
-            Pays::firstOrCreate(['libelle' => $p, 'cedeao' => $cedeao]);
+            Provenance::firstOrCreate(['libelle' => $p, 'cedeao' => $cedeao]);
         }
     }
 }

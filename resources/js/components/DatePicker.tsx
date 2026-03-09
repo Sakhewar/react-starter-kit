@@ -17,51 +17,37 @@ import {
 import { CalendarIcon } from "lucide-react"
 import { fr } from "date-fns/locale"
 
-function formatDate(date: Date | undefined) {
-  if (!date) {
+function formatDate(date: Date | undefined)
+{
+  if (!date)
+  {
     return ""
   }
 
-  return date.toLocaleDateString("fr-FR", {
+  return date.toLocaleDateString("fr-FR",
+  {
     day: "2-digit",
-    month: "long",
+    month: "2-digit",
     year: "numeric",
-  })
+  });
 }
 
-function isValidDate(date: Date | undefined) {
-  if (!date) {
-    return false
-  }
-  return !isNaN(date.getTime())
-}
-
-export function DatePicker() {
+export function DatePickerGloabal({fieldLabel, name, value, onSelect}:{fieldLabel:string, name?:string, value:string, onSelect?: (date: any) => void})
+{
   const [open, setOpen] = React.useState(false)
-  const [date, setDate] = React.useState<Date | undefined>(
-    new Date("2025-06-01")
-  )
-  const [month, setMonth] = React.useState<Date | undefined>(date)
-  const [value, setValue] = React.useState(formatDate(date))
 
   return (
     <Field className="mx-auto w-full">
-      <FieldLabel htmlFor="date-required">Cree Entre le :</FieldLabel>
+      <FieldLabel htmlFor="date-required">{fieldLabel}</FieldLabel>
       <InputGroup>
         <InputGroupInput
-          id="date-required"
+          id={name ?? "date-required"}
           value={value}
-          placeholder="June 01, 2025"
-          onChange={(e) => {
-            const date = new Date(e.target.value)
-            setValue(e.target.value)
-            if (isValidDate(date)) {
-              setDate(date)
-              setMonth(date)
-            }
-          }}
+          placeholder="dd/mm/yyyy"
+          readOnly
           onKeyDown={(e) => {
-            if (e.key === "ArrowDown") {
+            if (e.key === "ArrowDown")
+            {
               e.preventDefault()
               setOpen(true)
             }
@@ -88,13 +74,13 @@ export function DatePicker() {
             >
               <Calendar
                 mode="single"
-                selected={date}
-                month={month}
-                onMonthChange={setMonth}
                 locale={fr}
-                onSelect={(date) => {
-                  setDate(date)
-                  setValue(formatDate(date))
+                onSelect={(date) =>
+                {
+                  if(onSelect)
+                  {
+                    onSelect(formatDate(date));
+                  }
                   setOpen(false)
                 }}
               />

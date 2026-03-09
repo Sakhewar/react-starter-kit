@@ -3,11 +3,24 @@
 namespace App\Models;
 
 use App\Events\RtEvent;
+use App\Exports\DatasExport;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+
+use function PHPUnit\Framework\isEmpty;
+use Illuminate\Http\{Request};
 
 class Outil extends Model
 {
+    public static $queries = array(
+        "provenances"                               => "id,libelle,description",
+        "modalitepaiements"                         => "id,libelle,description,nbre_jour",
+        "users"                                     => "id,name,image,status,status_fr,email",       
+    );
     public static function listenerUsers(&$table, $add = true)
     {
         if ($add)
@@ -84,6 +97,27 @@ class Outil extends Model
         return $classes;
     }
 
+    protected function getAllClassesOf2(string $workDirectory, string $directory): array
+    {
+        $path = app_path("{$workDirectory}/{$directory}");
+
+        if (!is_dir($path)) {
+            return [];
+        }
+
+        $classes = [];
+
+        foreach (glob("{$path}/*.php") as $file) {
+            $className = 'App\\GraphQL\\' . $directory . '\\' . basename($file, '.php');
+
+            if (class_exists($className)) {
+                $classes[] = $className;
+            }
+        }
+
+        return $classes;
+    }
+
     public static function addWhereToModel(&$query, $args, $filtres)
     {
         foreach ($filtres as $key => $value)
@@ -99,6 +133,7 @@ class Outil extends Model
                 }
                 else if ($operator == 'date')
                 {
+                    //dd($value[2]);
                     if (isset($args[$value[0].'_start']) && isset($args[$value[0].'_end']))
                     {
                         // Si la colonne est précisée, on utilise la colonne, sinon, on match avec la colonne date
@@ -203,5 +238,231 @@ class Outil extends Model
     {
         $eventRT = new RtEvent($data);
         event($eventRT);
+    }
+
+    public static function generateFilePdfOrExcel(Request $request, $queryName, $type, $id = null)
+    {
+        $oldtag = $queryName;
+        $rewriteQueryName = null;
+
+        $titre = null;
+        $user = Auth::user()->name;
+
+        $object = array_keys($request->all());
+
+        $folder = config('env.FOLDER');
+        if (!isset($folder))
+        {
+            $folder = '/';
+        }
+        else
+        {
+            if ($folder == "")
+            {
+                $folder = '/';
+            }
+        }
+        
+        // GESTION DES FILTRES 
+        $uri = $request->getRequestUri();
+        $query = parse_url($uri)['query'] ?? '';
+        $filtre = isset($id) ? "id:{$id}" : $query;
+
+        $data = Outil::getOneItemWithFilterGraphQl($request, $queryName, $filtre);
+
+        if ($rewriteQueryName != null)
+        {
+            $queryName = $rewriteQueryName;
+        }
+        $details = null;
+        if (isset($id))
+        {
+            $model = substr($queryName, 0, strlen($queryName) - 1);
+            $filtre_detail = "{$model}_id:$id";
+            if ($oldtag == 'entree' ||  $oldtag == 'sortiestock') 
+            {
+                $queryName = 'entreesortiestocks';
+                $filtre_detail = "entree_sortie_stock_id:$id";
+            }
+          
+            $queryName_detail = "detail{$queryName}";
+            $queryToIgnore = ['contrats','facturecontrats'];
+            if(!in_array($queryName, $queryToIgnore))
+            {
+                $details = Outil::getOneItemWithFilterGraphQl($request, $queryName_detail, $filtre_detail);
+            }
+
+        }
+        
+        if ($data && count($data) > 0)
+        {
+            $addToLink = (isset($id) ? "detail-" : "");
+
+            $data = array('user' => $user, 'data' => $data, 'is_excel' => false, 'titre' => $titre, 'details' => $details);
+
+            if (str_contains($type, "pdf"))
+            {
+                if (isset($id))
+                {
+                    $pdf = PDF::loadView("pdfs.{$addToLink}{$queryName}", $data);
+                }
+                else
+                {
+                    $good = false;
+                    if (!view()->exists("pdfs.{$addToLink}{$queryName}"))
+                    {
+                        $className = 'App\\Models\\' . Str::studly( Str::singular($queryName));
+
+                        $data['columns'] = [];
+
+                        if (class_exists($className)) 
+                        {
+                            $data['columns'] = collect($className::$columnsExport)->where('export', true)->toArray();
+                        }
+
+                        if (count($data['columns']) > 0)
+                        {
+                            $pdf = PDF::loadView("pdfs.default_export", $data);
+                            $good = true;
+                        }
+                    }
+
+                    if (!$good)
+                    {
+                        $pdf = PDF::loadView("pdfs.{$addToLink}{$queryName}", $data);
+                    }
+                }
+
+                
+
+                return $pdf->stream("{$addToLink}{$queryName}");
+            }
+            else
+            { 
+                return Excel::download(new DatasExport($data, $queryName, $id), "{$addToLink}{$queryName}.xlsx");
+            }
+        }
+        else
+        {
+            return redirect()->back();
+        }
+    }
+
+    public static function getOneItemWithFilterGraphQl($request, $queryName, $filter, array $listeattributs_filter = null, $addToQueryAttr = null, $justTheseAttr = null, $auth_user_id = null)
+    {
+        $token = "";
+        if (auth()->check())
+        {
+            $auth_user_id = auth()->id();
+        }
+
+        if (isset($auth_user_id))
+        {
+            $token = cache('currentToken.' . $auth_user_id);
+            if (!isset($token) && isEmpty($token))
+            {
+                Outil::generateTokenForUser();
+                $token = cache('currentToken.' . $auth_user_id);
+            }
+        }
+    
+        $guzzleDefaults['headers']           = ['Authorization' => "Bearer {$token}", 'Content-Type' => 'application/json'];
+        $guzzleDefaults['verify']            = true;
+        $guzzleDefaults['http_errors']       = false;
+
+        $guzzleClient = new \GuzzleHttp\Client($guzzleDefaults);
+
+        $critere = !empty($filter) ? '(' . $filter . ')' : "";
+        if (str_contains($queryName, 'pdf'))
+        {
+            $queryName = str_replace('pdf', '', $queryName);
+        }
+        
+        if (isset($justTheseAttr))
+        {
+            $queryAttr = $justTheseAttr;
+        }
+        else if (!isset($queryAttr) && isset($queryName))
+        {
+            $queryAttr = Outil::$queries[$queryName] ?? "id,libelle,description";
+        }
+
+        $queryAttr = $queryAttr . $addToQueryAttr;
+
+        $add_text_filter = "";
+        if (isset($listeattributs_filter)) 
+        {
+            foreach ($listeattributs_filter as $key => $one) 
+            {
+                $queryAttr = str_replace($one . ",", "", $queryAttr); // Si le paramètre existe, on le remplace dans la chaine de caractère
+                $getAttr = $one;
+                $reste = "";
+                if (strpos($one, "{") !== false) 
+                {
+                    $getAttr = substr($one, 0, strpos($one, "{"));
+                    $reste = substr($one, strpos($one, "{"));
+                }
+                $add_text_filter .= (($key === 0) ? ',' : '') . $getAttr . $critere . $reste . (count($listeattributs_filter) - $key > 1 ? ',' : '');
+            }
+        }
+
+        $mount_session_id = "";
+        if (isset($auth_user_id))
+        {
+            $mount_session_id = "current_user_id=".$auth_user_id."&";
+        }
+        $url = self::getAPI()."graphql?{$mount_session_id}query={{$queryName}{$critere}{{$queryAttr}{$add_text_filter}}}";
+        $cpt = 1;
+        while ($cpt<2)
+        {
+            $response = $guzzleClient->request('GET', $url, $guzzleDefaults);
+            //dd($response);
+
+            if ($response->getStatusCode()==401)
+            {
+                if (isset($auth_user_id))
+                {
+                    Outil::generateTokenForUser();
+                    $token = cache('currentToken.' . $auth_user_id);
+                    $guzzleDefaults['headers']['Authorization'] = "Bearer {$token}";
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                break;
+            }
+            $cpt++;
+        }
+        $data = json_decode($response->getBody(), true);
+        if (!isset($data['data']) || !isset($data['data'][$queryName]))
+        {
+            dd($data, $url, $queryName, $filter, $listeattributs_filter);
+        }
+        return $data['data'][$queryName];
+    }
+
+    public static function generateTokenForUser($userId = null)
+    {
+        $currentUser = Auth::user();
+        if (isset($userId))
+        {
+            if (\is_numeric($userId))
+            {
+                $currentUser = User::find($userId);
+            }
+            else
+            {
+                $currentUser = $userId;
+            }
+        }
+        $abilities = [];
+        $token  = explode('|', $currentUser->createToken($request->device_name ?? "master", $abilities)->plainTextToken);
+        $token = is_array($token) && isset($token[1]) ? $token[1] : null;
+        
+        cache()->put('currentToken.' . $currentUser->id, $token);
     }
 }

@@ -23,43 +23,11 @@ const stats = {
 };
 
 const fraisPlans = [
-  {
-    code: "FI",
-    nom: "Frais inscription",
-    montant: "15,000.00 MAD",
-    reduction: "—",
-    net: "15,000.00 MAD",
-    plan: "Intégral 1 tr.",
-    statut: "Verrouillé",
-  },
-  {
-    code: "SC",
-    nom: "Scolarité",
-    montant: "20,000.00 MAD",
-    reduction: "2,000.00 MAD",
-    net: "18,000.00 MAD",
-    plan: "Mensualités 19 tr.",
-    statut: "Verrouillé",
-  },
+  {}
 ];
 
 const paiements = [
-  {
-    date: "19/02/2026",
-    recu: "REC-826082",
-    methode: "Espèces",
-    montant: "15,000.00 MAD",
-    statut: "Confirmé",
-    reference: "—",
-  },
-  {
-    date: "18/02/2026",
-    recu: "REC-826081",
-    methode: "Espèces",
-    montant: "15,000.00 MAD",
-    statut: "Annulé",
-    reference: "test",
-  },
+  {}
 ];
 
 export default function Dashboard({ page }) {
@@ -69,22 +37,11 @@ export default function Dashboard({ page }) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Finance — FALL Dame
+            Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Primaire · 1ère Année Dame
+            Donnees d'analyse non synthetise
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button className="gap-2 bg-black hover:bg-black/90 text-white">
-            <Plus className="h-4 w-4" />
-            Enregistrer un paiement
-          </Button>
-          <Button variant="outline" className="gap-2">
-            <FileText className="h-4 w-4" />
-            Facture
-          </Button>
         </div>
       </div>
 
@@ -93,34 +50,34 @@ export default function Dashboard({ page }) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total frais
+              NB Ventes
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-2xl font-bold">100</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Payé
+              Nb Clients
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.paye}</div>
+            <div className="text-2xl font-bold text-green-600">200</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Remboursé
+              CA Encaissé
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-500">
-              {stats.rembourse}
+              200 000 FCFA
             </div>
           </CardContent>
         </Card>
@@ -128,11 +85,11 @@ export default function Dashboard({ page }) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Reste à payer
+             CA Encaissé sur les ventes
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.reste}</div>
+            <div className="text-2xl font-bold text-red-600">150 000 FCFA</div>
           </CardContent>
         </Card>
       </div>
@@ -140,9 +97,9 @@ export default function Dashboard({ page }) {
       {/* Tableau Frais & Plans de paiement */}
       <Card>
         <CardHeader>
-          <CardTitle>Frais & Plans de paiement</CardTitle>
+          <CardTitle>Historique des ventes</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Chaque frais a son propre échéancier.
+            Les ventes du jour
           </p>
         </CardHeader>
         <CardContent>
@@ -150,42 +107,23 @@ export default function Dashboard({ page }) {
             <TableHeader>
               <TableRow>
                 <TableHead>Code</TableHead>
-                <TableHead>Nom</TableHead>
+                <TableHead>Client</TableHead>
                 <TableHead className="text-right">Montant</TableHead>
-                <TableHead className="text-right">Réduction</TableHead>
                 <TableHead className="text-right">Net</TableHead>
-                <TableHead>Plan</TableHead>
-                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {fraisPlans.map((item, idx) => (
                 <TableRow key={idx}>
-                  <TableCell className="font-medium">{item.code}</TableCell>
-                  <TableCell>{item.nom}</TableCell>
-                  <TableCell className="text-right">{item.montant}</TableCell>
-                  <TableCell className="text-right text-red-600">
-                    {item.reduction}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    {item.net}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{item.plan}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{item.statut}</Badge>
-                  </TableCell>
                 </TableRow>
               ))}
               <TableRow className="border-t-2">
-                <TableCell colSpan={4} className="font-bold text-right">
+                <TableCell colSpan={3} className="font-bold text-right">
                   Total net
                 </TableCell>
                 <TableCell className="text-right font-bold">
-                  19,500.00 MAD
+                  500 000 FCFA
                 </TableCell>
-                <TableCell colSpan={2} />
               </TableRow>
             </TableBody>
           </Table>
@@ -197,7 +135,7 @@ export default function Dashboard({ page }) {
         <CardHeader>
           <CardTitle>Historique des paiements</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Historique des encaissements.
+            Historique des encaissements du jour.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -205,19 +143,19 @@ export default function Dashboard({ page }) {
             <div className="flex-1 min-w-[220px]">
               <div className="text-sm text-muted-foreground">Payé</div>
               <div className="text-xl font-bold text-green-600">
-                15,000.00 MAD
+                15 000 FCFA
               </div>
             </div>
             <div className="flex-1 min-w-[220px]">
               <div className="text-sm text-muted-foreground">Remboursé</div>
               <div className="text-xl font-bold text-orange-500">
-                500.00 MAD
+                5 000 FCFA
               </div>
             </div>
             <div className="flex-1 min-w-[220px]">
               <div className="text-sm text-muted-foreground">Solde dû</div>
               <div className="text-xl font-bold text-red-600">
-                5,000.00 MAD
+                5 000 FCFA
               </div>
             </div>
           </div>
@@ -231,37 +169,11 @@ export default function Dashboard({ page }) {
                 <TableHead className="text-right">Montant</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Référence</TableHead>
-                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paiements.map((p, idx) => (
                 <TableRow key={idx}>
-                  <TableCell>{p.date}</TableCell>
-                  <TableCell>{p.recu}</TableCell>
-                  <TableCell>{p.methode}</TableCell>
-                  <TableCell className="text-right font-medium">
-                    {p.montant}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={p.statut === "Confirmé" ? "default" : "destructive"}
-                    >
-                      {p.statut}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{p.reference}</TableCell>
-                  <TableCell>
-                    {/* Icônes actions – à remplacer par tes boutons */}
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Search className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Plus className="h-4 w-4 rotate-45" /> {/* ≈ annuler */}
-                      </Button>
-                    </div>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

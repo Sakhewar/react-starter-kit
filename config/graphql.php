@@ -2,6 +2,14 @@
 
 declare(strict_types = 1);
 
+$workDirectory = 'GraphQL';
+$directories = ['Type', 'Query', 'Scalar']; 
+
+$queries = \App\Models\Outil::getAllClassesOf2($workDirectory, $directories[1]);
+$types = \App\Models\Outil::getAllClassesOf2($workDirectory, $directories[0]);
+
+
+
 return [
     'route' => [
         // The prefix for routes; do NOT use a leading slash!
@@ -74,16 +82,12 @@ return [
     //
     'schemas' => [
         'default' => [
-            'query' => [
-                // ExampleQuery::class,
-            ],
+            'query' => array_values($queries),
             'mutation' => [
                 // ExampleMutation::class,
             ],
             // The types only available in this schema
-            'types' => [
-                // ExampleType::class,
-            ],
+            'types' => array_values($types),
 
             // Laravel HTTP middleware
             'middleware' => null,

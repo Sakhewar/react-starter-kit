@@ -11,12 +11,28 @@ import {
 } from "@/components/ui/drawer"
 import { FieldSeparator } from "./ui/field"
 import { Input } from "./ui/input"
-import { DatePicker } from "./DatePicker"
+import { DatePickerGloabal } from "./DatePicker"
 import { Label } from "./ui/label"
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa"
+import { useEffect, useState } from "react"
+import { exportToPdfOrExcel } from "@/hooks/backoffice"
 
-export function MoreFilters({ open, onOpenChange, data, setData, handleSubmit }: { open: boolean, onOpenChange: (open: boolean) => void, data: any, setData: (data: any) => void, handleSubmit:any })
+export function MoreFilters({type,open, onOpenChange, data, setData, handleSubmit, reset}: {type:string, open: boolean, onOpenChange: (open: boolean) => void, data: any, setData: (data: any) => void, handleSubmit:any, reset:any })
 {
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
+
+  useEffect(() =>
+  {
+    if(dateStart.trim().length > 0)
+    {
+      setData({...data, date_start: dateStart})
+    } 
+    if(dateEnd.trim().length > 0)
+    {
+      setData({...data, date_end: dateEnd})
+    } 
+  },[dateStart, dateEnd])
   return (
     <Drawer open={open} onOpenChange={()=>{onOpenChange(open)}} direction="right">
       <DrawerContent>
@@ -26,7 +42,7 @@ export function MoreFilters({ open, onOpenChange, data, setData, handleSubmit }:
           <FieldSeparator />
         </DrawerHeader>
         <div className="no-scrollbar overflow-y-auto px-4 mt-5">
-            <form onSubmit={(e) => {handleSubmit()}} className="space-y-4">
+            <form onSubmit={(e) => {e.preventDefault(), handleSubmit()}} className="space-y-4">
                 <Input
                     type="text"
                     className="pr-9
@@ -39,15 +55,15 @@ export function MoreFilters({ open, onOpenChange, data, setData, handleSubmit }:
                     onChange={(e) => setData({ ...data, search: e.target.value })}
                     placeholder="Rechercher par libelle, description ..."
                     />
-                    <DatePicker />
-                    <DatePicker />
+                    <DatePickerGloabal name="date_start" fieldLabel="Crée entre le :" value={dateStart}  onSelect={(t) =>{setDateStart(t)}} />
+                    <DatePickerGloabal name="date_end" fieldLabel="Et le :"  value={dateEnd} onSelect={(t) =>{setDateEnd(t)}}/>
 
                     <div className="flex gap-2 items-center mt-10">
-                        <Button size="sm" variant="link">
+                        <Button size="sm" type="button" variant="link" onClick={()=>{exportToPdfOrExcel(type, 'excel', data)}}>
                             <FaRegFileExcel className="text-green-600 text-sm cursor-pointer hover:opacity-80 transition" />
                             Excel
                         </Button>
-                        <Button size="sm" variant="link">
+                        <Button size="sm" type="button" variant="link" onClick={()=>{exportToPdfOrExcel(type, 'pdf', data)}}>
                             <FaRegFilePdf className="text-red-600 text-sm cursor-pointer hover:opacity-80 transition" />
                             Pdf
                         </Button>
@@ -55,8 +71,8 @@ export function MoreFilters({ open, onOpenChange, data, setData, handleSubmit }:
             </form>
         </div>
         <DrawerFooter>
-          <Button>Filter</Button>
-          <Button variant="outline">Annuler</Button>
+          <Button className="cursor-pointer" onClick={handleSubmit}>Filter</Button>
+          <Button className="cursor-pointer" onClick={()=>{setDateStart("");setDateEnd("");reset()}} variant="outline">Annuler</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

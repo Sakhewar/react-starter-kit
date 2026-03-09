@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react"; // ← Ajout de Loader2
 import { route } from "ziggy-js";
+import { useAuthStore } from "@/hooks/authStore";
 
 export default function Login({ status, errors: serverErrors }: { status?: string; errors?: Record<string, string> }) {
   const { data, setData, processing, errors } = useForm({
@@ -19,9 +20,28 @@ export default function Login({ status, errors: serverErrors }: { status?: strin
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const {afterLogin, isAuthenticated} = useAuthStore();
+
+
+    const redirected = useRef(false)
+
+    useEffect(() =>
+    {
+        if (isAuthenticated && !redirected.current)
+        {
+            redirected.current = true
+            router.visit("/")
+        }
+    }, [isAuthenticated])
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.post("login", data);
+    router.post("login", data,{
+      onSuccess : (page) =>
+      { 
+        afterLogin(page.props.auth?.user);
+      }
+    });
   };
 
   const forgotPassword = () => {

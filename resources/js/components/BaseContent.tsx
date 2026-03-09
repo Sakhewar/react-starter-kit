@@ -13,16 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaRegFileExcel, FaRegFilePdf, FaRegFileWord, FaTimes } from "react-icons/fa";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { FaRegFileExcel, FaRegFilePdf} from "react-icons/fa";
 import {
   Select,
   SelectContent,
@@ -32,19 +23,17 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils"; // si tu as cette fonction utilitaire
 
-import { Column, columnConfigs } from "@/configs/columnTables";
+import { Column, columnConfigs } from "@/configs/listOfColumnTables";
 import { ModalCreateGeneric } from "./ModalCreateGeneric";
 
 import * as Icons from "lucide-react";
-import { fieldModals } from "@/configs/fieldModal";
-import { can, deleteElement, useGlobalStore } from "@/hooks/backoffice";
+import { fieldModals } from "@/configs/listOfFieldModal";
+import { can, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
 
 import { useEffect, useState } from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ConfirmDialog } from "./ConfirmDialog";
 import PaginationComponent from "./PaginationComponent";
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "./ui/input-group";
 import { Input } from "./ui/input";
 import { useForm } from "@inertiajs/react";
 import { MoreFilters } from "./MoreFilters";
@@ -67,6 +56,9 @@ interface PaginatedResponse<T> {
 
 export default function BaseContent({attributeName, namepage,page,...props}:{attributeName:string, namepage: string;page: any;})
 {
+  //Charger le state management de Zustand
+  const { initialize, dataPage, isLoading: globalLoading, error: globalError, updateItem, deleteItem, scope} = useGlobalStore();
+
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [items, setItems] = useState<EntityItem[]>([]);
@@ -87,7 +79,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
 
   const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
 
-  const { initialize, dataPage, isLoading: globalLoading, error: globalError, updateItem, deleteItem} = useGlobalStore();
 
   const permissionPages: any = dataPage['permissions'] ?? [];
 
@@ -222,11 +213,11 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
 
             <div className="flex items-center gap-4">
               <div className="flex gap-2 items-center">
-                <Button size="xs" variant="link">
+                <Button size="xs" type="button" variant="link" onClick={()=>{exportToPdfOrExcel(attributeName, 'excel', data)}}>
                   <FaRegFileExcel className="text-green-600 text-sm cursor-pointer hover:opacity-80 transition" />
                   Excel
                 </Button>
-                <Button size="xs" variant="link">
+                <Button size="xs" type="button" variant="link" onClick={()=>{exportToPdfOrExcel(attributeName, 'pdf', data)}}>
                   <FaRegFilePdf className="text-red-600 text-sm cursor-pointer hover:opacity-80 transition" />
                   Pdf
                 </Button>
@@ -301,16 +292,14 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       {/* Pagination fixe en bas – largeur totale moins sidebar */}
       <div
         className={cn(
-          "fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width,287px)] bg-background border-t shadow-sm z-20",
-          "transition-all duration-200"
+          "fixed bottom-0 left-0 right-0 bg-background border-t shadow-sm z-20",
+          "transition-all duration-200",
+          scope.collapsed ? "md:left-[72px]" : "md:left-[288px]"
         )}
       >
         <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-[13.5px]">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">
-                Afficher par
-              </span>
 
               <Select
                 value={pageSize.toString()}
@@ -341,7 +330,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
         </div>
       </div>
 
-      <MoreFilters data={data} setData={setData} open = {isMoreFilterOpen} onOpenChange={()=> setIsMoreFilterOpen(!isMoreFilterOpen)} handleSubmit={()=>setFilters({...filters,...data})} />
+      <MoreFilters type={attributeName} data={data} setData={setData} reset={()=>{reset(), setFilters({})}} open = {isMoreFilterOpen} onOpenChange={()=> setIsMoreFilterOpen(!isMoreFilterOpen)} handleSubmit={()=>setFilters({...filters,...data})} />
 
       {/* Modal ouvert manuellement via state */}
       <ModalCreateGeneric

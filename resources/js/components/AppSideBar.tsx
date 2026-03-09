@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { FaSitemap } from "react-icons/fa";
+import { useGlobalStore } from "@/hooks/backoffice";
 
 export default function AppSidebar({ isMobile = false }: { isMobile?: boolean }) {
   const { props } = usePage();
@@ -34,6 +35,12 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
     });
   }, [active_link, modules, openModules]);
 
+  useEffect(()=>
+  {
+    useGlobalStore.setState((state) => ({ ...state, scope: {...state.scope, collapsed: collapsed}}));
+
+  },[collapsed])
+
   const toggleModule = (title: string) => {
     setOpenModules((prev) => prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]);
   };
@@ -51,15 +58,16 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
           theme === "light" ? "bg-gray-50" : ""
         )}
       >
-        {!collapsed && (
+        
           <div onClick={()=>router.visit('/')} className="flex items-center gap-3 cursor-pointer">
             <FaSitemap className="h-7 w-7" />
-            <div>
+            {!collapsed && (<div>
               <div className="font-semibold text-base tracking-tight">OSP</div>
               <div className="text-xs text-gray-500">Hope Future ... OSP</div>
-            </div>
+            </div>)}
           </div>
-        )}
+        
+        
       </div>
 
       {/* Menu scrollable */}
@@ -120,6 +128,12 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                           <Link
                             key={pIdx}
                             href={`/pages${page.link}`}
+                            onClick={(e) =>
+                            {
+                              if (active_link === page.link) {
+                                e.preventDefault();
+                              }
+                            }}
                             className={cn(
                               "flex items-center justify-between gap-2 px-3 py-2 rounded-md text-[13px] transition-colors",
                               active

@@ -10,12 +10,19 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import MobileSidebar from "./MobileSideBar"
 import { ThemeToggle } from "./ThemeToggle"
+import { useAuthStore } from "@/hooks/authStore"
 
 export default function AppHeader() {
     const { breadcrumb, auth } = usePage<{ breadcrumb?: string[]; auth: { user: { name: string } } }>().props
 
+    const {afterLogout} = useAuthStore();
+
     const logout = () => {
-        router.post('/logout');
+        router.post('/logout',{}, {
+            onSuccess: ()=>{
+                afterLogout();
+            }
+        });
     };
 
     return (

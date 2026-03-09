@@ -51,6 +51,30 @@ class User extends Authenticatable
         ];
     }
 
+    public static $columnsExport =  [
+        [
+            "column_db" => "name",
+            "column_excel" => "Nom",
+            "column_unique" => true,
+            "import"        =>true,
+            "export"        =>true
+        ],
+        [
+            "column_db" => "email",
+            "column_excel" => "Email",
+            "column_unique" => false,
+            "import"        =>true,
+            "export"        =>true
+        ],
+        [
+            "column_db" => "status_fr",
+            "column_excel" => "Actif",
+            "column_unique" => false,
+            "import"        =>true,
+            "export"        =>true
+        ],
+    ];
+
     public function getImageAttribute()
     {
         return Outil::resolveImageField($this->attributes['image']);

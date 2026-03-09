@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\RefactoringItems\CRUDController;
 use Illuminate\Validation\Rule;
 
-class PaysController extends CRUDController
+class ProvenanceController extends CRUDController
 {
+
+    protected $graphQLQueryName = "provenances";
     public function beforeValidateData() : void
     {
         $this->request['cedeao'] = !(array_key_exists('cedeao', $this->request->all())) ? 0 : 1;

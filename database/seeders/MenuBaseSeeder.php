@@ -76,8 +76,8 @@ class MenuBaseSeeder extends Seeder
                         'icon'        => 'Globe',
                         'description' => null,
                         'order'       => 1,
-                        'link'        => '/pays',
-                        'permissions' => ['pays'],
+                        'link'        => '/provenance',
+                        'permissions' => ['provenance'],
                     ],
                     [
                         'title'       => 'Modalités de paiement',
