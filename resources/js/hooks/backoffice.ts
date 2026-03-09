@@ -349,3 +349,12 @@ export async function exportToPdfOrExcel(type: string, typeExport: string, args:
   window.open(url, '_blank');
   
 }
+
+export function toCapitalize(str:String)
+{
+  if (typeof str !== 'string' || str.length === 0)
+  {
+    return str;
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

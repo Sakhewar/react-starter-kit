@@ -24,7 +24,7 @@ import {
 import { cn } from "@/lib/utils"; // si tu as cette fonction utilitaire
 
 import { Column, columnConfigs } from "@/configs/listOfColumnTables";
-import { ModalCreateGeneric } from "./ModalCreateGeneric";
+import { FieldConfig, ModalCreateGeneric, TabConfig } from "./ModalCreateGeneric";
 
 import * as Icons from "lucide-react";
 import { fieldModals } from "@/configs/listOfFieldModal";
@@ -76,6 +76,8 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const columns: Column[] = columnConfigs[attributeName] ?? [];
   
   const fieldModal = fieldModals[attributeName] ?? [];
+
+  const isTabs = fieldModal.some((c: any) => "key" in c);
 
   const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
 
@@ -205,7 +207,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                   <Icons.Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 </div>
               </form>
-              <Button size="sm" variant="destructive" onClick={()=>{reset(), setFilters({})}} className="cursor-pointer text-[12px]">
+              <Button size="sm" variant="outline" onClick={()=>{reset(), setFilters({})}} className="cursor-pointer text-[12px] text-red-600 border border-red-600 hover:bg-red-600 hover:text-white">
                 Annuler
               </Button>
             </div>
@@ -335,9 +337,11 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       {/* Modal ouvert manuellement via state */}
       <ModalCreateGeneric
           page={page}
-          title={namepage}
+          title={attributeName}
           entity={attributeName}
-          fields={fieldModal}
+          {
+            ...(isTabs ? {tabs:fieldModal as TabConfig[]} : {fields : fieldModal as FieldConfig[]})
+          }
           updateItem={updateItem}
           onSuccess={(newItem) => {
             console.log("Nouveau créé :", newItem);

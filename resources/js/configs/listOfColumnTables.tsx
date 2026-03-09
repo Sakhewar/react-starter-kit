@@ -13,9 +13,9 @@ import { can, updateElement, useGlobalStore } from "@/hooks/backoffice";
 export const columnConfigs: Record<string, Column[]> =
 {
   provenance : [
-    { key: "libelle", label: "Libellé", className: "" },
-    { key: "description", label: "Description" },
-    { key: "actions", label: "", className: "flex items-center justify-center",
+    { key: "libelle",               label: "Libellé",         className: ""   },
+    { key: "description",           label: "Description"                      },
+    { key: "actions",               label: "",                className: "flex items-center justify-center",
       render: (_, row, extra) => (
         <RowActions row={row} config={{delete: can('suppression-provenance'), edit: can('modification-provenance'), clone: can('creation-provenance')}} attributeName={extra?.attributeName ?? "default"}
         />

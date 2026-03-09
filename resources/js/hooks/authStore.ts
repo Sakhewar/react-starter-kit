@@ -16,9 +16,7 @@ export const useAuthStore = create<AuthState>((set, get) => (
     isAuthenticated: !!localStorage.getItem("user"),
 
     afterLogin: (user) =>
-    {
-        console.log("afterLogin", user);
-        
+    {   
         localStorage.setItem("user", user)
         set({ user, isAuthenticated: true })
     },
