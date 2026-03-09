@@ -21,10 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils"; // si tu as cette fonction utilitaire
+import { cn, FieldConfig, TabConfig } from "@/lib/utils"; // si tu as cette fonction utilitaire
 
 import { Column, columnConfigs } from "@/configs/listOfColumnTables";
-import { FieldConfig, ModalCreateGeneric, TabConfig } from "./ModalCreateGeneric";
 
 import * as Icons from "lucide-react";
 import { fieldModals } from "@/configs/listOfFieldModal";
@@ -37,6 +36,7 @@ import PaginationComponent from "./PaginationComponent";
 import { Input } from "./ui/input";
 import { useForm } from "@inertiajs/react";
 import { MoreFilters } from "./MoreFilters";
+import { BaseModal} from "./BaseModal";
 
 interface EntityItem {
   id: number | string;
@@ -335,7 +335,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
       <MoreFilters type={attributeName} data={data} setData={setData} reset={()=>{reset(), setFilters({})}} open = {isMoreFilterOpen} onOpenChange={()=> setIsMoreFilterOpen(!isMoreFilterOpen)} handleSubmit={()=>setFilters({...filters,...data})} />
 
       {/* Modal ouvert manuellement via state */}
-      <ModalCreateGeneric
+      <BaseModal
           page={page}
           title={attributeName}
           entity={attributeName}

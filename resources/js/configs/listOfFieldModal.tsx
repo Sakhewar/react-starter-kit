@@ -1,4 +1,5 @@
-import { FieldConfig, TabConfig } from "@/components/ModalCreateGeneric";
+import { useGlobalStore } from "@/hooks/backoffice";
+import { FieldConfig, TabConfig } from "@/lib/utils";
 import { Book, BookOpen, Contact, Contact2Icon, ContactIcon, InfoIcon, PhoneCall } from "lucide-react";
 import { FaAddressBook, FaInfoCircle } from "react-icons/fa";
 
@@ -39,7 +40,7 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
       fields:
       [
         { name: "nom_complet",     label: "Nom complet",     type: "text",     required: true },
-        { name: "type_client_id",  label: "Type de client",  type: "select",   required: true, options: [], inputClassName: "w-full", lgColSpan: 6, mdColSpan: 6 },
+        { name: "type_client_id",  label: "Type de client",  type: "select",   required: true, options: "typeclients", inputClassName: "w-full", lgColSpan: 6, mdColSpan: 6 },
         { name: "telephone",       label: "Nº de téléphone", type: "number",   required: true, lgColSpan: 6, mdColSpan: 6 },
         { name: "email",           label: "Email",           type: "email" },
         { name: "adresse",         label: "Adresse",         type: "text" },
