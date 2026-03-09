@@ -334,6 +334,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
 
       {/* Modal ouvert manuellement via state */}
       <ModalCreateGeneric
+          page={page}
           title={namepage}
           entity={attributeName}
           fields={fieldModal}
