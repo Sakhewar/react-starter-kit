@@ -47,98 +47,133 @@ interface GlobalState {
 
   reset: () => void;
 }
+import { persist } from "zustand/middleware";
 
-export const useGlobalStore = create<GlobalState>((set, get) => ({
-  dataPage: {}, // Init vide
-  updateItem: null,
-  deleteItem: null,
-  isLoading: false,
-  error: null,
-  errors: {}, // Erreurs spécifiques
-  lastInitialized: null,
-  scope: {},
+export const useGlobalStore = create<GlobalState>()(
+  persist((set, get) => ({
 
-  initialize: async (options: InitOptions) => {
-    const defaultCount = 10;
-    const{ 
-      page, 
-      attributeName, 
-      onlyPageChange = false, 
-      currentPage = 1, 
-      pageSize = defaultCount, 
-      force = false,
-      filters = {}
-    } = options;
+    dataPage: {}, // Init vide
+    updateItem: null,
+    deleteItem: null,
+    isLoading: false,
+    error: null,
+    errors: {}, // Erreurs spécifiques
+    lastInitialized: null,
+    scope: {},
 
-    const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
-    const currentTemplateUrl = page?.link;
+    initialize: async (options: InitOptions) => {
+      const defaultCount = 10;
+      const{ 
+        page, 
+        attributeName, 
+        onlyPageChange = false, 
+        currentPage = 1, 
+        pageSize = defaultCount, 
+        force = false,
+        filters = {}
+      } = options;
 
-    // Évite rechargement inutile si même attributeName et pas force
-    if (!force && get().lastInitialized === attributeName)
-    {
-      return;
-    }
+      const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
+      const currentTemplateUrl = page?.link;
 
-    if(!currentTemplateUrl)
-    {
-      return;
-    }
-
-    set({ isLoading: true, error: null, errors: {} });
-
-    const getElementsNeeds: { entity: string; fields: string; args?: any }[] = [];
-    const pageChangeNeeds: { entity: string; fields: string; args?: any }[] = [];
-    
-    if (!onlyPageChange)
-    {
-      set({ dataPage: {}, updateItem: null});
-
-      //Pour vider le dataPage apres chaque changement de page
-  
-      getElementsNeeds.push(
-        {entity: 'permissions', fields: 'id,name',args: { search: `-${attributeName}` },
-      });
-
-      if (currentTemplateUrl.indexOf('/client') !== -1)
+      // Évite rechargement inutile si même attributeName et pas force
+      if (!force && get().lastInitialized === attributeName)
       {
-        getElementsNeeds.push({entity: 'typeclients',fields: 'id,libelle', args:{}});
+        return;
       }
 
-    }
-    else
-    {
-      // Requête pour l'entité principale (avec pagination dynamique)
-      pageChangeNeeds.push(
-        {entity: goodType,fields: (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],args: {...filters, page: currentPage, count: pageSize }
-      });
-
-    }
-
-    try
-    {  
-      let afterGetElement: { entity: string; data?: PaginatedResponse<EntityItem>; error?: string }[] = [];
-      if (getElementsNeeds.length > 0)
+      if(!currentTemplateUrl)
       {
-        const promises = getElementsNeeds.map(async (element) =>
+        return;
+      }
+
+      set({ isLoading: true, error: null, errors: {} });
+
+      const getElementsNeeds: { entity: string; fields: string; args?: any }[] = [];
+      const pageChangeNeeds: { entity: string; fields: string; args?: any }[] = [];
+      
+      if (!onlyPageChange)
+      {
+        set({ dataPage: {}, updateItem: null});
+
+        //Pour vider le dataPage apres chaque changement de page
+    
+        getElementsNeeds.push(
+          {entity: 'permissions', fields: 'id,name',args: { search: `-${attributeName}` },
+        });
+
+        if (currentTemplateUrl.indexOf('/client') !== -1)
+        {
+          getElementsNeeds.push({entity: 'typeclients',fields: 'id,libelle', args:{}});
+          getElementsNeeds.push({entity: 'modalitepaiements',fields: 'id,libelle', args:{}});
+        }
+
+      }
+      else
+      {
+        // Requête pour l'entité principale (avec pagination dynamique)
+        pageChangeNeeds.push(
+          {entity: goodType,fields: (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],args: {...filters, page: currentPage, count: pageSize }
+        });
+
+      }
+
+      try
+      {  
+        let afterGetElement: { entity: string; data?: PaginatedResponse<EntityItem>; error?: string }[] = [];
+        if (getElementsNeeds.length > 0)
+        {
+          const promises = getElementsNeeds.map(async (element) =>
+          {
+            try
+            {
+              const data = await graphqlGet<PaginatedResponse<EntityItem>>({
+                entity: element.entity,
+                fields: element.fields,
+                args: element.args || { page: 1, count: defaultCount },
+              });
+              return { entity: element.entity, data };
+            }
+            catch (err: any)
+            {
+              return { entity: element.entity, error: err.message || `Erreur pour ${element.entity}` };
+            }
+          });
+
+          const settled = await Promise.allSettled(promises);
+
+          afterGetElement = settled.map((result, index) =>
+          {
+            if (result.status === 'fulfilled')
+            {
+              return result.value;
+            }
+            else
+            {
+              return { entity: getElementsNeeds[index].entity, error: result.reason?.message || 'Erreur inconnue' };
+            }
+          });
+        }
+
+        // Lance les spécifiques à la page de la même façon
+        const promisesPage = pageChangeNeeds.map(async (element) =>
         {
           try
           {
             const data = await graphqlGet<PaginatedResponse<EntityItem>>({
               entity: element.entity,
               fields: element.fields,
-              args: element.args || { page: 1, count: defaultCount },
+              args: element.args,
             });
             return { entity: element.entity, data };
-          }
+          } 
           catch (err: any)
           {
             return { entity: element.entity, error: err.message || `Erreur pour ${element.entity}` };
           }
         });
-
-        const settled = await Promise.allSettled(promises);
-
-        afterGetElement = settled.map((result, index) =>
+        const settledPage = await Promise.allSettled(promisesPage);
+        const afterPageChanged = settledPage.map((result, index) =>
         {
           if (result.status === 'fulfilled')
           {
@@ -146,97 +181,85 @@ export const useGlobalStore = create<GlobalState>((set, get) => ({
           }
           else
           {
-            return { entity: getElementsNeeds[index].entity, error: result.reason?.message || 'Erreur inconnue' };
+            return { entity: pageChangeNeeds[index].entity, error: result.reason?.message || 'Erreur inconnue' };
           }
         });
+
+        const newDataPage = { ...get().dataPage };
+        const newErrors: Record<string, string> = {};
+
+        afterGetElement.forEach(({ entity, data, error }) =>
+        {
+          if (data)
+          {
+            newDataPage[entity] = data;
+          }
+          else if (error)
+          {
+            newErrors[entity] = error;
+          }
+        });
+
+        afterPageChanged.forEach(({ entity, data, error }) =>
+        {
+          if (data)
+          {
+            newDataPage[entity] = data;
+          }
+          else if (error)
+          {
+            newErrors[entity] = error;
+          }
+        });
+
+        set({
+          dataPage: newDataPage,
+          errors:{...get().errors, ...newErrors},
+          error: Object.keys(newErrors).length > 0 ? 'Erreurs partielles lors du chargement' : null,
+          isLoading: false,
+          lastInitialized: attributeName,
+        });
+      } catch (err: any)
+      {
+        set({
+          error: err.message || 'Erreur chargement données globales',
+          isLoading: false,
+        });
+        console.error('[globalStore] Erreur initialize:', err);
       }
+    },
 
-      // Lance les spécifiques à la page de la même façon
-      const promisesPage = pageChangeNeeds.map(async (element) =>
-      {
-        try
-        {
-          const data = await graphqlGet<PaginatedResponse<EntityItem>>({
-            entity: element.entity,
-            fields: element.fields,
-            args: element.args,
-          });
-          return { entity: element.entity, data };
-        } 
-        catch (err: any)
-        {
-          return { entity: element.entity, error: err.message || `Erreur pour ${element.entity}` };
-        }
-      });
-      const settledPage = await Promise.allSettled(promisesPage);
-      const afterPageChanged = settledPage.map((result, index) =>
-      {
-        if (result.status === 'fulfilled')
-        {
-          return result.value;
-        }
-        else
-        {
-          return { entity: pageChangeNeeds[index].entity, error: result.reason?.message || 'Erreur inconnue' };
-        }
-      });
-
-      const newDataPage = { ...get().dataPage };
-      const newErrors: Record<string, string> = {};
-
-      afterGetElement.forEach(({ entity, data, error }) =>
-      {
-        if (data)
-        {
-          newDataPage[entity] = data;
-        }
-        else if (error)
-        {
-          newErrors[entity] = error;
-        }
-      });
-
-      afterPageChanged.forEach(({ entity, data, error }) =>
-      {
-        if (data)
-        {
-          newDataPage[entity] = data;
-        }
-        else if (error)
-        {
-          newErrors[entity] = error;
-        }
-      });
-
+    reset: () => {
       set({
-        dataPage: newDataPage,
-        errors: newErrors,
-        error: Object.keys(newErrors).length > 0 ? 'Erreurs partielles lors du chargement' : null,
+        dataPage: {},
+        updateItem: null,
+        deleteItem: null,
         isLoading: false,
-        lastInitialized: attributeName,
+        error: null,
+        errors: {},
+        lastInitialized: null,
       });
-    } catch (err: any)
+    },
+    
+    }),
     {
-      set({
-        error: err.message || 'Erreur chargement données globales',
-        isLoading: false,
-      });
-      console.error('[globalStore] Erreur initialize:', err);
+      name: "global-store",
+      partialize: (state) => ({
+        scope: {
+          collapsed: state.scope?.collapsed ?? false,
+        },
+      }),
+      merge: (persistedState: any, currentState) => ({
+        ...currentState, // garde tout le state initial
+        scope: {
+          ...currentState.scope,
+          collapsed: persistedState?.scope?.collapsed ?? false, // écrase uniquement collapsed
+        },
+      }),
     }
-  },
+  )
+);
 
-  reset: () => {
-    set({
-      dataPage: {},
-      updateItem: null,
-      deleteItem: null,
-      isLoading: false,
-      error: null,
-      errors: {},
-      lastInitialized: null,
-    });
-  },
-}));
 
 
 export function can(name: string, permissions? : any [])

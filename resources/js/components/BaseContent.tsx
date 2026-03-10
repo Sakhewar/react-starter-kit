@@ -34,7 +34,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ConfirmDialog } from "./ConfirmDialog";
 import PaginationComponent from "./PaginationComponent";
 import { Input } from "./ui/input";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import { MoreFilters } from "./MoreFilters";
 import { BaseModal} from "./BaseModal";
 
@@ -57,7 +57,7 @@ interface PaginatedResponse<T> {
 export default function BaseContent({attributeName, namepage,page,...props}:{attributeName:string, namepage: string;page: any;})
 {
   //Charger le state management de Zustand
-  const { initialize, dataPage, isLoading: globalLoading, error: globalError, updateItem, deleteItem, scope} = useGlobalStore();
+  const { initialize, dataPage, isLoading: globalLoading, errors: errorGraphQL, updateItem, deleteItem, scope} = useGlobalStore();
 
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,9 +81,8 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
 
   const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
 
-
   const permissionPages: any = dataPage['permissions'] ?? [];
-
+  
   // Premier effect : synchronisation des states locaux quand dataPage[goodType] change
   useEffect(() =>
   {
@@ -98,7 +97,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
     {
       setLoading(true);
     }
-  }, [dataPage[goodType], globalError]);
+  }, [dataPage[goodType], errorGraphQL]);
 
   useEffect(() =>
   {
@@ -176,7 +175,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                   </Button>
 
                   <Button variant="ghost" className="justify-start px-4 py-2 rounded-none hover:bg-accent"
-                    onClick={() => console.log('Trame Word cliquée')}>
+                    onClick={() => window.open(`/${attributeName}.feuille`, '_self')}>
                     <FaRegFileExcel className="mr-2 h-4 w-4 text-green-600" />
                     Trame Excel
                   </Button>
@@ -248,17 +247,18 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                 </TableHeader>
 
                 <TableBody>
-                {loading ? (
+                {loading || Object.keys(errorGraphQL).length > 0 ? (
                     // Loader central au lieu de skeletons
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-20 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <Icons.Loader2 className="h-8 w-8 animate-spin text-primary" />
-                          <p className="mt-2 text-sm text-muted-foreground">Chargement des données...</p>
+                          {loading && !errorGraphQL && <Icons.Loader2 className="h-8 w-8 animate-spin text-primary" />}
+                          {loading && !errorGraphQL && <p className="mt-2 text-sm text-muted-foreground">Chargement des données...</p>}
+                          {errorGraphQL && <p className="mt-2 text-sm text-destructive">{errorGraphQL[goodType] ?? ""}</p>}
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) :  items.length === 0 ? (
+                  ) :  items?.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-20 text-center text-muted-foreground">
                         Aucun résultat trouvé
@@ -266,7 +266,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                     </TableRow>
                   ) : (
                     // Données avec légère animation d'apparition
-                    items.map((row, idx) => (
+                    items?.map((row, idx) => (
                       <TableRow
                         key={row.id ?? idx}
                         className={cn(

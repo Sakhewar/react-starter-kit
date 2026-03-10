@@ -66,7 +66,7 @@ class HandleInertiaRequests extends Middleware
                 {
                     foreach ($userPermissions as $userPerm)
                     {
-                        if (stripos($userPerm, $requiredKeyword) !== false)
+                        //if (stripos($userPerm, $requiredKeyword) !== false)
                         {
                             $pageIsVisible = true;
                         }

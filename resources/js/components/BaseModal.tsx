@@ -95,9 +95,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
   }, [isOpen]);
 
   const handleChange = (name: string, value: any) =>
-  {
-    console.log("diop log",name,value);
-    
+  {    
     setData(name, value)
   };
 

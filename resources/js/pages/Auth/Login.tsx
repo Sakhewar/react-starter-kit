@@ -44,8 +44,7 @@ export default function Login({ status, errors: serverErrors }: { status?: strin
       }
   
     },[auth])
-    console.log("diop log", auth);
-
+  
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     router.post("login", data,{

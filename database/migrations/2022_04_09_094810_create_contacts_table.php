@@ -22,8 +22,8 @@ class CreateContactsTable extends Migration
             $table->string('telephone')->nullable();
             $table->string('fonction')->nullable();
             $table->string('description')->nullable();
-            $table->foreignId('client_id')->nullable()->constrained();
-            $table->foreignId('fournisseur_id')->nullable()->constrained();
+            $table->foreignId('client_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('fournisseur_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
             \App\Models\Outil::listenerUsers($table);

@@ -86,36 +86,6 @@ class ModelQuery
     // public static function forBureau($root, $args, $query)
     // ..
 
-    public static function forClient($root, $args, $query)
-    {
-        Outil::addWhereToModel($query, $args,
-        [
-            ['id',                     '='],
-            ['nom',                 'like'],
-            ['type_client_id',         '='],
-            ['status',                 '='],
-            ['modalite_paiement_id',   '='],
-            ['nomenclature_client_id', '='],
-        ]);
-
-        if (isset($args['search']))
-        {
-            $motRecherche  = $args['search'];
-            $query = $query->where(function ($query) use ($motRecherche) {
-                return $query->where('nom', Outil::getOperateurLikeDB(), '%'.$motRecherche.'%')
-                    ->orWhere('email', Outil::getOperateurLikeDB(), '%'.$motRecherche.'%')
-                    ->orWhere('telephone', Outil::getOperateurLikeDB(), '%'.$motRecherche.'%');
-            });
-        }
-
-        if (isset($args['type_marchandise_id']))
-        {
-            $ctm =ClientTypeMarchandise::query()->where('type_marchandise_id', $args['type_marchandise_id'])->pluck('client_id');
-            $query = $query->whereIn('id', $ctm);
-        }
-        return self::getQueryOrQueryPaginated($root, $args, $query);
-    }
-
     public static function forContact($root, $args, $query)
     {
         Outil::addWhereToModel($query, $args,

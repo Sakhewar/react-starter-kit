@@ -61,10 +61,14 @@ export const columnConfigs: Record<string, Column[]> =
   ],
 
   client : [
-      { key: "nom", label: "Nom Complet", className: "" },
+      { key: "code", label: "Code", render: (_,row) =>  <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge>},
+      { key: "nom", label: "Nom Complet", className: "", render: (_,row, extra) =>  `${row?.prenom} ${row?.nom}`},
       { key: "email", label: "Email" },
-      { key: "telephone", label: "Téléphone" },
+      { key: "telephone", label: "Téléphone",render: (_,row) =>  <Badge className="text-white rounded-[5px] bg-orange-600">{row?.telephone}</Badge>},
       { key: "adresse", label: "Adresse" },
+      { key: "type_client_id", label: "Type de client",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px] bg-green-600">{row?.type_client.libelle}</Badge>},
+      { key: "plafond", label: "Plafond/Remise", className: "", render: (_,row, extra) =>  `${row?.plafond} / ${row?.remise}%`},
+      { key: "modalite_paiement_id", label: "Modalite de paiement",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px]">{row?.modalite_paiement.libelle}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}

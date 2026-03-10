@@ -11,7 +11,7 @@ export default function MobileSidebar() {
                     <Menu className="w-6 h-6" />
                 </SheetTrigger>
 
-                <SheetContent side="left" className="p-0 w-64">
+                <SheetContent side="left" className="p-0 w-[72px]">
                     <AppSidebar isMobile={true} />
                 </SheetContent>
             </Sheet>

@@ -5,6 +5,7 @@ import '../css/app.css';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { route } from 'ziggy-js';
 import { Ziggy } from '../js/ziggy';          // ← Importe Ziggy
+import { TooltipProvider } from './components/ui/tooltip';
 
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -21,7 +22,9 @@ createInertiaApp({
 
         root.render(
             <ThemeProvider>
-                <App {...props} />
+                <TooltipProvider>
+                    <App {...props} />
+                </TooltipProvider>
             </ThemeProvider>
         );
     },

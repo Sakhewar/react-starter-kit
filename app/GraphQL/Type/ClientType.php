@@ -24,7 +24,7 @@ class ClientType extends RefactGraphQLType
             'ninea'                              => ['type' => Type::string()],
             'rcc'                                => ['type' => Type::string()],
             'adresse_postale'                    => ['type' => Type::string()],
-            'adresse_geographique'               => ['type' => Type::string()],
+            'adresse'                            => ['type' => Type::string()],
             'description'                        => ['type' => Type::string()],
             'ville'                              => ['type' => Type::string()],
             'status'                             => ['type' => Type::int()],

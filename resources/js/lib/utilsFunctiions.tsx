@@ -334,10 +334,10 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
           <Button
             type="button"
             size="icon"
-            variant="outline"
+            variant="default"
             onClick={handleAdd}
             disabled={processing}
-            className="h-9 w-9 shrink-0 bg-cyan-50 border-cyan-300 hover:bg-cyan-100 text-cyan-700"
+            className="h-9 w-9 shrink-0"
           >
             <Plus className="h-4 w-4" />
           </Button>
@@ -354,59 +354,46 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
                     {f.label}
                     </TableShadCn.TableHead>
                 ))}
+                <TableShadCn.TableHead className="text-white text-center">#</TableShadCn.TableHead>
                 </TableShadCn.TableRow>
+                
             </TableShadCn.TableHeader>
 
             <TableShadCn.TableBody>
-            </TableShadCn.TableBody>
-        </TableShadCn.Table>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-[#1a4a5c] text-white">
-              {visibleFields.map(f => (
-                <th key={f.name} className="px-4 py-3 text-left font-semibold uppercase text-xs tracking-wider">
-                  {f.label}
-                </th>
-              ))}
-              <th className="px-4 py-3 w-10" />
-            </tr>
-          </thead>
-          <tbody>
             {rows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={visibleFields.length + 1}
-                  className="px-4 py-6 text-center text-muted-foreground text-sm"
-                >
+              <TableShadCn.TableRow className="bg-white">
+                <TableShadCn.TableCell colSpan={visibleFields.length} className="text-center">
                   Aucune ligne ajoutée
-                </td>
-              </tr>
-            ) : (
+                </TableShadCn.TableCell>
+              </TableShadCn.TableRow>
+            ): (
               rows.map((row, i) => (
-                <tr key={i} className="border-t border-border hover:bg-muted/40 transition-colors">
+                <TableShadCn.TableRow key={i} className="bg-white hover:bg-gray-100">
                   {visibleFields.map(f => (
-                    <td key={f.name} className="px-4 py-2.5 text-foreground">
-                      {f.type === "checkbox"
+                    <TableShadCn.TableCell key={f.name} className="text-center">
+                       {f.type === "checkbox"
                         ? (row[f.name] ? "✓" : "—")
                         : f.type === "select"
                           ? ((Array.isArray(f.options) ? f.options : []).find(o => o.libelle === row[f.name])?.libelle ?? row[f.name])
                           : (row[f.name] || "—")}
-                    </td>
-                  ))}
-                  <td className="px-4 py-2.5">
-                    <button
-                      type="button"
-                      onClick={() => onRemoveRow(tab.key, i)}
-                      className="text-muted-foreground hover:text-destructive transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
+                    </TableShadCn.TableCell>)
+                  )}
+                  <TableShadCn.TableCell className="text-center px-4 py-2.5">
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => onRemoveRow(tab.key, i)}
+                        className="text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4 text-white" />
+                    </Button>
+                  </TableShadCn.TableCell>
+                </TableShadCn.TableRow>
               ))
-            )}
-          </tbody>
-        </table>
+            )
+          }
+            </TableShadCn.TableBody>
+        </TableShadCn.Table>
       </div>
     </div>
   );

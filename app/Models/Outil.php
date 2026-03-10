@@ -465,4 +465,36 @@ class Outil extends Model
         
         cache()->put('currentToken.' . $currentUser->id, $token);
     }
+
+    public static function getCode($model, $indicatif)
+    {
+        $getLast = app($model)::where('code', self::getOperateurLikeDB(), '%' . $indicatif . '%')->orderBy('id', 'desc')->first();
+        $codenumber = 1;
+        if (isset($getLast))
+        {
+            $codenumber = $getLast->id + 1;
+        }
+        $code  =  $indicatif . "-00" . $codenumber . '-' . date('y');
+
+        $sim = app($model)::where('code', $code)->orderBy('id', 'desc')->first();
+        if (isset($sim))
+        {
+            $codenumber = $sim->id + 1;
+
+            $cpt = 0;
+            while (isset($sim))
+            {
+                $code = $indicatif . "-00" . $codenumber . '-' . date('y');
+                $sim = app($model)::where('code', $code)->orderBy('id', 'desc')->first();
+                $codenumber++;
+                $cpt++;
+                // if ($cpt==20)
+                // {
+                //     dd($codenumber, $sim);
+                // }
+            }
+        }
+
+        return $code;
+    }
 }
