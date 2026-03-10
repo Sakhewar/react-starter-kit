@@ -136,8 +136,8 @@ trait HasModelRelationships
         return $this->clients()->get()->count();
     }
 
-    public function getNomCompletAttribute()
-    {
-        return trim("{$this->prenom} {$this->nom}");
-    }
+    // public function getNomCompletAttribute()
+    // {
+    //     return trim("{$this->prenom} {$this->nom}");
+    // }
 }

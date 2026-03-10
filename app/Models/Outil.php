@@ -497,4 +497,36 @@ class Outil extends Model
 
         return $code;
     }
+
+    public static function getQueryNameOfModel($nameTable)
+    {
+        return str_replace("_", "", $nameTable);
+    }
+
+    public static function uploadFileToModel(&$request, &$item, $file = "image", $subimage="image")
+    {
+        $attr_erase = $file . "_erase";
+        if (!empty($request->file()) && isset($_FILES[$file]))
+        {
+            $fichier = $_FILES[$file]['name'];
+            if (!empty($fichier))
+            {
+                $fichier_tmp = $_FILES[$file]['tmp_name'];
+                $ext = explode('.', $fichier);
+                $rename = config('view.uploads')[self::getQueryNameOfModel($item->getTable())] . "/{$file}_" . $item->id . "." . end($ext);
+                move_uploaded_file($fichier_tmp, $rename);
+
+                // Pour directement save le lien absolu ici
+                $item->$subimage = self::resolveImageField($rename);
+            }
+
+        }
+        else if (isset($request->$attr_erase))
+        {
+            // Allows you to delete the user's image
+            $item->$subimage = null;
+        }
+
+        $item->save();
+    }
 }

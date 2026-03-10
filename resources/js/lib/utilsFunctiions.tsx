@@ -91,6 +91,8 @@ function checkUniqueness(fields: FieldConfig[], currentRow: Record<string, any>,
 
 export function FieldRenderer({field, value, onChange, errors = {}, processing = false,fileMap = {}, onFileChange, onRemoveFile}: FieldRendererProps)
 {
+  const {updateItem} = useGlobalStore();
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(updateItem != null ? updateItem[field.name] : null);
     return (
         <div className={cn("flex flex-col gap-2 min-w-0", buildColClass(field), field.containerClassName)}>
         {field.type !== "checkbox" && field.type !== "date" && (
@@ -143,44 +145,134 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
             onSelect={(date) => onChange(field.name, date)}
             />
         ) : field.type === "file" ? (
-            <div className={cn("flex flex-col gap-2", field.inputClassName)}>
-            <label
-                htmlFor={field.name}
-                className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-md border border-dashed border-input",
-                "text-sm text-muted-foreground cursor-pointer hover:bg-muted transition-colors",
-                processing && "opacity-50 pointer-events-none"
-                )}
-            >
-                <Paperclip className="h-4 w-4 shrink-0" />
-                <span>{field.placeholder ?? "Choisir un fichier..."}</span>
-                <input
-                id={field.name}
-                type="file"
-                accept={field.accept}
-                multiple={field.multiple}
-                disabled={processing}
-                className="sr-only"
-                onChange={(e) => onFileChange?.(field.name, e, field.multiple)}
-                />
-            </label>
-            {(fileMap[field.name] ?? []).length > 0 && (
-                <ul className="flex flex-col gap-1">
-                {fileMap[field.name].map((file, i) => (
-                    <li key={i} className="flex items-center justify-between text-sm px-2 py-1 rounded-md bg-muted">
-                    <span className="truncate max-w-[80%]">{file.name}</span>
+              <div className={cn("flex flex-col items-center gap-4", field.inputClassName)}>
+                <div className="relative">
+                  <label
+                    htmlFor={field.name}
+                    className={cn(
+                      "relative flex flex-col items-center justify-center",
+                      "w-25 h-25 rounded-full border-1 border-dashed border-input",
+                      "text-sm text-muted-foreground cursor-pointer overflow-hidden",
+                      "hover:border-primary hover:bg-muted/40 transition-all duration-200",
+                      processing && "opacity-50 pointer-events-none",
+                      field.labelClassName
+                    )}
+                  >
+                    {previewUrl ? (
+                      <img
+                        src={previewUrl}
+                        alt="Aperçu"
+                        className="absolute inset-0 w-full h-full object-contain object-center"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2 px-4 text-center">
+                        <Paperclip className="h-4 w-4 shrink-0" />
+                        <span className="text-xs leading-tight">
+                          {field.placeholder ?? "Choisir un fichier..."}
+                        </span>
+                      </div>
+                    )}
+                    <input
+                      id={field.name}
+                      type="file"
+                      accept={field.accept}
+                      multiple={field.multiple}
+                      disabled={processing}
+                      className="sr-only"
+                      onChange={(e) => {
+                        onFileChange?.(field.name, e, field.multiple);
+                        const file = e.target.files?.[0];
+                        if (file && file.type.startsWith("image/")) {
+                          setPreviewUrl(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </label>
+
+                  {previewUrl && (
                     <button
-                        type="button"
-                        onClick={() => onRemoveFile?.(field.name, i)}
-                        className="text-muted-foreground hover:text-destructive transition-colors"
+                      type="button"
+                      onClick={() => {
+                        setPreviewUrl(null);
+                        // Reset the input value
+                        const input = document.getElementById(field.name) as HTMLInputElement;
+                        if (input) input.value = "";
+                        onRemoveFile?.(field.name, 0);
+                        //onFileChange?.(field.name, null, field.multiple);
+                      }}
+                      className={cn(
+                        "absolute -top-1 -right-1",
+                        "w-6 h-6 rounded-full bg-destructive text-destructive-foreground",
+                        "flex items-center justify-center shadow-md",
+                        "hover:bg-destructive/80 transition-colors",
+                        "border-2 border-background"
+                      )}
                     >
-                        <X className="h-3.5 w-3.5" />
+                      <X className="h-3 w-3" />
                     </button>
-                    </li>
-                ))}
-                </ul>
-            )}
-            </div>
+                  )}
+                </div>
+              </div>
+            // <div className={cn("flex flex-col gap-2 hidden", field.inputClassName)}>
+            //   <label
+            //     htmlFor={field.name}
+            //     className={cn(
+            //       "relative flex flex-col items-center justify-center",
+            //       "w-30 h-30 rounded-full border-2 border-dashed border-input",
+            //       "text-sm text-muted-foreground cursor-pointer",
+            //       "hover:border-primary hover:bg-muted/40 transition-all duration-200",
+            //       processing && "opacity-50 pointer-events-none",
+            //       field.labelClassName
+            //     )}
+            //   >
+            //     {previewUrl ? (
+            //       <img
+            //         src={previewUrl}
+            //         alt="Aperçu"
+            //         className="w-full h-full rounded-full object-cover"
+            //       />
+            //     ) : (
+            //       <div className="flex flex-col items-center gap-2 px-4 text-center">
+            //         <Paperclip className="h-6 w-6 shrink-0" />
+            //         <span className="text-xs leading-tight">
+            //           {field.placeholder ?? "Choisir un fichier..."}
+            //         </span>
+            //       </div>
+            //     )}
+            //     <input
+            //       id={field.name}
+            //       type="file"
+            //       accept={field.accept}
+            //       multiple={field.multiple}
+            //       disabled={processing}
+            //       className="sr-only"
+            //       onChange={(e) => {
+            //         onFileChange?.(field.name, e, field.multiple);
+            //         // Aperçu image
+            //         const file = e.target.files?.[0];
+            //         if (file && file.type.startsWith("image/")) {
+            //           setPreviewUrl(URL.createObjectURL(file));
+            //         }
+            //       }}
+            //     />
+            //   </label>
+            // {(fileMap[field.name] ?? []).length > 0 && (
+            //     <ul className="flex flex-col gap-1">
+            //     {fileMap[field.name].map((file, i) => (
+            //         <li key={i} className="flex items-center justify-between text-sm px-2 py-1 rounded-md bg-muted">
+            //         <span className="truncate max-w-[80%]">{file.name}</span>
+            //         <button
+            //             type="button"
+            //             onClick={() => onRemoveFile?.(field.name, i)}
+            //             className="text-muted-foreground hover:text-destructive transition-colors"
+            //         >
+            //             <X className="h-3.5 w-3.5" />
+            //         </button>
+            //         </li>
+            //     ))}
+            //     </ul>
+            // )}
+            // </div>
         ) : (
             <Input
             id={field.name}

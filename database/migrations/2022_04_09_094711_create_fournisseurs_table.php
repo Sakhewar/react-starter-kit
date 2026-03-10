@@ -17,19 +17,13 @@ class CreateFournisseursTable extends Migration
         {
             $table->id();
             $table->string('code')->nullable();
-            $table->string('nom')->nullable();
+            $table->string('nom_complet')->nullable();
             $table->text('image')->nullable();
             $table->string('email')->nullable();
             $table->string('telephone')->nullable();
-            $table->string('faxe')->nullable();
-            $table->string('fixe')->nullable();
-            $table->string('ninea')->nullable();
-            $table->string('rcc')->nullable();
-            $table->string('adresse_postale')->nullable();
-            $table->string('adresse_geographique')->nullable();
-            $table->string('description')->nullable();
+            $table->string('adresse')->nullable();
+            $table->text('description')->nullable();
             $table->foreignId('pay_id')->nullable()->constrained();
-            $table->string('ville')->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
             $table->softDeletes();

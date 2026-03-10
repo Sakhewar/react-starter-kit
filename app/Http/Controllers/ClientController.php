@@ -12,9 +12,9 @@ class ClientController extends EntityTypeController
     protected function getValidationRules(): array
     {
         return [
-            'nom'                         => 'required',
-
-            'prenom'                      => 'required',
+            'nom_complet'                         => [
+                'required',
+            ],
 
             'type_client_id'              => 'required',
 
@@ -28,8 +28,8 @@ class ClientController extends EntityTypeController
     protected function getCustomValidationMessage(): array
     {
         return [
-            'prenom.required'                    => "Le prénom du client est requis",
-            'nom.required'                       => "Le nom complet du client est requis",
+            'nom_complet.required'               => "Le nom complet du client est requis",
+            'nom_complet.unique'                 => "Ce nom de client est déjà utilisé",
             'type_client_id.required'            => "Renseigner le type de client",
             'telephone.unique'                   => "Ce numéro de téléphone est déjà utilisé"
         ];
@@ -40,11 +40,6 @@ class ClientController extends EntityTypeController
         {
             $this->request['code']                       =  Outil::getCode($this->model, $this->modelValue->codePrefix);
         }
-
-        if ($this->request->from_excel)
-        {
-
-        }
            
     }
 
@@ -52,7 +47,6 @@ class ClientController extends EntityTypeController
     public function afterCRUDProcessing(&$model): void
     {
         $data = parseArray($this->request->contacts, Contact::class);
-    
         $model->saveHasManyRelation($data, Contact::class);
 
         // On fait le traitement uniquement pour le cas d'un fournisseur

@@ -17,7 +17,11 @@ var listofAttributes : Record<any,any> =
     ],
 
     clients : [
-        "id,code,prenom,nom,email,telephone,adresse,type_client_id,type_client{id,libelle},modalite_paiement_id,modalite_paiement{id,libelle},plafond,remise",
+        "id,code,nom_complet,email,telephone,adresse,type_client_id,type_client{id,libelle},modalite_paiement_id,modalite_paiement{id,libelle},plafond,remise",
+        "description,contacts{id,nom,email,telephone}"
+    ],
+    fournisseurs : [
+        "id,code,nom_complet,email,telephone,adresse,image",
         "description,contacts{id,nom,email,telephone}"
     ],
 

@@ -62,7 +62,7 @@ export const columnConfigs: Record<string, Column[]> =
 
   client : [
       { key: "code", label: "Code", render: (_,row) =>  <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge>},
-      { key: "nom", label: "Nom Complet", className: "", render: (_,row, extra) =>  `${row?.prenom} ${row?.nom}`},
+      { key: "nom_complet", label: "Nom Complet", className: "", render: (_,row, extra) =>  `${row?.nom_complet}`},
       { key: "email", label: "Email" },
       { key: "telephone", label: "Téléphone",render: (_,row) =>  <Badge className="text-white rounded-[5px] bg-orange-600">{row?.telephone}</Badge>},
       { key: "adresse", label: "Adresse" },
@@ -79,7 +79,7 @@ export const columnConfigs: Record<string, Column[]> =
   ],
 
   fournisseur : [
-      { key: "nom", label: "Nom Complet", className: "" },
+      { key: "nom_complet", label: "Nom Complet", className: "" },
       { key: "email", label: "Email" },
       { key: "telephone", label: "Téléphone" },
       { key: "adresse", label: "Adresse" },

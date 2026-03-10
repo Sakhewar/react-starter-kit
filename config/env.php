@@ -19,5 +19,6 @@ return [
     'PERMISSION_TRANSACTION'           => env('PERMISSION_TRANSACTION'),
     'APP_ERROR_API'                    => env('APP_ERROR_API', false),
     'APP_ENV_FOR'                      => env('APP_ENV_FOR', 'local'),
+    'LOG_CHANNEL'                      => env('LOG_CHANNEL', 'stack'),
 
 ];

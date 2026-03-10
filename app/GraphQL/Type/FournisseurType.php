@@ -7,20 +7,12 @@ use Rebing\GraphQL\Support\Facades\GraphQL;
 use GraphQL\Type\Definition\Type;
 
 class FournisseurType extends RefactGraphQLType
-{
-    protected $column = 'fournissuer_id';
-
-    protected $attributes = [
-        'name' => 'FournisseurType',
-        'description' => 'Type pour le fournisseur',
-    ];
-
-    protected function resolveFields(): array
+{   protected function resolveFields(): array
     {
         return [
             'id'                                 => ['type' => Type::int()],
             'nom'                                => ['type' => Type::string()],
-            'nom_complet'                        => ['type' => Type::string(), 'alias' => 'nom'],
+            'nom_complet'                        => ['type' => Type::string()],
             'telephone'                          => ['type' => Type::string()],
             'email'                              => ['type' => Type::string()],
             'code'                               => ['type' => Type::string()],
@@ -34,11 +26,13 @@ class FournisseurType extends RefactGraphQLType
             'status'                             => ['type' => Type::int()],
             'status_fr'                          => ['type' => Type::string()],
             'color_status'                       => ['type' => Type::string()],
-            'adresse_geographique'               => ['type' => Type::string()],
+            'adresse'                            => ['type' => Type::string()],
             'description'                        => ['type' => Type::string()],
             'pays_id'                            => ['type' => Type::int()],
             'pays'                               => ['type' => GraphQL::type('ProvenanceType')],
             'ville'                              => ['type' => Type::string()],
+
+            'contacts'                           => ['type' => Type::listOf(GraphQL::type('ContactType'))],
         ];
     }
 }

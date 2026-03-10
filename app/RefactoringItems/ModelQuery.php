@@ -183,15 +183,6 @@ class ModelQuery
         return self::getQueryOrQueryPaginated($root, $args, $query);
     }
 
-    public static function forFournisseur($root, $args, $query)
-    {
-        if (isset($args['article_facturation_id']))
-        {
-            $query->whereRaw("id in (select fournisseur_id from fournisseur_article_facturations where article_facturation_id={$args['article_facturation_id']})");
-        }
-
-        return self::getQueryOrQueryPaginated($root, $args, $query);
-    }
 
     public static function forGroupePermission($root, $args, $query)
     {
