@@ -8,10 +8,19 @@ var listofFilters : Record<string,Record<string,string | FieldConfig[]>> =
         fields :[
             { name: "search",          label: "", placeholder: "Rechercher par nom complet, email, téléphone,adresse ...",         type: "text"},
             { name: "type_client_id",  label: "Rechercher par type de client", labelClassName:"text-[13px]",        type: "select",  options: "typeclients",  inputClassName: "w-full" },
-            { name: "",                label: "Actif ?", labelClassName:"text-[13px] text-center flex items-center justify-center",  type: "text", inputClassName:"hidden", colSpan: 12},
-            { name: "activer",         label: "Oui", labelClassName:"text-[13px]",  type: "checkbox", colSpan: 4},
-            { name: "activer",         label: "Non", labelClassName:"text-[13px]",  type: "checkbox", colSpan: 4},
-            { name: "activer",         label: "Tout", labelClassName:"text-[13px]",  type: "checkbox", colSpan: 4}
+            {
+                name: "activer",
+                label: "Actif ? uu",
+                labelClassName: "text-[13px]",
+                type: "radio-group",
+                radioStyle: "minimal",
+                colSpan: 12,
+                radioOptions: [
+                  { label: "Tout", value: null },
+                  { label: "Oui",  value: true, activeClassName: "text-white text-emerald-500" },
+                  { label: "Non",  value: false, activeClassName: "text-white text-red-500" },
+                ],
+            },
         ] 
     },
 }

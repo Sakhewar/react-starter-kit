@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import * as TableShadCn from "@/components/ui/table";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { RadioGroupField } from "@/components/RadioGroupMultiple";
 
 
 const colSpanMap: Record<number, string> = {
@@ -95,7 +96,7 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(updateItem != null ? updateItem[field.name] : null);
     return (
         <div className={cn("flex flex-col gap-2 min-w-0", buildColClass(field), field.containerClassName)}>
-        {field.type !== "checkbox" && field.type !== "date" && (
+        {!["checkbox", "date", "radio-group"].includes(field.type ?? "") && (
             <Label
             htmlFor={field.name}
             className={cn(
@@ -213,7 +214,21 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
                   )}
                 </div>
               </div>
-        ) : (
+        ) : field.type === "radio-group" ? (
+               <RadioGroupField
+                 name={field.name}
+                 value={value ?? null}
+                 onChange={onChange}
+                 radioOptions={field.radioOptions ?? []}
+                 radioStyle={field.radioStyle}
+                 activeClassName={field.activeClassName}
+                 inactiveClassName={field.inactiveClassName}
+                 disabled={processing}
+                 label={field.label}
+                 labelClassName={field.labelClassName}
+                 required={field.required}
+               />
+           ): (
             <Input
             id={field.name}
             type={field.type ?? "text"}

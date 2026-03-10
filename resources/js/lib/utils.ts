@@ -9,7 +9,7 @@ export interface FieldConfig {
   key?: string;
   name: string;
   label: string;
-  type?: "text" | "email" | "number" | "textarea" | "select" | "checkbox" | "date" | "file";
+  type?: "text" | "email" | "number" | "textarea" | "select" | "checkbox" | "date" | "file" | "radio-group";
   placeholder?: string;
   required?: boolean;
   options?: string;
@@ -27,6 +27,32 @@ export interface FieldConfig {
   tableMode?: boolean;
   fields?: FieldConfig[];
   is_unique?: boolean;
+  radioOptions?: RadioOption[];
+  radioStyle?: "pill" | "box" | "minimal";
+  activeClassName?: string;           // défaut actif pour toutes les options
+  inactiveClassName?: string;  
+}
+
+export interface RadioOption
+{
+    label: string;
+    value: string | number | boolean | null;
+    activeClassName?: string;
+    icon?: React.ReactNode;
+}
+
+export interface RadioGroupFieldProps {
+  name: string;
+  value: string | number | null;
+  onChange: (name: string, value: string | number | null | boolean) => void;
+  radioOptions: RadioOption[];
+  radioStyle?: "pill" | "box" | "minimal";
+  activeClassName?: string;
+  inactiveClassName?: string;
+  disabled?: boolean;
+  label?: string;
+  labelClassName?: string;
+  required?: boolean;
 }
 
 export interface TabConfig

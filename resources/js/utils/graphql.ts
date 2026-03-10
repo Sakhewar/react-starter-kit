@@ -72,14 +72,14 @@ export function generateArgsFilters(args:Record<string, any>, withBrace = true):
     argsString = (withBrace == true ? '(' : '') + Object.entries(args)
       .map(([key, value]) =>
       {
-        if(key.endsWith("_id") || key == "id")
+        if(key.endsWith("_id") || ['id'].includes(key))
         {
           value = parseInt(value);
         }
         
-        if(String(value).trim().length == 0)
+        if(String(value).trim().length == 0 || value == null || value == undefined)
         {
-          delete args[key];
+          return '';
         }
         
         if (typeof value === 'string') return `${key}:"${value.replace(/"/g, '\\"')}"`;
