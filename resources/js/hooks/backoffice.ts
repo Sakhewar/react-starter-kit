@@ -373,10 +373,10 @@ export async function exportToPdfOrExcel(type: string, typeExport: string, args:
 {
   const goodType = !type.endsWith("s") ? type + "s" : type;
 
-  let attrs = Object.entries({attrs: listofAttributes[goodType]}).map(([key,value])=>
+  let attrs = Object.entries({attrs: listofAttributes[goodType][0]}).map(([key,value])=>
   {
-    return `${key}:${JSON.stringify(value.join(''))}`;
-  })
+    return `${key}:${JSON.stringify(value)}`;
+  });
   
   const url = `/generate-${goodType}-${typeExport}?${attrs + ','+ generateArgsFilters(args, false)}`;
 

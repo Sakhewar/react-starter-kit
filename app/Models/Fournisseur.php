@@ -7,29 +7,47 @@ class Fournisseur extends Model
     public $codePrefix = 'F';
     public static $columnsExport =  [
         [
-            "column_db" => "nom",
-            "column_excel" => "Nom",
-            "column_unique" => true
+            "column_db" => "nom_complet",
+            "column_excel" => "Nom Complet",
+            "column_unique" => true,
+            "import"      => true,
+            "export"      => true
         ],
         [
             "column_db" => "email",
             "column_excel" => "Email",
-            "column_unique" => false
+            "column_unique" => true,
+            "import"      => true,
+            "export"      => true
+        ],
+        [
+            "column_db" => "telephone",
+            "column_excel" => "Téléphone",
+            "column_unique" => true,
+            "import"      => true,
+            "export"      => true
+        ],
+        [
+            "column_db" => "adresse",
+            "column_excel" => "Adresse",
+            "column_unique" => false,
+            "import"      => true,
+            "export"      => true
         ],
         [
             "column_db" => "telephone",
             "column_excel" => "Telephone",
-            "column_unique" => false
+            "column_unique" => false,
+            "import"      => true,
+            "export"      => true
         ],
         [
-            "column_db" => "pay_id",
-            "column_excel" => "Pays",
-            "column_unique" => false
-        ],
-        [
-            "column_db" => "ville",
-            "column_excel" => "Ville",
-            "column_unique" => false
-        ],
+            "column_db"     => "type_fournisseur_id",
+            "column_excel"  => "Type De Fournisseur",
+            "columnMatched" => "libelle",
+            "model"         => TypeFournisseur::class,
+            "import"        => true,
+            "export"        => true,
+        ]
     ];
 }

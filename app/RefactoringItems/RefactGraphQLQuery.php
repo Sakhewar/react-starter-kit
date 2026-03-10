@@ -44,6 +44,7 @@ class RefactGraphQLQuery extends Query
         'code',
         'name',
         'nom',
+        'nom_complet',
         'prenom',
         'libelle',
         'description',
@@ -85,6 +86,7 @@ class RefactGraphQLQuery extends Query
             'name'                    => ['type' => Type::string()],
             'description'             => ['type' => Type::string()],
             'status'                  => ['type' => Type::boolean()],
+            'activer'                 => ['type' => Type::boolean()],
 
             'date_start'              => ['type' => Type::string()],
             'date_end'                => ['type' => Type::string()],

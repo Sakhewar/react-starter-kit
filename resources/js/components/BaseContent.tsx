@@ -37,6 +37,7 @@ import { Input } from "./ui/input";
 import { router, useForm } from "@inertiajs/react";
 import { MoreFilters } from "./MoreFilters";
 import { BaseModal} from "./BaseModal";
+import listofFilters from "@/configs/listOfFilters";
 
 interface EntityItem {
   id: number | string;
@@ -201,7 +202,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
                     "
                     value={data.search}
                     onChange={(e) => setData({ ...data, search: e.target.value })}
-                    placeholder="Rechercher par libelle, description ..."
+                    placeholder={listofFilters[attributeName] != null ? listofFilters[attributeName].placeholder as string :  "Rechercher par libelle, description ..."}
                   />
                   <Icons.Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 </div>
@@ -332,12 +333,12 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
         </div>
       </div>
 
-      <MoreFilters type={attributeName} data={data} setData={setData} reset={()=>{reset(), setFilters({})}} open = {isMoreFilterOpen} onOpenChange={()=> setIsMoreFilterOpen(!isMoreFilterOpen)} handleSubmit={()=>setFilters({...filters,...data})} />
+      <MoreFilters type={attributeName} fields={listofFilters[attributeName] != null ? listofFilters[attributeName].fields as FieldConfig[] : []} data={data} setData={setData} reset={()=>{reset(), setFilters({})}} open = {isMoreFilterOpen} onOpenChange={()=> setIsMoreFilterOpen(!isMoreFilterOpen)} handleSubmit={()=>setFilters({...filters,...data})} />
 
       {/* Modal ouvert manuellement via state */}
       <BaseModal
           page={page}
-          title={attributeName}
+          title={page?.title}
           entity={attributeName}
           {
             ...(isTabs ? {tabs:fieldModal as TabConfig[]} : {fields : fieldModal as FieldConfig[]})

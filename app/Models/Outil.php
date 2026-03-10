@@ -16,11 +16,6 @@ use Illuminate\Http\{Request};
 
 class Outil extends Model
 {
-    public static $queries = array(
-        "provenances"                               => "id,libelle,description",
-        "modalitepaiements"                         => "id,libelle,description,nbre_jour",
-        "users"                                     => "id,name,image,status,status_fr,email",       
-    );
     public static function listenerUsers(&$table, $add = true)
     {
         if ($add)
@@ -372,6 +367,28 @@ class Outil extends Model
 
         $guzzleClient = new \GuzzleHttp\Client($guzzleDefaults);
 
+        if (strpos($filter, 'attrs:') !== false)
+        {
+            $start_quote = strpos($filter, '%22');
+            $end_quote = strpos($filter, '%22', $start_quote + 3);
+            $comma_pos = strpos($filter, ',', $end_quote + 3);
+            $attrs = substr($filter, 0, $comma_pos);
+
+            $attrs_pos = strpos($attrs, 'attrs:%22');
+
+            if ($attrs_pos !== false)
+            {
+                $start = $attrs_pos + strlen('attrs:%22');
+                $end = strpos($attrs, '%22', $start);
+                if ($end !== false)
+                {
+                    $justTheseAttr = substr($attrs, $start, $end - $start);
+                }
+            }
+
+            $filter = substr($filter, $comma_pos + 1);
+        }
+
         $critere = !empty($filter) ? '(' . $filter . ')' : "";
         if (str_contains($queryName, 'pdf'))
         {
@@ -381,10 +398,6 @@ class Outil extends Model
         if (isset($justTheseAttr))
         {
             $queryAttr = $justTheseAttr;
-        }
-        else if (!isset($queryAttr) && isset($queryName))
-        {
-            $queryAttr = Outil::$queries[$queryName] ?? "id,libelle,description";
         }
 
         $queryAttr = $queryAttr . $addToQueryAttr;

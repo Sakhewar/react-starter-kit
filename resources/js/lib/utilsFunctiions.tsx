@@ -213,66 +213,6 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
                   )}
                 </div>
               </div>
-            // <div className={cn("flex flex-col gap-2 hidden", field.inputClassName)}>
-            //   <label
-            //     htmlFor={field.name}
-            //     className={cn(
-            //       "relative flex flex-col items-center justify-center",
-            //       "w-30 h-30 rounded-full border-2 border-dashed border-input",
-            //       "text-sm text-muted-foreground cursor-pointer",
-            //       "hover:border-primary hover:bg-muted/40 transition-all duration-200",
-            //       processing && "opacity-50 pointer-events-none",
-            //       field.labelClassName
-            //     )}
-            //   >
-            //     {previewUrl ? (
-            //       <img
-            //         src={previewUrl}
-            //         alt="Aperçu"
-            //         className="w-full h-full rounded-full object-cover"
-            //       />
-            //     ) : (
-            //       <div className="flex flex-col items-center gap-2 px-4 text-center">
-            //         <Paperclip className="h-6 w-6 shrink-0" />
-            //         <span className="text-xs leading-tight">
-            //           {field.placeholder ?? "Choisir un fichier..."}
-            //         </span>
-            //       </div>
-            //     )}
-            //     <input
-            //       id={field.name}
-            //       type="file"
-            //       accept={field.accept}
-            //       multiple={field.multiple}
-            //       disabled={processing}
-            //       className="sr-only"
-            //       onChange={(e) => {
-            //         onFileChange?.(field.name, e, field.multiple);
-            //         // Aperçu image
-            //         const file = e.target.files?.[0];
-            //         if (file && file.type.startsWith("image/")) {
-            //           setPreviewUrl(URL.createObjectURL(file));
-            //         }
-            //       }}
-            //     />
-            //   </label>
-            // {(fileMap[field.name] ?? []).length > 0 && (
-            //     <ul className="flex flex-col gap-1">
-            //     {fileMap[field.name].map((file, i) => (
-            //         <li key={i} className="flex items-center justify-between text-sm px-2 py-1 rounded-md bg-muted">
-            //         <span className="truncate max-w-[80%]">{file.name}</span>
-            //         <button
-            //             type="button"
-            //             onClick={() => onRemoveFile?.(field.name, i)}
-            //             className="text-muted-foreground hover:text-destructive transition-colors"
-            //         >
-            //             <X className="h-3.5 w-3.5" />
-            //         </button>
-            //         </li>
-            //     ))}
-            //     </ul>
-            // )}
-            // </div>
         ) : (
             <Input
             id={field.name}
