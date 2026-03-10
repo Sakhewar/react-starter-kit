@@ -17,7 +17,7 @@ class LogiquePermissions extends Migration
             $table->id();
             $table->string('name');
             $table->string('tag');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
             \App\Models\Outil::listenerUsers($table);
@@ -27,7 +27,7 @@ class LogiquePermissions extends Migration
             $table->id();
             $table->string('name');
             $table->string('couleur')->default('info');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
             \App\Models\Outil::listenerUsers($table);
@@ -47,12 +47,13 @@ class LogiquePermissions extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groupe_permissions');
-        Schema::dropIfExists('type_permissions');
         Schema::table('permissions', function (Blueprint $table)
         {
             $table->dropConstrainedForeignId('groupe_permission_id');
             $table->dropConstrainedForeignId('type_permission_id');
         });
+        Schema::dropIfExists('groupe_permissions');
+        Schema::dropIfExists('type_permissions');
+       
     }
 }

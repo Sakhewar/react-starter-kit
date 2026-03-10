@@ -209,7 +209,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
                   onClick={() => setActiveTab(tab.key)}
                   className={cn(
                     "flex items-center gap-1.5 h-8 px-3 text-xs font-medium cursor-pointer",
-                    activeTab === tab.key ? "border-b-1 border-b-primary rounded-b-none" : ""
+                    activeTab === tab.key ? "border-b-3 border-b-primary rounded-b-none" : ""
                   )}
                 >
                   {tab.icon && (

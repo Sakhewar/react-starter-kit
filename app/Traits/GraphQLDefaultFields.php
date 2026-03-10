@@ -106,6 +106,11 @@ trait GraphQLDefaultFields
         return $date_at;
     }
 
+    public function resolveActiverFrField($root, $args)
+    {
+        return $root['activer'] == 1 ? "Oui" : "Non";
+    }
+
     public function resolveImageField($root, $args)
     {
         return Outil::resolveImageField($root['image']);

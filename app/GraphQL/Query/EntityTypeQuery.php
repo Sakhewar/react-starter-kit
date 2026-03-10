@@ -5,8 +5,10 @@ namespace App\GraphQL\Query;
 use App\RefactoringItems\RefactGraphQLQuery;
 use GraphQL\Type\Definition\Type;
 
-class ClientQuery extends RefactGraphQLQuery
+class EntityTypeQuery extends RefactGraphQLQuery
 {
+    protected $paginationType = 'EntityTypePaginatedType';
+    protected $modelType = 'EntityTypeType';
     public function args(): array
     {
         return $this->addArgs([

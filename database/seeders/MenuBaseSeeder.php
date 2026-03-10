@@ -70,15 +70,15 @@ class MenuBaseSeeder extends Seeder
                 'mode_link'     => 'liste-view',
                 'open_default'  => true,
                 'pages'         => [
-                    [
-                        'title'       => 'Pays',
-                        'title_en'    => 'Countries',
-                        'icon'        => 'Globe',
-                        'description' => null,
-                        'order'       => 1,
-                        'link'        => '/provenance',
-                        'permissions' => ['provenance'],
-                    ],
+                    // [
+                    //     'title'       => 'Pays',
+                    //     'title_en'    => 'Countries',
+                    //     'icon'        => 'Globe',
+                    //     'description' => null,
+                    //     'order'       => 1,
+                    //     'link'        => '/provenance',
+                    //     'permissions' => ['provenance'],
+                    // ],
                     [
                         'title'       => 'Modalités de paiement',
                         'title_en'    => 'Terms of payment',
@@ -439,8 +439,10 @@ class MenuBaseSeeder extends Seeder
 
         // LinkRouteController (inchangé sauf si tu veux renommer)
         $link_route_controllers = [
-            //['route_name' => 'soustypecotation', 'controller_name' => 'TypeCotation'],
+            //['route_name' => 'typefournisseur', 'controller_name' => 'EntityType'],
         ];
+        
+        LinkRouteController::query()->forceDelete();
 
         foreach ($link_route_controllers as $item)
         {

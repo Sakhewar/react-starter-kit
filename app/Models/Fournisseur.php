@@ -4,6 +4,7 @@ namespace App\Models;
 
 class Fournisseur extends Model
 {
+    public $codePrefix = 'F';
     public static $columnsExport =  [
         [
             "column_db" => "nom",

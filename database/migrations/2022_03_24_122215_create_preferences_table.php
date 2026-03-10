@@ -20,7 +20,6 @@ class CreatePreferencesTable extends Migration
             $table->string('display_name')->nullable();
             $table->string('valeur')->nullable();
             $table->timestamps();
-            \App\Models\Outil::listenerUsers($table);
         });
     }
 

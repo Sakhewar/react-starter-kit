@@ -48,6 +48,7 @@ interface GlobalState {
   reset: () => void;
 }
 import { persist } from "zustand/middleware";
+import { managePageDeps } from './routeChange';
 
 export const useGlobalStore = create<GlobalState>()(
   persist((set, get) => ({
@@ -102,11 +103,11 @@ export const useGlobalStore = create<GlobalState>()(
           {entity: 'permissions', fields: 'id,name',args: { search: `-${attributeName}` },
         });
 
-        if (currentTemplateUrl.indexOf('/client') !== -1)
-        {
-          getElementsNeeds.push({entity: 'typeclients',fields: 'id,libelle', args:{}});
-          getElementsNeeds.push({entity: 'modalitepaiements',fields: 'id,libelle', args:{}});
-        }
+        let needsEltsDeps: { entity: string; fields: string; args?: any }[] = [];
+
+        needsEltsDeps = managePageDeps(currentTemplateUrl, needsEltsDeps);
+
+        getElementsNeeds.push(...needsEltsDeps);
 
       }
       else
@@ -246,14 +247,14 @@ export const useGlobalStore = create<GlobalState>()(
       name: "global-store",
       partialize: (state) => ({
         scope: {
-          collapsed: state.scope?.collapsed ?? false,
+          collapsed: state.scope?.collapsed ?? true,
         },
       }),
       merge: (persistedState: any, currentState) => ({
         ...currentState, // garde tout le state initial
         scope: {
           ...currentState.scope,
-          collapsed: persistedState?.scope?.collapsed ?? false, // écrase uniquement collapsed
+          collapsed: persistedState?.scope?.collapsed ?? true, // écrase uniquement collapsed
         },
       }),
     }
@@ -297,6 +298,11 @@ export async function addElement(type: string, data : Record<string, any>)
     return {data: rtr};
   }).catch((error) =>
   {
+    if(error.response.status === 500)
+    {
+      toast.error('Une erreur est survenue, Merci de contacter l\'administrateur', {position:'top-center'});
+      rtr['success'] = false;
+    }
     if(error.response && error.response.data)
     {
       if(error.response.data.message)
@@ -366,8 +372,13 @@ export async function deleteElement(type: string, id: number)
 export async function exportToPdfOrExcel(type: string, typeExport: string, args: Record<string, any>)
 {
   const goodType = !type.endsWith("s") ? type + "s" : type;
+
+  let attrs = Object.entries({attrs: listofAttributes[goodType]}).map(([key,value])=>
+  {
+    return `${key}:${JSON.stringify(value.join(''))}`;
+  })
   
-  const url = `/generate-${goodType}-${typeExport}?${generateArgsFilters(args, false)}`;
+  const url = `/generate-${goodType}-${typeExport}?${attrs + ','+ generateArgsFilters(args, false)}`;
 
   window.open(url, '_blank');
   

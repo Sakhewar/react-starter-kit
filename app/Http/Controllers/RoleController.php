@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Validation\Rule;
 use App\RefactoringItems\{CRUDController};
 
-class RoleController extends EntityTypeController
+class RoleController extends CRUDController
 {
     protected $modelNamespace = '\\Spatie\\Permission\\Models';
 

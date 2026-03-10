@@ -6,14 +6,6 @@ use Illuminate\Validation\Rule;
 
 class FournisseurController extends ClientController
 {
-    public function beforeValidateData(): void
-    {
-        if($this->request->from_excel)
-        {
-            //dd($this->request->all());
-        }
-    }
-
     protected function getValidationRules(): array
     {
 

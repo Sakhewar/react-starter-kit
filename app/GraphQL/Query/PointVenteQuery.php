@@ -4,6 +4,6 @@ namespace App\GraphQL\Query;
 
 use App\RefactoringItems\RefactGraphQLQuery;
 
-class NotifPermUserQuery extends RefactGraphQLQuery
+class PointVenteQuery extends EntityTypeQuery
 {
 }

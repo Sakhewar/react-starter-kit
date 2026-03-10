@@ -16,6 +16,7 @@ use App\Models\{
     Page,
     Pays,
     TypeClient,
+    TypeFournisseur,
     User};
 use Illuminate\Database\Eloquent\Relations\{BelongsTo};
 use Spatie\Permission\Models\{Permission};
@@ -92,6 +93,11 @@ trait HasModelRelationships
     public function type_client()
     {
         return $this->belongsTo(TypeClient::class);
+    }
+
+    public function type_fournisseur()
+    {
+        return $this->belongsTo(TypeFournisseur::class);
     }
     public function clients()
     {

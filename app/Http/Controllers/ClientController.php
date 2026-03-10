@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Mpdf\Tag\U;
 use App\Models\{Outil,Contact,TypeClient};
+use App\RefactoringItems\CRUDController;
 use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rule;
 
-class ClientController extends EntityTypeController
+class ClientController extends CRUDController
 {
     protected function getValidationRules(): array
     {

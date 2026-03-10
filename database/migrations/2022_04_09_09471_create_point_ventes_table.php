@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateContactsTable extends Migration
+class CreatePointVentesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,16 @@ class CreateContactsTable extends Migration
      */
     public function up()
     {
-        Schema::create('contacts', function (Blueprint $table)
+        Schema::create('point_ventes', function (Blueprint $table)
         {
             $table->id();
-            $table->string('nom')->nullable();
-            $table->string('prenom')->nullable();
+            $table->string('libelle')->nullable();
             $table->string('email')->nullable();
             $table->string('telephone')->nullable();
-            $table->string('image')->nullable();
+            $table->string('adresse')->nullable();
+            $table->string('rccm')->nullable();
+            $table->string('ninea')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('client_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('fournisseur_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('point_vente_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
             \App\Models\Outil::listenerUsers($table);
@@ -38,6 +36,6 @@ class CreateContactsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contacts');
+        Schema::dropIfExists('point_ventes');
     }
 }

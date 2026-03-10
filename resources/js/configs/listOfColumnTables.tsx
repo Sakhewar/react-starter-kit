@@ -9,6 +9,7 @@ import { ChevronDown, Pencil, Copy, Trash2, Settings } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { Badge } from "@/components/ui/badge";
 import { can, updateElement, useGlobalStore } from "@/hooks/backoffice";
+import { cn } from "@/lib/utils";
 
 export const columnConfigs: Record<string, Column[]> =
 {
@@ -59,16 +60,42 @@ export const columnConfigs: Record<string, Column[]> =
       },
       
   ],
+  typefournisseur : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        />
+      ),
+    },  
+  ],
+
+  pointvente : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "adresse", label: "Adresse", className: "" },
+    { key: "email", label: "Email", className: "" },
+    { key: "telephone", label: "Téléphone", className: "" },
+    { key: "rccm", label: "RCCM", className: "" },
+    { key: "ninea", label: "Ninea", className: "" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        />
+      ),
+    },  
+  ],
 
   client : [
       { key: "code", label: "Code", render: (_,row) =>  <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge>},
       { key: "nom_complet", label: "Nom Complet", className: "", render: (_,row, extra) =>  `${row?.nom_complet}`},
       { key: "email", label: "Email" },
-      { key: "telephone", label: "Téléphone",render: (_,row) =>  <Badge className="text-white rounded-[5px] bg-orange-600">{row?.telephone}</Badge>},
+      { key: "telephone", label: "Téléphone",render: (_,row) =>  <span>{row?.telephone}</span>},
       { key: "adresse", label: "Adresse" },
-      { key: "type_client_id", label: "Type de client",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px] bg-green-600">{row?.type_client.libelle}</Badge>},
-      { key: "plafond", label: "Plafond/Remise", className: "", render: (_,row, extra) =>  `${row?.plafond} / ${row?.remise}%`},
-      { key: "modalite_paiement_id", label: "Modalite de paiement",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px]">{row?.modalite_paiement.libelle}</Badge>},
+      { key: "type_client_id", label: "Type de client",render: (_,row, extra) =>  <span>{row?.type_client?.libelle}</span>},
+      { key: "plafond", label: "Plafond/Remise", className: "", render: (_,row, extra) =>  `${row?.plafond ?? ''} / ${row?.remise ? `${row?.remise}%` : ''}`},
+      { key: "modalite_paiement_id", label: "Modalite de paiement",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px]">{row?.modalite_paiement?.libelle}</Badge>},
+      { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
@@ -79,10 +106,12 @@ export const columnConfigs: Record<string, Column[]> =
   ],
 
   fournisseur : [
+      { key: "code", label: "Code", render: (_,row) =>  <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge>},
       { key: "nom_complet", label: "Nom Complet", className: "" },
       { key: "email", label: "Email" },
-      { key: "telephone", label: "Téléphone" },
+      { key: "telephone", label: "Téléphone",render: (_,row) =>  <Badge className="text-white rounded-[5px] bg-orange-600">{row?.telephone}</Badge>},
       { key: "adresse", label: "Adresse" },
+      { key: "type_fournisseur_id", label: "Type de fournisseur",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px] bg-green-600">{row?.type_fournisseur?.libelle}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
@@ -271,6 +300,17 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName}:
             if(key === "clone")
             {
               data.id = null;
+              Object.keys(data).forEach((key)=>
+              {
+                if(Array.isArray(data[key]))
+                {
+                  data[key] = data[key].map((item: any)=>
+                  {
+                    delete item.id;
+                    return item;
+                  })
+                }
+              })
             }
             useGlobalStore.setState((state) => ({ ...state, updateItem: data }));
           });

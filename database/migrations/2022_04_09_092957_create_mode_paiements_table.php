@@ -17,10 +17,10 @@ class CreateModePaiementsTable extends Migration
         {
             $table->id();
             $table->string('libelle');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
+            $table->string('id_text')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            \App\Models\Outil::listenerUsers($table);
         });
     }
 

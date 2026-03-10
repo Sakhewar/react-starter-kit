@@ -170,6 +170,7 @@ return [
     'cursor_pagination_type' => Rebing\GraphQL\Support\CursorPaginationType::class,
 
     'graphiql' => [
+        'enabled' => env('ENABLE_GRAPHIQL', true),
         'prefix' => '/graphiql',
         'controller' => \Rebing\GraphQL\GraphQLController::class.'@graphiql',
         'middleware' => [],

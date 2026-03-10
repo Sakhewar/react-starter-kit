@@ -267,7 +267,7 @@ class Outil extends Model
         $uri = $request->getRequestUri();
         $query = parse_url($uri)['query'] ?? '';
         $filtre = isset($id) ? "id:{$id}" : $query;
-
+        
         $data = Outil::getOneItemWithFilterGraphQl($request, $queryName, $filtre);
 
         if ($rewriteQueryName != null)

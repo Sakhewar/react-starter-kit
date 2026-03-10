@@ -23,8 +23,7 @@ class CreateFournisseursTable extends Migration
             $table->string('telephone')->nullable();
             $table->string('adresse')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('pay_id')->nullable()->constrained();
-            $table->integer('status')->default(1);
+            $table->foreignId('type_fournisseur_id')->nullable()->constrained();
             $table->timestamps();
             $table->softDeletes();
             \App\Models\Outil::listenerUsers($table);

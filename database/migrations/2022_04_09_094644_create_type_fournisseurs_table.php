@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModalitePaiementsTable extends Migration
+class CreateTypeFournisseursTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateModalitePaiementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('modalite_paiements', function (Blueprint $table)
+        Schema::create('type_fournisseurs', function (Blueprint $table)
         {
             $table->id();
             $table->string('libelle');
-            $table->integer('nbre_jour')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -31,6 +30,6 @@ class CreateModalitePaiementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modalite_paiements');
+        Schema::dropIfExists('type_fournisseurs');
     }
 }

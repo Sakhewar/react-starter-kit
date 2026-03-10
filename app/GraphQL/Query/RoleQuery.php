@@ -7,9 +7,4 @@ use App\RefactoringItems\RefactGraphQLQuery;
 class RoleQuery extends RefactGraphQLQuery
 {
     protected $modelNamespace = '\\Spatie\\Permission\\Models';
-
-    public $attributes = [
-        'name' => 'roles',
-        'description' => 'Retourne la liste des roles',
-    ];
 }

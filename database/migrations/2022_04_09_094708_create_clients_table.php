@@ -23,14 +23,12 @@ class CreateClientsTable extends Migration
             $table->text('image')->nullable();
             $table->string('adresse')->nullable();
             $table->text('description')->nullable();
-            $table->integer('status')->default(1);
             $table->float('remise')->nullable();
             $table->float('plafond')->nullable();
             $table->foreignId('type_client_id')->nullable()->constrained();
             $table->foreignId('modalite_paiement_id')->nullable()->constrained();
             $table->timestamps();
             $table->softDeletes();
-            \App\Models\Outil::listenerUsers($table);
         });
     }
 
