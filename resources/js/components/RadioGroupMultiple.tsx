@@ -84,13 +84,13 @@ export function RadioGroupField({
                 >
                   {isActive && (
                     <span className={cn("w-2 h-2 rounded-full bg-primary block",
-                      isActive ? option.activeClassName ?? styles.active : (inactiveClassName ?? styles.inactive)
+                      isActive ? option.radioActiveClassName ?? styles.active : (inactiveClassName ?? styles.inactive)
                   )} />
                   )}
                 </span>
               )}
               {option.icon && <span className="shrink-0">{option.icon}</span>}
-              {option.label}
+              <span className={option.labelClassName ?? ""}>{option.label}</span>
             </button>
           );
         })}

@@ -17,7 +17,12 @@ class FournisseurController extends ClientController
             'telephone'                   => [
                 'nullable',
                 Rule::unique($this->table)->where('telephone', $this->request->telephone)->ignore($this->modelId)
-            ]
+            ],
+
+            'type_fournisseur_id'                         => [
+                'required'
+            ],
+            
         ];
     }
 
@@ -26,7 +31,8 @@ class FournisseurController extends ClientController
         return [
             'nom_complet.required'               => "Le nom complet du fournisseur est requis",
             'telephone.required'                 => "Le numéro de téléphone du fournisseur est requis",
-            'telephone.unique'                   => "Ce numéro de téléphone est déjà utilisé"
+            'telephone.unique'                   => "Ce numéro de téléphone est déjà utilisé",
+            'type_fournisseur_id.required'       => "Le type de fournisseur est requis",
         ];
     }
 }

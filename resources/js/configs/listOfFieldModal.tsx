@@ -5,6 +5,7 @@ import { FaAddressBook, FaInfoCircle } from "react-icons/fa";
 
 export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
 {
+  // Backoffice
   provenance:
   [
     { name: "libelle",     label: "Libellé",     type: "text",     required: true },
@@ -36,7 +37,50 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
     { name: "description", label: "Description", type: "textarea" },
   ],
 
-  // Modal avec Tab Pane
+  typedepot:
+  [
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
+
+  pointvente:
+  [
+    {
+      key: "infos",
+      icon: <InfoIcon />,
+      label: "Infos Générales",
+      fields:
+      [
+        { name: "libelle",               label: "Libellé",               type: "text",     required: true,                                                                  },
+        { name: "email",                 label: "Email",                 type: "email",                                                                            lgColSpan: 6,   mdColSpan: 6 },
+        { name: "telephone",             label: "Nº de téléphone",       type: "number",                                                          lgColSpan: 6,   mdColSpan: 6 },
+        { name: "rccm",                  label: "RCCM",                  type: "text",                                                                                  },
+        { name: "ninea",                 label: "Ninea",                 type: "text",                                                                                  },
+        { name: "adresse",               label: "Adresse",               type: "textarea",                                                                                  },
+      ],
+    },
+    {
+      key: "contacts",
+      label: "Contact(s)",
+      icon: <BookOpen />,
+      tableMode: true,
+      fields:
+      [
+        { name: "email",     label: "Email",        type: "email",             required:true,            is_unique: true,      colSpan: 12,      mdColSpan: 6 },
+        { name: "telephone", label: "Téléphone",    type:"number",         required:true,            is_unique: true,      colSpan: 12,      mdColSpan:5 },
+      ],
+    },
+  ] as TabConfig[],
+
+  depot:
+  [
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
+    { name: "point_vente_id",        label: "Point de vente",        type: "select",    required: true,       options: "pointventes", lgColSpan:6,  inputClassName: "w-full" },
+    { name: "type_depot_id",        label: "Type de dépôt",        type: "select",    required: true,         options: "typedepots",  lgColSpan:6,  inputClassName: "w-full" },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
+
+  // Modal Tiers
   client:
   [
     {
@@ -95,35 +139,6 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
         { name: "nom",       label: "Nom Complet",        required:true,                                  colSpan: 12,      mdColSpan: 4 },
         { name: "email",     label: "Email",        type: "email",             required:true,            is_unique: true,      colSpan: 12,      mdColSpan: 4 },
         { name: "telephone", label: "Téléphone",  type:"number",           required:true,            is_unique: true,      colSpan: 12,      mdColSpan: 3 },
-      ],
-    },
-  ] as TabConfig[],
-
-  pointvente:
-  [
-    {
-      key: "infos",
-      icon: <InfoIcon />,
-      label: "Infos Générales",
-      fields:
-      [
-        { name: "libelle",               label: "Libellé",               type: "text",     required: true,                                                                  },
-        { name: "email",                 label: "Email",                 type: "email",                                                                            lgColSpan: 6,   mdColSpan: 6 },
-        { name: "telephone",             label: "Nº de téléphone",       type: "number",                                                          lgColSpan: 6,   mdColSpan: 6 },
-        { name: "rccm",                  label: "RCCM",                  type: "text",                                                                                  },
-        { name: "ninea",                 label: "Ninea",                 type: "text",                                                                                  },
-        { name: "adresse",               label: "Adresse",               type: "textarea",                                                                                  },
-      ],
-    },
-    {
-      key: "contacts",
-      label: "Contact(s)",
-      icon: <BookOpen />,
-      tableMode: true,
-      fields:
-      [
-        { name: "email",     label: "Email",        type: "email",             required:true,            is_unique: true,      colSpan: 12,      mdColSpan: 6 },
-        { name: "telephone", label: "Téléphone",    type:"number",         required:true,            is_unique: true,      colSpan: 12,      mdColSpan:5 },
       ],
     },
   ] as TabConfig[],

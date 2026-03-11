@@ -151,9 +151,9 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
         {/* Header */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            {PageIcon && <PageIcon className="w-5 h-5" />}
-            <h1 className="text-lg font-semibold tracking-tight">{namepage}</h1>
-            <Badge variant="default" className="font-normal rounded-[4px]">
+            {PageIcon && <PageIcon className="w-4 h-4" />}
+            <h1 className="text-md font-semibold tracking-tight">{namepage}</h1>
+            <Badge variant="default" className="font-normal text-xs rounded-[4px]">
               {metadata?.total ?? 0}
             </Badge>
           </div>

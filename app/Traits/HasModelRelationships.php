@@ -15,7 +15,9 @@ use App\Models\{
     NotifPermUser,
     Page,
     Pays,
+    PointVente,
     TypeClient,
+    TypeDepot,
     TypeFournisseur,
     User};
 use Illuminate\Database\Eloquent\Relations\{BelongsTo};
@@ -93,6 +95,16 @@ trait HasModelRelationships
     public function type_client()
     {
         return $this->belongsTo(TypeClient::class);
+    }
+
+    public function type_depot()
+    {
+        return $this->belongsTo(TypeDepot::class);
+    }
+
+    public function point_vente()
+    {
+        return $this->belongsTo(PointVente::class);
     }
 
     public function type_fournisseur()

@@ -247,14 +247,14 @@ export const useGlobalStore = create<GlobalState>()(
       name: "global-store",
       partialize: (state) => ({
         scope: {
-          collapsed: state.scope?.collapsed ?? true,
+          collapsed: state.scope?.collapsed ?? false,
         },
       }),
       merge: (persistedState: any, currentState) => ({
         ...currentState, // garde tout le state initial
         scope: {
           ...currentState.scope,
-          collapsed: persistedState?.scope?.collapsed ?? true, // écrase uniquement collapsed
+          collapsed: persistedState?.scope?.collapsed ?? false, // écrase uniquement collapsed
         },
       }),
     }

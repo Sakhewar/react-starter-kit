@@ -80,7 +80,8 @@ export function MoreFilters({type,open, onOpenChange, data, setData, handleSubmi
                   ))}
                 </div>}
 
-                <div className="flex gap-2 items-center mt-10">
+                <div className="flex gap-2 items-center mt-10 justify-end">
+                    <span className="text-sm text-gray-500 mr-2">Exporter les données en </span>
                     <Button size="sm" type="button" variant="link" onClick={()=>{exportToPdfOrExcel(type, 'excel', data)}}>
                         <FaRegFileExcel className="text-green-600 text-sm cursor-pointer hover:opacity-80 transition" />
                         Excel

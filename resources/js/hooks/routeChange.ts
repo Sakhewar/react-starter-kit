@@ -12,6 +12,11 @@ export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ ent
     {
         getElementsNeeds.push({entity: 'typefournisseurs',fields: 'id,libelle', args:{}});
     }
+    else if(currentTemplateUrl.indexOf('/depot') !== -1)
+    {
+        getElementsNeeds.push({entity: 'typedepots',fields: 'id,libelle', args:{}});
+        getElementsNeeds.push({entity: 'pointventes',fields: 'id,libelle', args:{}});
+    }
 
     return getElementsNeeds;
 

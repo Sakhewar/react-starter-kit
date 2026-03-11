@@ -31,6 +31,18 @@ class EntityTypeController extends CRUDController
                 ]
             ]);
         }
+   
+        if(Str::contains('depot', $this->getPath()))
+        {
+            $baseArray = array_merge($baseArray,[
+                'point_vente_id'                       => [
+                    'required',
+                ],
+                'type_depot_id'                        => [
+                    'required',
+                ]
+            ]);
+        }
         return $baseArray;
     }
 
@@ -40,6 +52,8 @@ class EntityTypeController extends CRUDController
             "libelle.required"         => "Le libelle est obligatoire",
             "libelle.unique"           => "Le libelle existe déjà",
             "nbre_jour.required"       => "Le nombre de jour est obligatoire",
+            "point_vente_id.required"  => "Le point de vente est obligatoire",
+            "type_depot_id.required"   => "Le type de depot est obligatoire"
         ];
     }
 

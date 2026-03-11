@@ -38,6 +38,8 @@ export interface RadioOption
     label: string;
     value: string | number | boolean | null;
     activeClassName?: string;
+    radioActiveClassName?: string;
+    labelClassName?: string;
     icon?: React.ReactNode;
 }
 

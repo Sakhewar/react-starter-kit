@@ -71,6 +71,17 @@ export const columnConfigs: Record<string, Column[]> =
     },  
   ],
 
+  typedepot : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        />
+      ),
+    },  
+  ],
+
   pointvente : [
     { key: "libelle", label: "Libellé", className: "" },
     { key: "adresse", label: "Adresse", className: "" },
@@ -86,15 +97,29 @@ export const columnConfigs: Record<string, Column[]> =
     },  
   ],
 
+  depot : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "point_vente_id", label: "Point de vente",render: (_,row, extra) =>  <span>{row?.point_vente?.libelle}</span>},
+    { key: "type_depot_id", label: "Type de dépôt",render: (_,row, extra) =>  <span>{row?.type_depot?.libelle}</span>},
+    { key: "description", label: "Description" },
+    { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        />
+      ),
+    },  
+  ],
+
   client : [
       { key: "code", label: "Code", render: (_,row) =>  <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge>},
       { key: "nom_complet", label: "Nom Complet", className: "", render: (_,row, extra) =>  `${row?.nom_complet}`},
       { key: "email", label: "Email" },
-      { key: "telephone", label: "Téléphone",render: (_,row) =>  <span>{row?.telephone}</span>},
+      { key: "telephone", label: "Téléphone"},
       { key: "adresse", label: "Adresse" },
       { key: "type_client_id", label: "Type de client",render: (_,row, extra) =>  <span>{row?.type_client?.libelle}</span>},
       { key: "plafond", label: "Plafond/Remise", className: "", render: (_,row, extra) =>  `${row?.plafond ?? ''} / ${row?.remise ? `${row?.remise}%` : ''}`},
-      { key: "modalite_paiement_id", label: "Modalite de paiement",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px]">{row?.modalite_paiement?.libelle}</Badge>},
+      { key: "modalite_paiement_id", label: "Modalite de paiement",render: (_,row, extra) =>  <span>{row?.modalite_paiement?.libelle}</span>},
       { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
@@ -109,9 +134,9 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "code", label: "Code", render: (_,row) =>  <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge>},
       { key: "nom_complet", label: "Nom Complet", className: "" },
       { key: "email", label: "Email" },
-      { key: "telephone", label: "Téléphone",render: (_,row) =>  <Badge className="text-white rounded-[5px] bg-orange-600">{row?.telephone}</Badge>},
+      { key: "telephone", label: "Téléphone"},
       { key: "adresse", label: "Adresse" },
-      { key: "type_fournisseur_id", label: "Type de fournisseur",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px] bg-green-600">{row?.type_fournisseur?.libelle}</Badge>},
+      { key: "type_fournisseur_id", label: "Type de fournisseur",render: (_,row, extra) =>  <span>{row?.type_fournisseur?.libelle}</span>},
       { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (

@@ -1,5 +1,6 @@
 // utils/graphql.ts
 import axios from 'axios';
+import { toast } from 'sonner';
 
 interface GraphQLParams {
   entity: string;                  
@@ -47,11 +48,13 @@ export async function graphqlGet<T = any>({entity,fields,args = {},callback = un
     if (result.errors && result.errors.length > 0)
     {
       const msg = result.errors.map((e: any) => e.message).join('\n');
+      toast.error(`Erreur GraphQL: ${msg}`, {position:'top-center'});
       throw new Error(`GraphQL Error: ${msg}`);
     }
 
     if (!result.data || !result.data[entity])
     {
+      toast.error(`Aucune donnée pour ${entity}`, {position:'top-center'});
       throw new Error(`Aucune donnée pour ${entity}`);
     }
 
@@ -59,6 +62,7 @@ export async function graphqlGet<T = any>({entity,fields,args = {},callback = un
   } 
   catch (error: any)
   {
+    toast.error(`Erreur GraphQL: ${error.message}`, {position:'top-center'});
     console.error('Erreur graphqlGet:', error);
     throw error;
   }
@@ -75,6 +79,11 @@ export function generateArgsFilters(args:Record<string, any>, withBrace = true):
         if(key.endsWith("_id") || ['id'].includes(key))
         {
           value = parseInt(value);
+
+          if(isNaN(value))
+          {
+            return '';
+          }
         }
         
         if(String(value).trim().length == 0 || value == null || value == undefined)
