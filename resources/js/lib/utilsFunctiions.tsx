@@ -273,7 +273,7 @@ function SearchableSelect({ field, value, onChange, processing }: {
           >
             {value
               ? Array.isArray(options) && options.find(opt => String(opt.id) === String(value))?.libelle
-              : (field.placeholder ?? `Choisir ${field.label.toLowerCase()}`)}
+              : (field.placeholder ?? `${toCapitalize(field.label.toLowerCase())}`)}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -291,7 +291,7 @@ function SearchableSelect({ field, value, onChange, processing }: {
                   }}
                 >
                   <span className="text-muted-foreground">
-                    {field.placeholder ?? `Choisir ${field.label.toLowerCase()}`}
+                    {field.placeholder ?? `${toCapitalize(field.label.toLowerCase())}`}
                   </span>
                 </CommandItem>
                 {Array.isArray(options) && options.map((opt) => (
