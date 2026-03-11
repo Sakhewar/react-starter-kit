@@ -40,7 +40,7 @@ export function RadioGroupField({
   const styles = STYLE_DEFAULTS[radioStyle];
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col items-center gap-1.5">
       {label && (
         <span
           className={cn(
@@ -69,7 +69,7 @@ export function RadioGroupField({
               className={cn(
                 styles.base,
                 isActive
-                  ? (option.activeClassName ?? activeClassName ?? styles.active)
+                  ? (activeClassName ?? styles.active)
                   : (inactiveClassName ?? styles.inactive),
                 disabled && "opacity-50 pointer-events-none"
               )}
@@ -78,11 +78,14 @@ export function RadioGroupField({
                 <span
                   className={cn(
                     "w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
-                    isActive ? "border-primary" : "border-muted-foreground"
+                    isActive ? "border-primary" : "border-muted-foreground",
+                    isActive ? option.activeClassName ?? styles.active  : (inactiveClassName ?? styles.inactive)
                   )}
                 >
                   {isActive && (
-                    <span className="w-2 h-2 rounded-full bg-primary block" />
+                    <span className={cn("w-2 h-2 rounded-full bg-primary block",
+                      isActive ? option.activeClassName ?? styles.active : (inactiveClassName ?? styles.inactive)
+                  )} />
                   )}
                 </span>
               )}

@@ -25,7 +25,7 @@ var listofAttributes : Record<any,any> =
         "description,contacts{id,nom,email,telephone}"
     ],
     fournisseurs : [
-        "id,code,nom_complet,email,telephone,adresse,image,type_fournisseur_id,type_fournisseur{id,libelle}",
+        "id,code,nom_complet,email,telephone,adresse,image,type_fournisseur_id,type_fournisseur{id,libelle},activer,activer_fr",
         "description,contacts{id,nom,email,telephone}"
     ],
 

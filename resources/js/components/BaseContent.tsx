@@ -68,6 +68,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isMoreFilterOpen, setIsMoreFilterOpen] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [isDialogChangeOpen, setIsDialogChangeOpen] = React.useState(false);
   const [refreshList, setRefreshList] = useState(0);
   const [filters, setFilters] = useState({});
   const { data, setData, reset } = useForm({
@@ -128,6 +129,10 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   useEffect(()=>{
     setIsDialogOpen(deleteItem != null);
   },[deleteItem])
+
+  useEffect(()=>{
+    setIsDialogChangeOpen(scope.changedItem != null);
+  },[scope.changedItem])
 
   const PageIcon = page?.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
@@ -357,6 +362,16 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             onConfirm={()=>{deleteElement(attributeName, deleteItem?.id).then((data) => {data && data.success && (setIsDialogOpen(false),setRefreshList((prev) => prev + 1));
             })}}
             onOpenChange={() => {setIsDialogOpen(!isDialogOpen); useGlobalStore.setState((state) => ({ ...state, deleteItem: null }));}}
+          />
+
+          <ConfirmDialog
+            title="Activer cet element"
+            description="Etes-vous sûr de vouloir activer cet element ?"
+            confirmText="Oui, activer"
+            open={isDialogChangeOpen}
+            onConfirm={()=>{deleteElement(attributeName, deleteItem?.id).then((data) => {data && data.success && (setIsDialogChangeOpen(false),setRefreshList((prev) => prev + 1));
+            })}}
+            onOpenChange={() => {setIsDialogChangeOpen(!isDialogChangeOpen); useGlobalStore.setState((state) => ({scope: { ...state.scope, changedItem: null }}));}}
           />
       </div>
   );

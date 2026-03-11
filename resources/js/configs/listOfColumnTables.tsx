@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Pencil, Copy, Trash2, Settings } from "lucide-react";
+import { ChevronDown, Pencil, Copy, Trash2, Settings, Clapperboard, Download, Fingerprint } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { Badge } from "@/components/ui/badge";
 import { can, updateElement, useGlobalStore } from "@/hooks/backoffice";
@@ -112,9 +112,24 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "telephone", label: "Téléphone",render: (_,row) =>  <Badge className="text-white rounded-[5px] bg-orange-600">{row?.telephone}</Badge>},
       { key: "adresse", label: "Adresse" },
       { key: "type_fournisseur_id", label: "Type de fournisseur",render: (_,row, extra) =>  <Badge className="text-white rounded-[5px] bg-green-600">{row?.type_fournisseur?.libelle}</Badge>},
+      { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+            extraActions={
+              [
+                { key: "print", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? Fingerprint : Clapperboard, variant: row.activer == 1 ? "destructive" : "primary",
+                  condition(r)
+                  { 
+                    return can('modification-fournisseur')
+                  },
+                  onClick(r)
+                  {
+                    useGlobalStore.setState((state) => ({scope: { ...state.scope, changedItem: r }}));
+                  }
+                },
+              ]
+            }
           />
         ),
       },
@@ -238,7 +253,7 @@ export type Action =
   key: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  variant?: "default" | "destructive";
+  variant?: "default" | "destructive" | "primary" | "secondary" | "success";
   condition?: (row: any) => boolean;
   onClick?: (row: any) => void;
 };
