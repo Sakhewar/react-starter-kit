@@ -18,6 +18,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
   const [openModules, setOpenModules] = useState<string[]>([]);
 
   const [flyoutModule, setFlyoutModule] = useState<any | null>(null);
+  const [FlyoutModuleIcon, setFlyoutModuleIcon] = useState<any | null>(null);
   const [flyoutTop, setFlyoutTop] = useState(0);
   const flyoutRef = useRef<HTMLDivElement>(null);
 
@@ -47,6 +48,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
     const handleClickOutside = (e: MouseEvent) => {
       if (flyoutRef.current && !flyoutRef.current.contains(e.target as Node)) {
         setFlyoutModule(null);
+        setFlyoutModuleIcon(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -68,6 +70,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
       const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       setFlyoutTop(rect.top);
       setFlyoutModule((prev: any) => (prev?.title === module.title ? null : module));
+      const ModuleIcon = Icons[module.icon as keyof typeof Icons] || Icons.Folder;
+      setFlyoutModuleIcon(ModuleIcon);
     }
   };
 
@@ -226,7 +230,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
             className="fixed left-[72px] z-50 bg-background border border-border rounded-[5px] shadow-2xl overflow-hidden"
           >
             {/* Titre du module */}
-            <div className="px-4 py-3 border-b bg-accent/30">
+            <div className="px-4 py-3 border-b bg-accent/30 flex gap-2">
+              {FlyoutModuleIcon && <FlyoutModuleIcon className="h-4 w-4" />}
               <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">
                 {flyoutModule.title}
               </p>
