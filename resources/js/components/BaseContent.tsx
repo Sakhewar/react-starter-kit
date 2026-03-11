@@ -21,20 +21,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn, FieldConfig, TabConfig } from "@/lib/utils"; // si tu as cette fonction utilitaire
+import { cn, Column, FieldConfig, TabConfig } from "@/lib/utils"; // si tu as cette fonction utilitaire
 
-import { Column, columnConfigs } from "@/configs/listOfColumnTables";
+import {columnConfigs } from "@/configs/listOfColumnTables";
 
 import * as Icons from "lucide-react";
 import { fieldModals } from "@/configs/listOfFieldModal";
-import { can, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
+import { can, changeStatut, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
 
 import { useEffect, useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ConfirmDialog } from "./ConfirmDialog";
 import PaginationComponent from "./PaginationComponent";
 import { Input } from "./ui/input";
-import { router, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { MoreFilters } from "./MoreFilters";
 import { BaseModal} from "./BaseModal";
 import listofFilters from "@/configs/listOfFilters";
@@ -58,7 +58,7 @@ interface PaginatedResponse<T> {
 export default function BaseContent({attributeName, namepage,page,...props}:{attributeName:string, namepage: string;page: any;})
 {
   //Charger le state management de Zustand
-  const { initialize, dataPage, isLoading: globalLoading, errors: errorGraphQL, updateItem, deleteItem, scope} = useGlobalStore();
+  const { initialize, dataPage, isLoading: globalLoading, errors: errorGraphQL, updateItem, scope} = useGlobalStore();
 
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,8 +67,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isMoreFilterOpen, setIsMoreFilterOpen] = React.useState(false);
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [isDialogChangeOpen, setIsDialogChangeOpen] = React.useState(false);
   const [refreshList, setRefreshList] = useState(0);
   const [filters, setFilters] = useState({});
   const { data, setData, reset } = useForm({
@@ -125,14 +123,6 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
     setIsModalOpen(updateItem != null);
     
   },[updateItem])
-
-  useEffect(()=>{
-    setIsDialogOpen(deleteItem != null);
-  },[deleteItem])
-
-  useEffect(()=>{
-    setIsDialogChangeOpen(scope.changedItem != null);
-  },[scope.changedItem])
 
   const PageIcon = page?.icon ? (Icons[page.icon as keyof typeof Icons] as React.ElementType) : null;
 
@@ -357,21 +347,24 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
           onOpenChange={() => {setIsModalOpen(!isModalOpen); useGlobalStore.setState((state) => ({ ...state, updateItem: null }));}}
         />
 
-        <ConfirmDialog
-            open={isDialogOpen}
-            onConfirm={()=>{deleteElement(attributeName, deleteItem?.id).then((data) => {data && data.success && (setIsDialogOpen(false),setRefreshList((prev) => prev + 1));
-            })}}
-            onOpenChange={() => {setIsDialogOpen(!isDialogOpen); useGlobalStore.setState((state) => ({ ...state, deleteItem: null }));}}
-          />
-
+          {/* Dialog de change statut ... */}
           <ConfirmDialog
-            title="Activer cet element"
-            description="Etes-vous sûr de vouloir activer cet element ?"
-            confirmText="Oui, activer"
-            open={isDialogChangeOpen}
-            onConfirm={()=>{deleteElement(attributeName, deleteItem?.id).then((data) => {data && data.success && (setIsDialogChangeOpen(false),setRefreshList((prev) => prev + 1));
-            })}}
-            onOpenChange={() => {setIsDialogChangeOpen(!isDialogChangeOpen); useGlobalStore.setState((state) => ({scope: { ...state.scope, changedItem: null }}));}}
+            title={scope && scope.itemToChange != null ? scope.itemToChange?.title : ""}
+            description={scope && scope.itemToChange != null ? scope.itemToChange?.description : ""}
+            confirmText={scope && scope.itemToChange != null ? scope.itemToChange?.confirmText : ""}
+            open={scope && scope.itemToChange != null}
+            onConfirm={()=> scope && scope.itemToChange != null && scope.itemToChange?.onConfirm().then((data:any)=>
+            {
+              useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: null }}));
+              data && data.success && (setRefreshList((prev) => prev + 1));
+            })}
+            onOpenChange={
+              () => {
+                useGlobalStore.setState((state) => ({
+                  scope: { ...state.scope, itemToChange: null }
+                }));
+              }
+            }
           />
       </div>
   );

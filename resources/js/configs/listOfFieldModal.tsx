@@ -51,6 +51,7 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
       label: "Infos Générales",
       fields:
       [
+        { name: 'image',                 label: "",                      type: "file",      accept: "image/*" },
         { name: "libelle",               label: "Libellé",               type: "text",     required: true,                                                                  },
         { name: "email",                 label: "Email",                 type: "email",                                                                            lgColSpan: 6,   mdColSpan: 6 },
         { name: "telephone",             label: "Nº de téléphone",       type: "number",                                                          lgColSpan: 6,   mdColSpan: 6 },

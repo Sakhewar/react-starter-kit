@@ -106,7 +106,8 @@ abstract class CRUDController extends Controller
      *
      * @var any
      */
-    protected $columStatut = 'status';
+    //protected $columStatut = 'status';
+    protected $columStatut = 'activer';
 
     /**
      * Le namespace ou est localise les model
@@ -262,7 +263,7 @@ abstract class CRUDController extends Controller
                 $errors = null;
                 $data = 0;
 
-                if (isset($this->modelValue))
+                if (isset($this->modelValue, $this->modelValue->id))
                 {
                     if (Schema::hasColumn($this->modelValue->getTable(), $this->columStatut))
                     {

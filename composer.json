@@ -107,7 +107,6 @@
             "rm -rf bootstrap/cache/* storage/framework/views/*",
             "php artisan clear-compiled",
             "composer dumpautoload",
-            "mkdir -p public/uploads/fournisseurs",
             "sudo chmod -R 777 public/uploads/ storage/ bootstrap/cache",
             "php artisan optimize:clear"
         ],

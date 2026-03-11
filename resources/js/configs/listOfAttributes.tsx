@@ -34,7 +34,7 @@ var listofAttributes : Record<any,any> =
     ],
 
     pointventes : [
-        "id,,libelle,email,telephone,adresse,image,rccm,ninea",
+        "id,image,libelle,email,telephone,adresse,image,rccm,ninea",
         "description,contacts{id,email,telephone}"
     ],
 

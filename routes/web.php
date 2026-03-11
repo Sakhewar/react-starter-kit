@@ -38,5 +38,24 @@ Route::middleware('auth')->group(function ()
 
 });
 
+// Route::post('/{table_name}/{methode?}', function ($resource) {
+//     $controllerClass = new class extends CRUDController
+//     {
+//         public function __construct()
+//         {
+//             $this->model = "App\\Models\\" . ucfirst('ModalitePaiement');
+//             parent::__construct();
+//         }
+
+//         public function beforeValidateData(): void
+//         {
+//             dd($this->model::$columnsExport);
+//             //dd($this->request->all());
+//         }
+//     };
+   
+//     // Appelle dynamiquement la méthode index
+//     return $controllerClass->save()
+
 
 

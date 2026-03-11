@@ -518,6 +518,12 @@ class Outil extends Model
 
     public static function uploadFileToModel(&$request, &$item, $file = "image", $subimage="image")
     {
+        $directoryUpload = $item::getDirectoryUploads($item);
+        
+        if(!isset($directoryUpload))
+        {
+            throw new \Exception("Le model n'a pas de dossier d'upload");
+        }
         $attr_erase = $file . "_erase";
         if (!empty($request->file()) && isset($_FILES[$file]))
         {
@@ -526,10 +532,17 @@ class Outil extends Model
             {
                 $fichier_tmp = $_FILES[$file]['tmp_name'];
                 $ext = explode('.', $fichier);
-                $rename = config('view.uploads')[self::getQueryNameOfModel($item->getTable())] . "/{$file}_" . $item->id . "." . end($ext);
-                move_uploaded_file($fichier_tmp, $rename);
+                $rename = $directoryUpload . "/{$file}_" . $item->id . "." . end($ext);
 
-                // Pour directement save le lien absolu ici
+                $dir = dirname($rename);
+
+                if(!is_dir($dir))
+                {
+                    mkdir($dir, 0777, true);
+                }
+
+                move_uploaded_file($fichier_tmp, $rename);
+                
                 $item->$subimage = self::resolveImageField($rename);
             }
 

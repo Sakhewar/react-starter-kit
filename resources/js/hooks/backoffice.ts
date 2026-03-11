@@ -36,7 +36,6 @@ interface InitOptions {
 interface GlobalState {
   dataPage: Record<string, PaginatedResponse<EntityItem>>;
   updateItem: any;
-  deleteItem: any;
   isLoading: boolean;
   error: string | null;
   errors: Record<string, string>; // Erreurs par entity pour plus de robustesse
@@ -55,7 +54,6 @@ export const useGlobalStore = create<GlobalState>()(
 
     dataPage: {}, // Init vide
     updateItem: null,
-    deleteItem: null,
     isLoading: false,
     error: null,
     errors: {}, // Erreurs spécifiques
@@ -234,7 +232,6 @@ export const useGlobalStore = create<GlobalState>()(
       set({
         dataPage: {},
         updateItem: null,
-        deleteItem: null,
         isLoading: false,
         error: null,
         errors: {},
@@ -357,6 +354,55 @@ export async function deleteElement(type: string, id: number)
     return rtr;
   }).catch((error) =>
   {
+    if(error.response.status === 500)
+    {
+      toast.error('Une erreur est survenue, Merci de contacter l\'administrateur', {position:'top-center'});
+      rtr['success'] = false;
+    }
+
+    if(error.response && error.response.data)
+    {
+      if(error.response.data.message)
+      {
+        toast.error(error.response.data.message, {position:'top-center'});
+        rtr['success'] = false;
+      }
+    }
+    return rtr;
+  })
+}
+
+export async function changeStatut(type: string, data : Record<string, any>, route?: any, rtrMsg?: any)
+{
+  let rtr : Record<string, any>  = {};
+
+  let routeAction = route ?? 'statut';
+
+  return axios.post(`/${type}/${routeAction}`, data).then((response) =>
+  { 
+    if(response && response.data)
+    {
+      let data = response.data;
+      if(data.errors || data.data.errors)
+      {
+        toast.error(data.errors || data.data.errors, {position:'top-center'})
+        rtr['success'] = false;
+      }
+      else
+      {
+        toast.success(rtrMsg ?? 'Changement Effectuée avec succés !', {position:'top-center'})
+        rtr['success'] = true;
+      }
+    }
+    return rtr;
+  }).catch((error) =>
+  {
+    if(error.response.status === 500)
+    {
+      toast.error('Une erreur est survenue, Merci de contacter l\'administrateur', {position:'top-center'});
+      rtr['success'] = false;
+    }
+
     if(error.response && error.response.data)
     {
       if(error.response.data.message)

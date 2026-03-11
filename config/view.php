@@ -16,9 +16,6 @@ return [
     'paths' => [
         resource_path('views'),
     ],
-    'uploads' => [
-        'fournisseurs'        => 'uploads/fournisseurs',
-    ],
 
     /*
     |--------------------------------------------------------------------------

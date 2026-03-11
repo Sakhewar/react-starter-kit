@@ -38,4 +38,16 @@ class Model extends EloquentModel
             "export"        => true,
         ],
     ];
+
+    public static function getDirectoryUploads($model)
+    {
+        if(!isset($model))
+        {
+            return null;
+        }
+
+        $name_table = (new $model)->getTable();
+
+        return "uploads/" . $name_table;
+    }
 }

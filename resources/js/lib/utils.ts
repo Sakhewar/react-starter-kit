@@ -100,3 +100,28 @@ export interface FieldRendererProps {
   onRemoveFile?: (name: string, index: number) => void;
 }
 
+export type Action =
+{
+  key: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }> | React.ReactElement;
+  variant?: "default" | "destructive" | "primary" | "secondary" | "success";
+  condition?: (row: any) => boolean;
+  onClick?: (row: any) => void;
+};
+
+export type ActionsConfig =
+{
+  edit?: boolean | ((row: any) => boolean);
+  clone?: boolean | ((row: any) => boolean);
+  delete?: boolean | ((row: any) => boolean);
+  [key: string]: boolean | ((row: any) => boolean) | undefined;
+};
+
+export type Column = {
+  key: string;
+  label: string;
+  className?: string;
+  render?: (value: any, row: any, extra?: { namepage: string, attributeName: string }) => React.ReactNode;
+};
+

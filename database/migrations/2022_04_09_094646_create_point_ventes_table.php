@@ -16,6 +16,7 @@ class CreatePointVentesTable extends Migration
         Schema::create('point_ventes', function (Blueprint $table)
         {
             $table->id();
+            $table->string('image')->nullable();
             $table->string('libelle')->nullable();
             $table->string('email')->nullable();
             $table->string('telephone')->nullable();

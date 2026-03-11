@@ -40,4 +40,9 @@ class EntityTypeType extends RefactGraphQLType
 
         ];
     }
+
+    public function resolveImageField($root, $args)
+    {
+        return $root['image'];
+    }
 }

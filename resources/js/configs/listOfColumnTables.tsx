@@ -5,11 +5,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Pencil, Copy, Trash2, Settings, Clapperboard, Download, Fingerprint } from "lucide-react";
+import { ChevronDown, Pencil, Copy, Trash2, Settings, Clapperboard, Download, Fingerprint, ThumbsDown, ThumbsUp } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { Badge } from "@/components/ui/badge";
-import { can, updateElement, useGlobalStore } from "@/hooks/backoffice";
-import { cn } from "@/lib/utils";
+import { can, changeStatut, deleteElement, toCapitalize, updateElement, useGlobalStore } from "@/hooks/backoffice";
+import { Action, ActionsConfig, cn, Column } from "@/lib/utils";
+import React from "react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 export const columnConfigs: Record<string, Column[]> =
 {
@@ -18,7 +20,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "description",           label: "Description"                      },
     { key: "actions",               label: "",                className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions row={row} config={{delete: can('suppression-provenance'), edit: can('modification-provenance'), clone: can('creation-provenance')}} attributeName={extra?.attributeName ?? "default"}
+        <RowActions row={row} config={{delete: can('suppression-provenance'), edit: can('modification-provenance'), clone: can('creation-provenance')}} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     },
@@ -30,7 +32,7 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "description", label: "Description" },
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
-          <RowActions row={row} attributeName={extra?.attributeName ?? "default"}
+          <RowActions row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
           />
         ),
       },
@@ -42,7 +44,7 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "description", label: "Description" },
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
-          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
           />
         ),
       },
@@ -54,7 +56,7 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "description", label: "Description" },
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
-          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
           />
         ),
       },
@@ -65,7 +67,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "description", label: "Description" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     },  
@@ -76,13 +78,14 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "description", label: "Description" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     },  
   ],
 
   pointvente : [
+    { key: "image", label: "Image", className: "", render: (value) => <div className="flex items-center justify-center"><Avatar size="lg"><AvatarImage src={value} /> </Avatar></div>},
     { key: "libelle", label: "Libellé", className: "" },
     { key: "adresse", label: "Adresse", className: "" },
     { key: "email", label: "Email", className: "" },
@@ -91,7 +94,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "ninea", label: "Ninea", className: "" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     },  
@@ -105,7 +108,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     },  
@@ -123,7 +126,31 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
-          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+            extraActions={
+              [
+                { key: "print", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "success",
+                  condition(r)
+                  { 
+                    return can('modification-client')
+                  },
+                  onClick(r)
+                  {
+                    let obj = {
+                      changedItem : r,
+                      title : (r.activer == 1 ? "Désactiver" : "Activer") + " ce client",
+                      description : r.activer == 1 ? "Voulez-vous vraiment désactiver ce client ?" : "Voulez-vous vraiment activer ce client ?",
+                      confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                      onConfirm: async () =>
+                      { 
+                        return changeStatut('client', {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Client ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                      },
+                    };
+                    useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
+                  }
+                },
+              ]
+            }
           />
         ),
       },
@@ -140,17 +167,27 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
-          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
             extraActions={
               [
-                { key: "print", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? Fingerprint : Clapperboard, variant: row.activer == 1 ? "destructive" : "primary",
+                { key: "print", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "secondary",
                   condition(r)
                   { 
                     return can('modification-fournisseur')
                   },
                   onClick(r)
                   {
-                    useGlobalStore.setState((state) => ({scope: { ...state.scope, changedItem: r }}));
+                    let obj = {
+                      changedItem : r,
+                      title : (r.activer == 1 ? "Désactiver" : "Activer") + " ce fournisseur",
+                      description : r.activer == 1 ? "Voulez-vous vraiment désactiver ce fournisseur ?" : "Voulez-vous vraiment activer ce fournisseur ?",
+                      confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                      onConfirm: async () =>
+                      { 
+                        return changeStatut('fournisseur', {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Fournisseur ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                      },
+                    };
+                    useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
                   }
                 },
               ]
@@ -167,7 +204,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "description", label: "Description" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     }
@@ -180,7 +217,7 @@ export const columnConfigs: Record<string, Column[]> =
       { key: "status_fr", label: "Actif", render: (v) => <Badge>{v}</Badge> },
       { key: "actions", label: "", className: "flex items-center justify-center",
         render: (_, row, extra) => (
-          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"}
+          <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
           />
         ),
       }
@@ -194,7 +231,7 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "created_at",  label: "Inscrit le", render: (v) => new Date(v).toLocaleDateString("fr-SN")},
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
-        <RowActions config={{delete: false, clone : false}} row={row} attributeName={extra?.attributeName ?? "default"}
+        <RowActions config={{delete: false, clone : false}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
         />
       ),
     }
@@ -273,30 +310,6 @@ export const columnConfigs: Record<string, Column[]> =
 // ────────────────────────────────────────────────
 // Types
 // ────────────────────────────────────────────────
-export type Action =
-{
-  key: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  variant?: "default" | "destructive" | "primary" | "secondary" | "success";
-  condition?: (row: any) => boolean;
-  onClick?: (row: any) => void;
-};
-
-export type ActionsConfig =
-{
-  edit?: boolean | ((row: any) => boolean);
-  clone?: boolean | ((row: any) => boolean);
-  delete?: boolean | ((row: any) => boolean);
-  [key: string]: boolean | ((row: any) => boolean) | undefined;
-};
-
-export type Column = {
-  key: string;
-  label: string;
-  className?: string;
-  render?: (value: any, row: any, extra?: { namepage: string, attributeName: string }) => React.ReactNode;
-};
 
 const baseActions: Record<string, Omit<Action, "key" | "onClick">> = {
   edit: {
@@ -315,7 +328,7 @@ const baseActions: Record<string, Omit<Action, "key" | "onClick">> = {
 };
 
 
-export const RowActions = ({config = {}, extraActions = [], row, attributeName}: { config?: ActionsConfig; extraActions?: Action[]; row: any; attributeName: string; }) =>
+export const RowActions = ({config = {}, extraActions = [], row, attributeName, namepage}: { config?: ActionsConfig; extraActions?: Action[]; row: any; attributeName: string; namepage?: string; }) =>
 {
   const shouldShowBase = (key: keyof typeof baseActions): boolean =>
   {
@@ -331,7 +344,18 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName}:
       onClick: () => {
         if (key === "delete")
         {
-          useGlobalStore.setState((state) => ({ ...state, deleteItem: row }));
+          let obj = {
+            changedItem : row,
+            title :`Suppression ${toCapitalize(namepage ?? '')}`,
+            description : "Voulez-vous vraiment effectuer la suppression ?",
+            confirmText :"Oui Supprimer",
+            onConfirm: async () =>
+            { 
+              return deleteElement(attributeName, row?.id);
+            },
+          };
+          
+          useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
         }
         else if (key === "edit" || key === "clone" )
         {
@@ -373,6 +397,7 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName}:
   ];
 
   if (sortedActions.length === 0) return null;
+  
 
   return (
     <DropdownMenu>
@@ -384,21 +409,26 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName}:
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
-        {sortedActions.map((action) => (
-          <DropdownMenuItem
-            key={action.key}
-            className={
-              action.variant === "destructive"
-                ? "text-destructive focus:bg-destructive/10 focus:text-destructive"
-                : ""
-            }
-            onClick={() => action.onClick?.(row)}
-          >
-            <action.icon className="mr-2 h-4 w-4" />
-            {action.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
+  {sortedActions.map((action) => {
+    const Icon = action.icon;
+
+    return (
+      <DropdownMenuItem
+        key={action.key}
+        className={
+          action.variant === "destructive"
+            ? "text-destructive focus:bg-destructive/10 focus:text-destructive"
+            : action.variant === "success" ? "text-success focus:bg-success/10 focus:text-success"
+            : ""
+        }
+        onClick={() => action.onClick?.(row)}
+      >
+        {React.isValidElement(Icon) ? (Icon) : (Icon && <Icon className="mr-2 h-4 w-4" />)}
+        <span className={action.variant === "destructive" ? "text-destructive" : action.variant === "success" ? "text-green-600" : ""}>{action.label}</span>
+      </DropdownMenuItem>
+    );
+  })}
+</DropdownMenuContent>
     </DropdownMenu>
   );
 };
