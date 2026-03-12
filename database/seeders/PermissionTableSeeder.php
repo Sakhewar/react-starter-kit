@@ -133,6 +133,20 @@ class PermissionTableSeeder extends Seeder
                 ],
             ],
             [
+                "name" => "Sous Famille de produits",
+                "tag" => "sousfamilleproduit",
+                "permissions" =>
+                [
+                    array("name" => "liste" , "couleur" => "primary" , "display_name" => "Voir la liste des types de client"),
+                    array("name" => "creation" , "couleur" => "success" , "display_name" => "Créer un type de client"),
+                    array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
+                    array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
+                    array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
+                ],
+            ],
+            [
                 "name" => "Marques",
                 "tag" => "marque",
                 "permissions" =>

@@ -187,7 +187,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent
+      <DialogContent aria-describedby={undefined}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         className="sm:max-w-[60vw] max-h-[90vh] overflow-y-auto top-[50px] translate-y-0 mt-4 [&>button:last-of-type]:hidden"

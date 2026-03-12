@@ -232,7 +232,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
             {/* Titre du module */}
             <div className="px-4 py-3 border-b bg-accent/30 flex gap-2">
               {FlyoutModuleIcon && <FlyoutModuleIcon className="h-4 w-4" />}
-              <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-semibold">
+              <p className="text-[11px] uppercase tracking-widest font-semibold">
                 {flyoutModule.title}
               </p>
             </div>
@@ -260,9 +260,9 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                       )}
                     >
                       <div className="p-2 rounded-full bg-background shadow-sm">
-                        <PageIcon className="h-5 w-5" />
+                        <PageIcon className="h-5 w-5 text-black dark:text-light" />
                       </div>
-                      <span className="text-[12px] leading-tight font-medium">{page.title}</span>
+                      <span className="text-[12px] leading-tight text-black dark:text-light font-medium">{page.title}</span>
                     </Link>
                   );
                 })}
@@ -295,9 +295,9 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                           active ? "bg-background shadow-sm" : "bg-muted/50"
                         )}
                       >
-                        <PageIcon className="h-4 w-4" />
+                        <PageIcon className="h-4 w-4 text-black dark:text-white" />
                       </div>
-                      <span className="truncate">{page.title}</span>
+                      <span className="truncate text-black dark:text-white">{page.title}</span>
                     </Link>
                   );
                 })}

@@ -46,7 +46,7 @@ export default function MAinEntry()
     if(queryName != null)
     {
       reset();
-      initialize({attributeName,page,onlyPageChange:false, force:true});
+      initialize({attributeName:queryName,page,onlyPageChange:false, force:true});
     }
   }, [queryName, namepage, initialize]);
 
