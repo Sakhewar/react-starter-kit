@@ -331,7 +331,7 @@ class PermissionTableSeeder extends Seeder
          */
         $users = array();
         array_push($users, array("name" => "Root", "email" => "root@osp.com", "image" => ('assets/media/logos/logo.svg'), "password" => "rootOSP@2026"));
-        array_push($users, array("name" => "OSP", "email" => "sakh96@gmail.com", "image" => ('assets/media/logos/logo.svg'), "password" => "Passer123"));
+        array_push($users, array("name" => "Admin", "email" => "sakh96@gmail.com", "image" => ('assets/media/logos/logo.svg'), "password" => "Passer123"));
 
         foreach ($users as $user)
         {

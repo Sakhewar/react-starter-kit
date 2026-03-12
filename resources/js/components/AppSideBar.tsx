@@ -93,8 +93,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
             <FaSitemap className="h-7 w-7" />
             {!collapsed && (
               <div>
-                <div className="font-semibold text-base tracking-tight">OSP</div>
-                <div className="text-xs text-gray-500">Hope Future ... OSP</div>
+                <div className="font-semibold text-base tracking-tight">POS</div>
+                <div className="text-xs text-gray-500">Build By DIOP With ❤️</div>
               </div>
             )}
           </div>
@@ -133,7 +133,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     <Tooltip key={module.id}>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-3">
-                          <ModuleIcon className="h-4 w-4 text-black" />
+                          <ModuleIcon className={cn("h-4 w-4", theme === "light" ? "text-black" : "")} />
                           {!collapsed && <span className="truncate">{module.title}</span>}
                         </div>
                         </TooltipTrigger>
@@ -180,8 +180,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                               )}
                             >
                               <div className="flex items-center gap-2">
-                                <PageIcon className="h-4 w-4 text-muted-foreground" />
-                                <span className="truncate">{page.title}</span>
+                                <PageIcon className="h-4 w-4 text-black dark:text-white" />
+                                <span className="truncate text-black dark:text-white">{page.title}</span>
                               </div>
                             </Link>
                           );

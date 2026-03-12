@@ -81,7 +81,7 @@ export default function MAinEntry()
 
         <div className="flex-1 flex flex-col min-w-0 h-screen">
           
-          {/* <AppHeader /> */}
+          <AppHeader />
           
           <main className="flex-1 overflow-y-auto">
             <div className="p-4 md:p-6 lg:py-6 lg:px-8">

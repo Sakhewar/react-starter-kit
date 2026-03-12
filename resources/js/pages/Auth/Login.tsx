@@ -68,8 +68,8 @@ export default function Login({ status, errors: serverErrors }: { status?: strin
         {/* Partie gauche : illustration - 70% */}
         <div className="hidden lg:flex lg:w-[60%] md:w-[60%] bg-gradient-to-br from-gray-900 to-gray-700 items-center justify-center p-12 relative overflow-hidden">
           <div className="text-center text-white space-y-4">
-            <h1 className="text-4xl font-bold">Bienvenue sur OSP</h1>
-            <p className="text-lg">Votre plateforme de gestion avancée</p>
+            <h1 className="text-4xl font-bold">Bienvenue sur POS</h1>
+            <p className="text-lg">Build By DIOP With ❤️</p>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export default function Login({ status, errors: serverErrors }: { status?: strin
             <CardHeader className="space-y-1">
               <div className="flex justify-center mb-4">
                 <div className="flex items-center justify-center">
-                  <span className="text-sm font-bold">OSP Hope VO 🚀</span>
+                  <span className="text-sm font-bold">POS Build By DIOP With ❤️</span>
                 </div>
               </div>
               <CardTitle className="text-lg font-bold text-center">Connexion</CardTitle>
