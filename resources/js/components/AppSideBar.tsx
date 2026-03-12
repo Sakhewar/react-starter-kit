@@ -133,8 +133,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     <Tooltip key={module.id}>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-3">
-                          <ModuleIcon className={cn("h-4 w-4", theme === "light" ? "text-black" : "")} />
-                          {!collapsed && <span className="truncate">{module.title}</span>}
+                          <ModuleIcon className="h-4 w-4 text-black dark:text-white" />
+                          {!collapsed && <span className="truncate text-black dark:text-white">{module.title}</span>}
                         </div>
                         </TooltipTrigger>
                         <TooltipContent side="right">
@@ -145,7 +145,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     {!collapsed && module.pages?.length > 1 && (
                       <ChevronDown
                         className={cn(
-                          "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                          "h-4 w-4 text-black dark:text-white transition-transform duration-200",
                           isOpen && "rotate-180"
                         )}
                       />
@@ -160,7 +160,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                       transition={{ duration: 0.25, ease: "easeOut" }}
                       className="overflow-visible"
                     >
-                      <div className="ml-5 py-1.5 space-y-0.5 border-l border-border pl-3">
+                      <div className="ml-5 py-1.5 space-y-0.5 border-l border-black dark:border-white pl-3">
                         {module.pages.map((page: any, pIdx: number) => {
                           const PageIcon =
                             Icons[page.icon as keyof typeof Icons] || Icons.FileText;
