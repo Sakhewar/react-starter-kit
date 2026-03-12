@@ -1021,6 +1021,11 @@ abstract class CRUDController extends Controller
         }
     }
 
+    protected function afterValidation(\Illuminate\Validation\Validator $validator): void
+    {
+        // Override dans les controllers enfants si besoin
+    }       
+
     /**
      * Permet de valider les inputs user
      *
@@ -1031,25 +1036,32 @@ abstract class CRUDController extends Controller
         if (isset($this->request->from_excel))
         {
             $validator = Validator::make($this->request->all(), $this->getValidationRules(), $this->getCustomValidationMessage());
+                        
             if ($validator->fails())
             {
+                $this->afterValidation($validator);
                 throw new \Exception($validator->errors()->first());
             }
         }
         else
         {
-            $this->request->validate($this->getValidationRules(), $this->getCustomValidationMessage());
+            $validator = Validator::make($this->request->all(), $this->getValidationRules(), $this->getCustomValidationMessage());
+            
+            if ($validator->fails())
+            {
+                $this->afterValidation($validator);
+                throw new \Illuminate\Validation\ValidationException($validator);
+            }
         }
 
-        // dd('good');
-
         $dataValidated = $this->request->all();
-
         $dataValidated = collect($dataValidated)->except(['id', 'signature']);
         $dataValidated = arrayWithOnly($dataValidated, $this->model);
 
         return $dataValidated;
     }
+
+
 
 
     /**

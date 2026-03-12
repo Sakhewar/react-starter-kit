@@ -42,6 +42,15 @@ var listofAttributes : Record<any,any> =
         "id,libelle,description,type_depot_id,type_depot{id,libelle},point_vente_id,point_vente{id,libelle},activer,activer_fr",
     ],
 
+    familleproduits : [
+        "id,libelle,description",
+    ],
+
+    sousfamilleproduits : [
+        "id,libelle,famille_produit_id,famille_produit{id,libelle},description"
+    ],
+
+
     users : [
         "id,name,image,status,status_fr,email",
     ]

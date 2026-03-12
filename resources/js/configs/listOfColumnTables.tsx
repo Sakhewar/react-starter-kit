@@ -198,6 +198,29 @@ export const columnConfigs: Record<string, Column[]> =
       
   ],
 
+  familleproduit : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+        />
+      ),
+    },  
+  ],
+
+  sousfamilleproduit : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "famille_produit_ud", label: "Famille Produit",  render : (_,row) => <span>{row?.famille_produit?.libelle}</span> },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+        />
+      ),
+    },  
+  ],
+
   role : [
     { key: "libelle", label: "Libellé" },
     { key: "nb_permissions", label: "Nbre De Permissions" },

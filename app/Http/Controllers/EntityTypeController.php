@@ -23,18 +23,20 @@ class EntityTypeController extends CRUDController
             ]
         ];
 
-        if(Str::contains('modalitepaiement', $this->getPath()))
+        if(Str::contains($this->getPath(),'modalitepaiement'))
         {
-            $baseArray = array_merge($baseArray,[
+            $baseArray = array_merge($baseArray,
+            [
                 'nbre_jour'                        => [
                     'required',
                 ]
             ]);
         }
    
-        if(Str::contains('depot', $this->getPath()))
+        if(Str::contains( $this->getPath(), 'depot'))
         {
-            $baseArray = array_merge($baseArray,[
+            $baseArray = array_merge($baseArray,
+            [
                 'point_vente_id'                       => [
                     'required',
                 ],
@@ -43,17 +45,55 @@ class EntityTypeController extends CRUDController
                 ]
             ]);
         }
+
+        if(Str::contains($this->getPath(), 'sousfamilleproduit'))
+        {
+            $baseArray = array_merge($baseArray,
+            [
+                'famille_produit_id'                       => [
+                    'required',
+                ],
+                'libelle'                        => [
+                    'required',
+                    Rule::unique($this->table)->where('famille_produit_id', $this->request->famille_produit_id)->ignore($this->modelId)
+                ],
+                
+            ]);
+        }
+        else if(Str::contains($this->getPath(), 'familleproduit'))
+        {
+            $baseArray = array_merge($baseArray,
+            [
+                'libelle'                        => [
+                    'required',
+                    Rule::unique($this->table)->whereNull('famille_produit_id')->ignore($this->modelId)
+                ],
+            ]);
+        }
         return $baseArray;
+    }
+
+    protected function afterValidation(\Illuminate\Validation\Validator $validator): void
+    {
+        $errors = $validator->errors();
+       
+        if ($errors->has('famille_produit_id'))
+        {
+            $errors->forget('libelle');
+        }
     }
 
     protected function getCustomValidationMessage(): array
     {
         return [
-            "libelle.required"         => "Le libelle est obligatoire",
-            "libelle.unique"           => "Le libelle existe déjà",
-            "nbre_jour.required"       => "Le nombre de jour est obligatoire",
-            "point_vente_id.required"  => "Le point de vente est obligatoire",
-            "type_depot_id.required"   => "Le type de depot est obligatoire"
+            "libelle.required"                  => "Le libelle est obligatoire",
+            "libelle.unique"                    => "Le libelle existe déjà",
+            "nbre_jour.required"                => "Le nombre de jour est obligatoire",
+            "point_vente_id.required"           => "Le point de vente est obligatoire",
+            "type_depot_id.required"            => "Le type de depot est obligatoire",
+            "famille_produit_id.required"       => "La famille de produit est obligatoire",
+
+            
         ];
     }
 

@@ -36,6 +36,9 @@ class EntityTypeType extends RefactGraphQLType
             'point_vente_id'                     => ['type' => Type::int()],
             'point_vente'                        => ['type' => GraphQL::type('EntityTypeType')],
 
+            'famille_produit_id'                 => ['type' => Type::int()],
+            'famille_produit'                    => ['type' => GraphQL::type('EntityTypeType')],
+
             'contacts'                           => ['type' => Type::listOf(GraphQL::type('ContactType'))],
 
         ];

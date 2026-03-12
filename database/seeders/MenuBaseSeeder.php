@@ -207,7 +207,7 @@ class MenuBaseSeeder extends Seeder
                         'description' => null,
                         'order'       => 1,
                         'link'        => '/familleproduit',
-                        'permissions' => ['familleproduit'],
+                        'permissions' => ['familleproduit', 'sousfamilleproduit'],
                     ],
                     [
                         'title'       => 'Marques',

@@ -143,4 +143,17 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
       ],
     },
   ] as TabConfig[],
+
+  familleproduit:
+  [
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
+
+  sousfamilleproduit:
+  [
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
+    { name: "famille_produit_id",        label: "Famille de produit",        type: "select",    required: true,       options: "familleproduits2", lgColSpan:6,  inputClassName: "w-full" },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
 };

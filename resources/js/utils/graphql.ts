@@ -1,4 +1,5 @@
 // utils/graphql.ts
+import { showToast } from '@/hooks/backoffice';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -48,13 +49,11 @@ export async function graphqlGet<T = any>({entity,fields,args = {},callback = un
     if (result.errors && result.errors.length > 0)
     {
       const msg = result.errors.map((e: any) => e.message).join('\n');
-      toast.error(`Erreur GraphQL: ${msg}`, {position:'top-center'});
       throw new Error(`GraphQL Error: ${msg}`);
     }
 
     if (!result.data || !result.data[entity])
     {
-      toast.error(`Aucune donnée pour ${entity}`, {position:'top-center'});
       throw new Error(`Aucune donnée pour ${entity}`);
     }
 
@@ -62,7 +61,7 @@ export async function graphqlGet<T = any>({entity,fields,args = {},callback = un
   } 
   catch (error: any)
   {
-    toast.error(`Erreur GraphQL: ${error.message}`, {position:'top-center'});
+    showToast(`Erreur GraphQL: ${error.message}`);
     console.error('Erreur graphqlGet:', error);
     throw error;
   }

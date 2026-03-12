@@ -3,7 +3,7 @@ import { create, useStore } from 'zustand';
 import { generateArgsFilters, graphqlGet } from '@/utils/graphql';
 
 import axios from 'axios';
-import { toast } from 'sonner';
+import { toast, type ToastT } from 'sonner';
 import listofAttributes from '@/configs/listOfAttributes';
 
 
@@ -88,8 +88,8 @@ export const useGlobalStore = create<GlobalState>()(
 
       set({ isLoading: true, error: null, errors: {} });
 
-      const getElementsNeeds: { entity: string; fields: string; args?: any }[] = [];
-      const pageChangeNeeds: { entity: string; fields: string; args?: any }[] = [];
+      const getElementsNeeds: { entity: string; fields: string; args?: any, optionals?: Record<string,any> }[] = [];
+      const pageChangeNeeds: { entity: string; fields: string; args?: any, optionals?: Record<string,any>}[] = [];
       
       if (!onlyPageChange)
       {
@@ -124,6 +124,13 @@ export const useGlobalStore = create<GlobalState>()(
         {
           const promises = getElementsNeeds.map(async (element) =>
           {
+            let finalType = element.entity;
+              
+            if(element.optionals && element.optionals?.toType)
+            { 
+              finalType = element.optionals.toType;
+            }
+           
             try
             {
               const data = await graphqlGet<PaginatedResponse<EntityItem>>({
@@ -131,11 +138,12 @@ export const useGlobalStore = create<GlobalState>()(
                 fields: element.fields,
                 args: element.args || { page: 1, count: defaultCount },
               });
-              return { entity: element.entity, data };
+              return { entity: finalType, data };
             }
             catch (err: any)
             {
-              return { entity: element.entity, error: err.message || `Erreur pour ${element.entity}` };
+              
+              return { entity: finalType, error: err.message || `Erreur pour ${element.entity}` };
             }
           });
 
@@ -149,7 +157,15 @@ export const useGlobalStore = create<GlobalState>()(
             }
             else
             {
-              return { entity: getElementsNeeds[index].entity, error: result.reason?.message || 'Erreur inconnue' };
+              let currentElt = getElementsNeeds[index];
+              let finalType = currentElt.entity;
+              
+              if(currentElt.optionals && currentElt.optionals?.toType)
+              {
+               
+                finalType = currentElt.optionals.toType;
+              }
+              return { entity: finalType, error: result.reason?.message || 'Erreur inconnue' };
             }
           });
         }
@@ -188,7 +204,7 @@ export const useGlobalStore = create<GlobalState>()(
         const newErrors: Record<string, string> = {};
 
         afterGetElement.forEach(({ entity, data, error }) =>
-        {
+        { 
           if (data)
           {
             newDataPage[entity] = data;
@@ -258,6 +274,12 @@ export const useGlobalStore = create<GlobalState>()(
   )
 );
 
+// uniquement en dev
+if (typeof window !== "undefined") {
+  // @ts-ignore
+  window.store = useGlobalStore;
+}
+
 
 
 export function can(name: string, permissions? : any [])
@@ -283,12 +305,12 @@ export async function addElement(type: string, data : Record<string, any>)
       let dataRes = response.data;
       if(dataRes.errors || dataRes.data.errors)
       {
-        toast.error(dataRes.errors || dataRes.data.errors, {position:'top-center'})
+        showToast(dataRes.errors || dataRes.data.errors);
         rtr['success'] = false;
       }
       else
       { 
-        toast.success(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, {position:'top-center'})
+        showToast(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, 'success');
         rtr['success'] = true;
       }
     }
@@ -297,14 +319,14 @@ export async function addElement(type: string, data : Record<string, any>)
   {
     if(error.response.status === 500)
     {
-      toast.error('Une erreur est survenue, Merci de contacter l\'administrateur', {position:'top-center'});
+      showToast('Une erreur est survenue, Merci de contacter l\'administrateur');
       rtr['success'] = false;
     }
     if(error.response && error.response.data)
     {
       if(error.response.data.message)
       {
-        toast.error(error.response.data.message, {position:'top-center'});
+        showToast(error.response.data.message);
         rtr['success'] = false;
       }
     }
@@ -327,7 +349,7 @@ export async function updateElement(type: string, id: number)
   }
   else
   {
-    toast.error("Une erreur est survenue !", {position:'top-center'});
+    showToast("Une erreur est survenue !");
   }
 }
 
@@ -342,12 +364,12 @@ export async function deleteElement(type: string, id: number)
       let data = response.data;
       if(data.errors || data.data.errors)
       {
-        toast.error(data.errors || data.data.errors, {position:'top-center'})
+        showToast(data.errors || data.data.errors);
         rtr['success'] = false;
       }
       else
       {
-        toast.success('Suppression Effectuée avec succés !', {position:'top-center'})
+        showToast("Suppression Effectuée avec succés !", 'success');
         rtr['success'] = true;
       }
     }
@@ -356,7 +378,7 @@ export async function deleteElement(type: string, id: number)
   {
     if(error.response.status === 500)
     {
-      toast.error('Une erreur est survenue, Merci de contacter l\'administrateur', {position:'top-center'});
+      showToast("Une erreur est survenue, Merci de contacter l\'administrateur");
       rtr['success'] = false;
     }
 
@@ -364,7 +386,7 @@ export async function deleteElement(type: string, id: number)
     {
       if(error.response.data.message)
       {
-        toast.error(error.response.data.message, {position:'top-center'});
+        showToast(error.response.data.message);
         rtr['success'] = false;
       }
     }
@@ -385,12 +407,12 @@ export async function changeStatut(type: string, data : Record<string, any>, rou
       let data = response.data;
       if(data.errors || data.data.errors)
       {
-        toast.error(data.errors || data.data.errors, {position:'top-center'})
+        showToast(data.errors || data.data.errors);
         rtr['success'] = false;
       }
       else
       {
-        toast.success(rtrMsg ?? 'Changement Effectuée avec succés !', {position:'top-center'})
+        showToast(rtrMsg ?? 'Changement Effectuée avec succés !', 'success')
         rtr['success'] = true;
       }
     }
@@ -399,7 +421,7 @@ export async function changeStatut(type: string, data : Record<string, any>, rou
   {
     if(error.response.status === 500)
     {
-      toast.error('Une erreur est survenue, Merci de contacter l\'administrateur', {position:'top-center'});
+      showToast('Une erreur est survenue, Merci de contacter l\'administrateur');
       rtr['success'] = false;
     }
 
@@ -407,7 +429,7 @@ export async function changeStatut(type: string, data : Record<string, any>, rou
     {
       if(error.response.data.message)
       {
-        toast.error(error.response.data.message, {position:'top-center'});
+        showToast(error.response.data.message);
         rtr['success'] = false;
       }
     }
@@ -437,4 +459,26 @@ export function toCapitalize(str:String)
     return str;
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function showToast(message: string, type: ToastT["type"] = "error",options: Partial<ToastT> = {})
+{
+  const closeButtonColorClass =
+  {
+    error: "!bg-red-500 !text-white !border-red-400",
+    success: "!bg-green-500 !text-white !border-green-400",
+    warning: "!bg-yellow-500 !text-white !border-yellow-400",
+    info: "!bg-blue-500 !text-white !border-blue-400",
+  }[type as string] ?? "!bg-black !text-white !border-white/20";
+
+  //@ts-ignore
+  return toast[type]?.(message,
+  {
+    position: "top-center",
+    closeButton: true,
+    classNames: {
+      closeButton: `!left-auto !right-0 !translate-x-1/2 ${closeButtonColorClass}`,
+    },
+    ...options,
+  });
 }

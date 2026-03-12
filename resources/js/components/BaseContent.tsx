@@ -56,7 +56,7 @@ interface PaginatedResponse<T> {
   };
 }
 
-export default function BaseContent({attributeName, namepage,page,...props}:{attributeName:string, namepage: string;page: any;})
+export default function BaseContent({attributeName, namepage,page, permissionName,...props}:{attributeName:string, namepage: string;page: any;permissionName?:string | null})
 {
   //Charger le state management de Zustand
   const { initialize, dataPage, isLoading: globalLoading, errors: errorGraphQL, updateItem, scope} = useGlobalStore();
@@ -73,7 +73,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
   const { data, setData, reset } = useForm({
     search: "",
   });
-
+ 
   const columns: Column[] = columnConfigs[attributeName] ?? [];
   
   const fieldModal = fieldModals[attributeName] ?? [];
@@ -149,7 +149,7 @@ export default function BaseContent({attributeName, namepage,page,...props}:{att
             </Badge>
           </div>
 
-          {can(`creation-${attributeName}`, permissionPages) && <div className="">
+          {can(`creation-${permissionName ?? attributeName}`, permissionPages) && <div className="">
             <HoverCard openDelay={80} closeDelay={150}>
                 <HoverCardTrigger asChild>
                   <Button className="cursor-pointer">

@@ -1,8 +1,6 @@
 
-export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ entity: string; fields: string; args?: any }[])
-{
-    console.log(currentTemplateUrl);
-    
+export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ entity: string; fields: string; args?: any, optionals?: Record<string,any>}[])
+{    
     if (currentTemplateUrl.indexOf('/client') !== -1)
     {
         getElementsNeeds.push({entity: 'typeclients',fields: 'id,libelle', args:{}});
@@ -16,6 +14,10 @@ export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ ent
     {
         getElementsNeeds.push({entity: 'typedepots',fields: 'id,libelle', args:{}});
         getElementsNeeds.push({entity: 'pointventes',fields: 'id,libelle', args:{}});
+    }
+    else if(currentTemplateUrl.indexOf('/familleproduit') !== -1)
+    {
+        getElementsNeeds.push({entity: 'familleproduits',fields: 'id,libelle', args:{}, optionals: {toType : 'familleproduits2'}});
     }
 
     return getElementsNeeds;
