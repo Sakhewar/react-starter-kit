@@ -152,8 +152,14 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
 
   sousfamilleproduit:
   [
-    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true, lgColSpan: 6 },
     { name: "famille_produit_id",        label: "Famille de produit",        type: "select",    required: true,       options: "familleproduits2", lgColSpan:6,  inputClassName: "w-full" },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
+
+  marque:
+  [
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
     { name: "description", label: "Description", type: "textarea" },
   ],
 };

@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\{
     Client,
     Contact,
+    FamilleProduit,
     FileItem,
     Fournisseur,
     Module,
@@ -100,6 +101,11 @@ trait HasModelRelationships
     public function type_depot()
     {
         return $this->belongsTo(TypeDepot::class);
+    }
+
+    public function famille_produit()
+    {
+        return $this->belongsTo(FamilleProduit::class);
     }
 
     public function point_vente()

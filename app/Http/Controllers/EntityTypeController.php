@@ -23,7 +23,7 @@ class EntityTypeController extends CRUDController
             ]
         ];
 
-        if(Str::contains($this->getPath(),'modalitepaiement'))
+        if(Str::contains('modalitepaiement', $this->getPath()))
         {
             $baseArray = array_merge($baseArray,
             [
@@ -33,7 +33,7 @@ class EntityTypeController extends CRUDController
             ]);
         }
    
-        if(Str::contains( $this->getPath(), 'depot'))
+        if(Str::contains(  'depot', $this->getPath()))
         {
             $baseArray = array_merge($baseArray,
             [

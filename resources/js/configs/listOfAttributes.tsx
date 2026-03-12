@@ -34,7 +34,7 @@ var listofAttributes : Record<any,any> =
     ],
 
     pointventes : [
-        "id,image,libelle,email,telephone,adresse,image,rccm,ninea",
+        "id,image,libelle,email,telephone,adresse,image,rccm,ninea,activer,activer_fr",
         "description,contacts{id,email,telephone}"
     ],
 
@@ -43,11 +43,15 @@ var listofAttributes : Record<any,any> =
     ],
 
     familleproduits : [
-        "id,libelle,description",
+        "id,libelle,description,activer,activer_fr",
     ],
 
     sousfamilleproduits : [
-        "id,libelle,famille_produit_id,famille_produit{id,libelle},description"
+        "id,libelle,famille_produit_id,famille_produit{id,libelle},description,activer,activer_fr"
+    ],
+
+    marques : [
+        "id,libelle,description,activer,activer_fr",
     ],
 
 

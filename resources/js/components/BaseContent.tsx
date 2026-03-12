@@ -396,7 +396,7 @@ export default function BaseContent({attributeName, namepage,page, permissionNam
       {/* Modal ouvert manuellement via state */}
       <BaseModal
           page={page}
-          title={page?.title}
+          title={namepage}
           entity={attributeName}
           {
             ...(isTabs ? {tabs:fieldModal as TabConfig[]} : {fields : fieldModal as FieldConfig[]})

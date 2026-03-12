@@ -92,9 +92,34 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "telephone", label: "Téléphone", className: "" },
     { key: "rccm", label: "RCCM", className: "" },
     { key: "ninea", label: "Ninea", className: "" },
+    { key: "activer", label: "Actif",render: (_,row, extra) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
         <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+          extraActions={
+            [
+              { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "success",
+                condition(r)
+                { 
+                  return can('statut-' + (extra?.attributeName ?? "default"))
+                },
+                onClick(r)
+                {
+                  let obj = {
+                    changedItem : r,
+                    title : (r.activer == 1 ? "Désactiver" : "Activer") + " ce point de vente",
+                    description : r.activer == 1 ? "Voulez-vous vraiment désactiver ce point de vente ?" : "Voulez-vous vraiment activer ce point de vente ?",
+                    confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                    onConfirm: async () =>
+                    { 
+                      return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Point de vente ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                    },
+                  };
+                  useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
+                }
+              },
+            ]
+          }
         />
       ),
     },  
@@ -109,6 +134,30 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
         <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+          extraActions={
+            [
+              { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "success",
+                condition(r)
+                { 
+                  return can('statut-' + (extra?.attributeName ?? "default"))
+                },
+                onClick(r)
+                {
+                  let obj = {
+                    changedItem : r,
+                    title : (r.activer == 1 ? "Désactiver" : "Activer") + " ce depot",
+                    description : r.activer == 1 ? "Voulez-vous vraiment désactiver ce client ?" : "Voulez-vous vraiment activer ce depot ?",
+                    confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                    onConfirm: async () =>
+                    { 
+                      return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Depot ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                    },
+                  };
+                  useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
+                }
+              },
+            ]
+          }
         />
       ),
     },  
@@ -129,10 +178,10 @@ export const columnConfigs: Record<string, Column[]> =
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
             extraActions={
               [
-                { key: "print", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "success",
+                { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "success",
                   condition(r)
                   { 
-                    return can('modification-client')
+                    return can('statut-' + (extra?.attributeName ?? "default"))
                   },
                   onClick(r)
                   {
@@ -143,7 +192,7 @@ export const columnConfigs: Record<string, Column[]> =
                       confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
                       onConfirm: async () =>
                       { 
-                        return changeStatut('client', {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Client ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                        return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Client ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
                       },
                     };
                     useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
@@ -170,10 +219,10 @@ export const columnConfigs: Record<string, Column[]> =
           <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
             extraActions={
               [
-                { key: "print", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "secondary",
+                { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "secondary",
                   condition(r)
                   { 
-                    return can('modification-fournisseur')
+                    return can('statut-' + (extra?.attributeName ?? "default"))
                   },
                   onClick(r)
                   {
@@ -184,7 +233,7 @@ export const columnConfigs: Record<string, Column[]> =
                       confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
                       onConfirm: async () =>
                       { 
-                        return changeStatut('fournisseur', {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Fournisseur ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                        return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Fournisseur ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
                       },
                     };
                     useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
@@ -201,9 +250,34 @@ export const columnConfigs: Record<string, Column[]> =
   familleproduit : [
     { key: "libelle", label: "Libellé", className: "" },
     { key: "description", label: "Description" },
+    { key: "activer", label: "Actif",render: (_,row) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
         <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+          extraActions={
+            [
+              { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "secondary",
+                condition(r)
+                { 
+                  return can('statut-' + (extra?.attributeName ?? "default"))
+                },
+                onClick(r)
+                {
+                  let obj = {
+                    changedItem : r,
+                    title : (r.activer == 1 ? "Désactiver" : "Activer") + " cette famille de produit",
+                    description : (r.activer == 1 ? "Voulez-vous vraiment désactiver" : "Voulez-vous vraiment activer") + " cette famille de produit ?",
+                    confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                    onConfirm: async () =>
+                    { 
+                      return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Famille de produit ' + (r.activer == 1 ? "désactivée" : "activée") + " avec succès"));
+                    },
+                  };
+                  useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
+                }
+              },
+            ]
+          }
         />
       ),
     },  
@@ -213,9 +287,34 @@ export const columnConfigs: Record<string, Column[]> =
     { key: "libelle", label: "Libellé", className: "" },
     { key: "famille_produit_ud", label: "Famille Produit",  render : (_,row) => <span>{row?.famille_produit?.libelle}</span> },
     { key: "description", label: "Description" },
+    { key: "activer", label: "Actif",render: (_,row) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
         <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+          extraActions={
+            [
+              { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "secondary",
+                condition(r)
+                { 
+                  return can('statut-' + (extra?.attributeName ?? "default"))
+                },
+                onClick(r)
+                {
+                  let obj = {
+                    changedItem : r,
+                    title : (r.activer == 1 ? "Désactiver" : "Activer") + " cette sous famille de produit",
+                    description : (r.activer == 1 ? "Voulez-vous vraiment désactiver" : "Voulez-vous vraiment activer") + " cette sous famille de produit ?",
+                    confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                    onConfirm: async () =>
+                    { 
+                      return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Sous Famille de produit ' + (r.activer == 1 ? "désactivée" : "activée") + " avec succès"));
+                    },
+                  };
+                  useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
+                }
+              },
+            ]
+          }
         />
       ),
     },  
@@ -231,6 +330,41 @@ export const columnConfigs: Record<string, Column[]> =
         />
       ),
     }
+  ],
+  marque : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "description", label: "Description" },
+    { key: "activer", label: "Actif",render: (_,row) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+          extraActions={
+            [
+              { key: "activer", label:row.activer == 1 ? "Désactiver" : "Activer", icon:row.activer == 1 ? <ThumbsDown className="mr-2 text-red-600"/> : <ThumbsUp className="mr-2 text-green-600" />, variant: row.activer == 1 ? "destructive" : "secondary",
+                condition(r)
+                { 
+                  return can('statut-' + (extra?.attributeName ?? "default"))
+                },
+                onClick(r)
+                {
+                  let obj = {
+                    changedItem : r,
+                    title : (r.activer == 1 ? "Désactiver" : "Activer") + " cette marque",
+                    description : (r.activer == 1 ? "Voulez-vous vraiment désactiver" : "Voulez-vous vraiment activer") + " cette marque ?",
+                    confirmText :"Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                    onConfirm: async () =>
+                    { 
+                      return changeStatut(extra?.attributeName ?? "", {id: r.id, status: r.activer == 1 ? 0 : 1}, null, ('Marque ' + (r.activer == 1 ? "désactivé" : "activé") + " avec succès"));
+                    },
+                  };
+                  useGlobalStore.setState((state) => ({scope: { ...state.scope, itemToChange: obj }}));
+                }
+              },
+            ]
+          }
+        />
+      ),
+    },  
   ],
 
   user : [

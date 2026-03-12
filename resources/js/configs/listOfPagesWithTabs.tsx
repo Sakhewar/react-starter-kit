@@ -6,14 +6,14 @@ export const pageWithTabs =
     familleproduit : [
         {
             key : 1,
-            namepage: 'Famille de produit',
+            namepage: 'Famille de produits',
             attributeName: 'familleproduit',
             icon : <Tag />,
             permissionName : 'familleproduit'
         },
         {
             key : 2,
-            namepage: 'Sous Famille de produit',
+            namepage: 'Sous Famille de produits',
             attributeName: 'sousfamilleproduit',
             icon: <Tag/>,
             permissionName : 'familleproduit'

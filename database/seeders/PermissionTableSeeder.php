@@ -34,6 +34,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "creation" , "couleur" => "success" , "display_name" => "Créer une modalité de paiement"),
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier une modalité de paiement"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer une modalité de paiement"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -45,6 +47,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "creation" , "couleur" => "success" , "display_name" => "Créer un mode de paiement"),
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un mode de paiement"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un mode de paiement"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -68,6 +72,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -80,6 +86,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -92,6 +100,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -104,6 +114,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -116,6 +128,22 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
+                ],
+            ],
+            [
+                "name" => "Marques",
+                "tag" => "marque",
+                "permissions" =>
+                [
+                    array("name" => "liste" , "couleur" => "primary" , "display_name" => "Voir la liste des types de client"),
+                    array("name" => "creation" , "couleur" => "success" , "display_name" => "Créer un type de client"),
+                    array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
+                    array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
+                    array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -128,6 +156,8 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "modification" , "couleur" => "warning" , "display_name" => "Modifier un type de client"),
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un type de client"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un type de client"),
+                    array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un client"),
+
                 ],
             ],
             [
@@ -144,6 +174,15 @@ class PermissionTableSeeder extends Seeder
                 ],
             ],
             [
+                "name" => "Comptes Clients",
+                "tag" => "compteclient",
+                "permissions" =>
+                [
+                    array("name" => "liste" , "couleur" => "primary" , "display_name" => "Voir la liste des clients"),
+                    array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un client"),
+                ],
+            ],
+            [
                 "name" => "Fournisseurs",
                 "tag" => "fournisseur",
                 "permissions" =>
@@ -154,6 +193,15 @@ class PermissionTableSeeder extends Seeder
                     array("name" => "suppression" , "couleur" => "danger" , "display_name" => "Supprimer un fournisseur"),
                     array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un fournisseur"),
                     array("name" => "statut" , "couleur" => "primary" , "display_name" => "Activer/Désactiver un fournisseur"),
+                ],
+            ],
+            [
+                "name" => "Comptes Fournisseurs",
+                "tag" => "comptefournisseur",
+                "permissions" =>
+                [
+                    array("name" => "liste" , "couleur" => "primary" , "display_name" => "Voir la liste des clients"),
+                    array("name" => "detail" , "couleur" => "info" , "display_name" => "Voir les détails d'un client"),
                 ],
             ],
 

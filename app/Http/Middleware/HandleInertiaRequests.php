@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
         $this->modules = Module::with(['modules', 'pages', 'mode_link'])->whereNull('module_id')->orderBy('order')->get();
     }
 
-     protected function getModulesNew(array $modules, $user): array
+    protected function getModulesNew(array $modules, $user): array
     {
         if (!$user)
         {
