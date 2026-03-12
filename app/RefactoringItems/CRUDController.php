@@ -508,6 +508,7 @@ abstract class CRUDController extends Controller
 
         $refl = new ReflectionClass($fileToexport);
         $this->feuilleExport = $refl->getName();
+        
         return Excel::download(new $this->feuilleExport($this->model), "{$this->modelName}.xlsx");
     }
 

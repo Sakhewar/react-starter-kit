@@ -133,7 +133,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     <Tooltip key={module.id}>
                       <TooltipTrigger asChild>
                         <div className="flex items-center gap-3">
-                          <ModuleIcon className="h-5 w-5 text-muted-foreground" />
+                          <ModuleIcon className="h-4 w-4 text-black" />
                           {!collapsed && <span className="truncate">{module.title}</span>}
                         </div>
                         </TooltipTrigger>

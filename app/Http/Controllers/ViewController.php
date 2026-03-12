@@ -51,13 +51,15 @@ class ViewController extends Controller
             if (class_exists($modelClass))
             {
                 $instance = new $modelClass();
-                $request['model_name'] = $instance::class;
+                $request['model_to_use'] = $instance::class;
+                $request['model_name_to_use'] = class_basename($instance::class);
 
                 $controllerClass = new class extends EntityTypeController
                 {
                     public function beforeInitControllerState():void
                     {
-                        $this->model = $this->request->model_name;
+                        $this->model = $this->request->model_to_use;
+                        $this->modelName = $this->request->model_name_to_use;
                     }
                 };
 
