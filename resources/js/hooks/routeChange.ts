@@ -13,11 +13,11 @@ export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ ent
     else if(currentTemplateUrl.indexOf('/depot') !== -1)
     {
         getElementsNeeds.push({entity: 'typedepots',fields: 'id,libelle', args:{}});
-        getElementsNeeds.push({entity: 'pointventes',fields: 'id,libelle', args:{}});
+        getElementsNeeds.push({entity: 'pointventes',fields: 'id,libelle', args:{activer:true}});
     }
     else if(currentTemplateUrl.indexOf('/familleproduit') !== -1)
     {
-        getElementsNeeds.push({entity: 'familleproduits',fields: 'id,libelle', args:{}, optionals: {toType : 'familleproduits2'}});
+        getElementsNeeds.push({entity: 'familleproduits',fields: 'id,libelle', args:{activer:true}, optionals: {toType : 'familleproduits2'}});
     }
 
     return getElementsNeeds;
