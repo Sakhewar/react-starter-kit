@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\{LinkRouteController, Module, Page, Outil};
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Str;
+use \Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -156,11 +156,10 @@ class HomeController extends Controller
         }
 
         $retour['prefixepermission']       = $prefixepermission;
-        //Dans page only link
         $retour['page']                    = !$getPage ? null : ['link' => $getPage->link, 'title' => $getPage->title, 'icon' => $getPage->icon, 'permissions' => $getPage->permissions];
         $retour['breadcrumb']              = $breadcrumb;
         $retour['active_link']             = "/" . $namepage;
-        $retour['namepage']                = \Illuminate\Support\Str::studly($namepage);
+        $retour['namepage']                = Str::studly($namepage);
 
         // Passer tout dans Inertia, layout unique
         return Inertia::render('MainEntry', $retour);

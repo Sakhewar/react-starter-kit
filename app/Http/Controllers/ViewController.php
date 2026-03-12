@@ -39,9 +39,33 @@ class ViewController extends Controller
             $linkRouterController = LinkRouteController::whereRaw("LOWER(TRIM(route_name)) = LOWER(TRIM(?))", [$table_name])->first();
             $getController = !isset($linkRouterController) ? null : $linkRouterController->controller_name . "Controller";
         }
-  
-        if (isset($getController)) {
+
+        if (isset($getController))
+        {
             return app()->make("App\\Http\\Controllers\\{$getController}")->callAction($methode, $parameters = array(isset($id) ? $id : $request));
+        }
+        else
+        {
+            $modelClass = "App\\Models\\" . Str::studly($table_name);
+
+            if (class_exists($modelClass))
+            {
+                $instance = new $modelClass();
+                $request['model_name'] = $instance::class;
+
+                $controllerClass = new class extends EntityTypeController
+                {
+                    public function beforeInitControllerState():void
+                    {
+                        $this->model = $this->request->model_name;
+                    }
+                };
+
+                if(isset($controllerClass))
+                {
+                    return $controllerClass->{$methode}();
+                }
+            }
         }
     }
 }

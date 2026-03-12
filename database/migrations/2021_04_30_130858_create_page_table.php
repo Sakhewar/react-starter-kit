@@ -22,6 +22,7 @@ class CreatePageTable extends Migration
             $table->longText('description')->nullable();
             $table->unsignedBigInteger('order')->nullable();
             $table->string('link');
+            $table->string('model_name')->nullable();
             $table->boolean('can_be_managed')->default(true);
             $table->longText('permissions')->nullable();
             $table->foreignId('module_id')->nullable()->constrained()->nullOnDelete();

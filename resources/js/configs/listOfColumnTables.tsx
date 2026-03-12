@@ -320,17 +320,6 @@ export const columnConfigs: Record<string, Column[]> =
     },  
   ],
 
-  role : [
-    { key: "libelle", label: "Libellé" },
-    { key: "nb_permissions", label: "Nbre De Permissions" },
-    { key: "description", label: "Description" },
-    { key: "actions", label: "", className: "flex items-center justify-center",
-      render: (_, row, extra) => (
-        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
-        />
-      ),
-    }
-  ],
   marque : [
     { key: "libelle", label: "Libellé", className: "" },
     { key: "description", label: "Description" },
@@ -365,6 +354,28 @@ export const columnConfigs: Record<string, Column[]> =
         />
       ),
     },  
+  ],
+  produit : [
+    { key: "libelle", label: "Libellé", className: "" },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+        />
+      ),
+    },  
+  ],
+
+  role : [
+    { key: "libelle", label: "Libellé" },
+    { key: "nb_permissions", label: "Nbre De Permissions" },
+    { key: "description", label: "Description" },
+    { key: "actions", label: "", className: "flex items-center justify-center",
+      render: (_, row, extra) => (
+        <RowActions config={{}} row={row} attributeName={extra?.attributeName ?? "default"} namepage={extra?.namepage}
+        />
+      ),
+    }
   ],
 
   user : [

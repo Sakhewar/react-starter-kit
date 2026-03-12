@@ -45,12 +45,15 @@ interface GlobalState {
   initialize: (options: InitOptions) => Promise<void>;
 
   reset: () => void;
+
+  setState: (key: keyof GlobalState, value: any) => void
 }
 import { persist } from "zustand/middleware";
 import { managePageDeps } from './routeChange';
 
 export const useGlobalStore = create<GlobalState>()(
-  persist((set, get) => ({
+  persist((set, get) => (
+  {
 
     dataPage: {}, // Init vide
     updateItem: null,
@@ -254,23 +257,27 @@ export const useGlobalStore = create<GlobalState>()(
         lastInitialized: null,
       });
     },
+
+    setState: (key, value) => set(
+      (state) => ({...state, [key]: value,})
+    ),
     
+  }),
+  {
+    name: "global-store",
+    partialize: (state) => ({
+      scope: {
+        collapsed: state.scope?.collapsed ?? false,
+      },
     }),
-    {
-      name: "global-store",
-      partialize: (state) => ({
-        scope: {
-          collapsed: state.scope?.collapsed ?? false,
-        },
-      }),
-      merge: (persistedState: any, currentState) => ({
-        ...currentState, // garde tout le state initial
-        scope: {
-          ...currentState.scope,
-          collapsed: persistedState?.scope?.collapsed ?? false, // écrase uniquement collapsed
-        },
-      }),
-    }
+    merge: (persistedState: any, currentState) => ({
+      ...currentState, // garde tout le state initial
+      scope: {
+        ...currentState.scope,
+        collapsed: persistedState?.scope?.collapsed ?? false, // écrase uniquement collapsed
+      },
+    }),
+  }
   )
 );
 

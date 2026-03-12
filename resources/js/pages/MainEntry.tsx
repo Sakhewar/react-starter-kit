@@ -9,7 +9,7 @@ import * as CustomPages from "./CustomPages";
 import BaseContent from "@/components/BaseContent";
 import AppHeader from "@/components/AppHeader";
 import { useGlobalStore } from "@/hooks/backoffice";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import AuthGuard from "@/components/authGuard/authguard";
 import { useAuthStore } from "@/hooks/authStore";
@@ -27,6 +27,8 @@ export default function MAinEntry()
 
   const [queryName, setQueryName] = useState<string | null>(null);
 
+  const { initialize, reset, setState, scope} = useGlobalStore();
+
   //Si dans la page on doit avoir des tabs
 
   const hasTabs = attributeName in pageWithTabs ? pageWithTabs[attributeName as keyof typeof pageWithTabs] : [];
@@ -34,12 +36,9 @@ export default function MAinEntry()
   
 
   //Pour rediger vers sa propre page si on veux pas utiliser le composant de base
-  const DynamicComponent = (namepage in CustomPages ? CustomPages[namepage as keyof typeof CustomPages] : null);
+  const DynamicComponent = (namepage in CustomPages ? CustomPages[namepage as keyof typeof CustomPages] : null);  
 
-  //console.log(page);
-  
 
-  const { initialize, reset} = useGlobalStore();
   const {afterLogin} = useAuthStore(); 
 
   useEffect(() =>

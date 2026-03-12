@@ -162,4 +162,10 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
     { name: "libelle",     label: "Libellé",     type: "text",     required: true },
     { name: "description", label: "Description", type: "textarea" },
   ],
+
+  produit:
+  [
+    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
+    { name: "description", label: "Description", type: "textarea" },
+  ],
 };

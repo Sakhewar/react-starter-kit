@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\{LinkRouteController, ModeLink, Module, Page};
+use App\Models\{FamilleProduit, LinkRouteController, Marque, ModeLink, Module, Page, Produit};
 use Illuminate\Database\Seeder;
 
 class MenuBaseSeeder extends Seeder
@@ -219,7 +219,7 @@ class MenuBaseSeeder extends Seeder
                         'permissions' => ['marque'],
                     ],
                     [
-                        'title'       => 'Liste des produits',
+                        'title'       => 'Produits',
                         'title_en'    => 'Products List',
                         'icon'        => 'ShoppingBag',
                         'description' => null,
