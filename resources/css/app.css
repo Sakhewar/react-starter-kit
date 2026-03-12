@@ -241,4 +241,8 @@
     button{
         cursor: pointer !important;
     }
+
+    [vaul-drawer] {
+        width: 600px !important;
+      }
 }

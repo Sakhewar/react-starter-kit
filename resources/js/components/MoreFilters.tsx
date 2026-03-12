@@ -42,7 +42,7 @@ export function MoreFilters({type,open, onOpenChange, data, setData, handleSubmi
   };
   return (
     <Drawer open={open} onOpenChange={()=>{onOpenChange(open)}} direction="right">
-      <DrawerContent>
+      <DrawerContent className="!lg:w-[50vw] !max-w-[40vw]">
         <DrawerHeader>
           <DrawerTitle>Autres Filtres</DrawerTitle>
           <DrawerDescription>Vous pouvez appliquer d'autres filtres si besoin !</DrawerDescription>
