@@ -5,8 +5,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Pencil, Copy, Trash2, Settings, Clapperboard, Download, Fingerprint, ThumbsDown, ThumbsUp } from "lucide-react";
-import { router } from "@inertiajs/react";
+import { ChevronDown, Pencil, Copy, Trash2, Settings, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { can, changeStatut, deleteElement, toCapitalize, updateElement, useGlobalStore } from "@/hooks/backoffice";
 import { Action, ActionsConfig, cn, Column } from "@/lib/utils";
@@ -165,7 +164,7 @@ export const columnConfigs: Record<string, Column[]> =
 
   sousfamilleproduit : [
     { key: "libelle", label: "Libellé", className: "" },
-    { key: "famille_produit_ud", label: "Famille Produit",  render : (_,row) => <span>{row?.famille_produit?.libelle}</span> },
+    { key: "famille_produit_id", label: "Famille Produit",  render : (_,row) => <span>{row?.famille_produit?.libelle}</span> },
     { key: "description", label: "Description" },
     { key: "activer", label: "Actif",render: (_,row) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
     { key: "actions", label: "", className: "flex items-center justify-center",
@@ -188,7 +187,12 @@ export const columnConfigs: Record<string, Column[]> =
     },  
   ],
   produit : [
+    { key: "code",    label: "Code", className: "" },
     { key: "libelle", label: "Libellé", className: "" },
+    { key: "famille_produit_id", label: "Famille Produit",  render : (_,row) => <span>{row?.famille_produit?.libelle}</span> },
+    { key: "sous_famille_produit_id", label: "Famille Produit",  render : (_,row) => <span>{row?.sous_famille_produit?.libelle}</span> },
+    { key: "marque_id", label: "Marque",  render : (_,row) => <span>{row?.marque?.libelle}</span> },
+
     { key: "description", label: "Description" },
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (

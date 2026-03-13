@@ -19,6 +19,13 @@ export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ ent
     {
         getElementsNeeds.push({entity: 'familleproduits',fields: 'id,libelle', args:{activer:true}, optionals: {toType : 'familleproduits2'}});
     }
+    else if(currentTemplateUrl.indexOf('/produit') !== -1)
+    {
+        getElementsNeeds.push({entity: 'marques',fields: 'id,libelle', args:{activer:true}});
+        getElementsNeeds.push({entity: 'pointventes',fields: 'id,libelle', args:{activer:true}});
+        getElementsNeeds.push({entity: 'familleproduits',fields: 'id,libelle', args:{activer:true}});
+        getElementsNeeds.push({entity: 'sousfamilleproduits',fields: 'id,libelle', args:{activer:true}});
+    }
 
     return getElementsNeeds;
 

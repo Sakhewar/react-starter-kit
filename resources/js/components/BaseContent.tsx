@@ -402,8 +402,8 @@ export default function BaseContent({attributeName, namepage,page, permissionNam
             ...(isTabs ? {tabs:fieldModal as TabConfig[]} : {fields : fieldModal as FieldConfig[]})
           }
           updateItem={updateItem}
-          onSuccess={(newItem) => {
-            console.log("Nouveau créé :", newItem);
+          onSuccess={(newItem) =>
+          {
             setRefreshList((prev) => prev + 1)
           }}
           isOpen={isModalOpen} // ← Contrôle via state

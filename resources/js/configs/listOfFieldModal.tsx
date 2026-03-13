@@ -1,6 +1,8 @@
+import { TableRow } from "@/components/ui/table";
 import { useGlobalStore } from "@/hooks/backoffice";
 import { FieldConfig, TabConfig } from "@/lib/utils";
-import { Book, BookOpen, Contact, Contact2Icon, ContactIcon, InfoIcon, PhoneCall } from "lucide-react";
+import { PrixVenteProduit } from "@/pages/modalsTabPane/modalsTabPane";
+import { Book, BookOpen, Contact, Contact2Icon, ContactIcon, DollarSign, InfoIcon, PhoneCall } from "lucide-react";
 import { FaAddressBook, FaInfoCircle } from "react-icons/fa";
 
 export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
@@ -165,7 +167,26 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
 
   produit:
   [
-    { name: "libelle",     label: "Libellé",     type: "text",     required: true },
-    { name: "description", label: "Description", type: "textarea" },
-  ],
+    {
+      key: "infos",
+      icon: <InfoIcon />,
+      label: "Infos Générales",
+      fields:
+      [
+        { name: "code",                                           label: "Code",                                    type: "text",                       required: false,                                                           lgColSpan: 6,                 mdColSpan: 6                                                       },
+        { name: "libelle",                                        label: "Désignation",                             type: "text",                       required: true,                                                                                                                                                             },
+        { name: "famille_produit_id",                             label: "Famille de produit",                      type: "select",                     required: true,          options: "familleproduits",                       lgColSpan: 6,                 mdColSpan: 6,                             inputClassName: "w-full" },
+        { name: "sous_famille_produit_id",                        label: "Sous Famille de produit",                 type: "select",                     required: false,         options: "sousfamilleproduits",                   lgColSpan: 6,                 mdColSpan: 6,                             inputClassName: "w-full" },
+        { name: "marque_id",                                      label: "Marque",                                  type: "select",                     required: false,         options: "marques",                               lgColSpan: 6,                 mdColSpan: 6,                             inputClassName: "w-full" },
+        { name: "description",                                    label: "Description",                             type: "textarea",                                                                                                                                                                                               }
+      ],
+    },
+    {
+      key: "prix_ventes",
+      label: "Pricing",
+      icon: <DollarSign />,
+      tableMode: true,
+      fields: <PrixVenteProduit type="produit" />
+    },
+  ] as TabConfig[],
 };

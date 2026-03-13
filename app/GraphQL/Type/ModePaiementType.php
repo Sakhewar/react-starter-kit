@@ -13,13 +13,6 @@ class ModePaiementType extends RefactGraphQLType
             'id'                                 => ['type' => Type::int()],
             'libelle'                            => ['type' => Type::string()],
             'description'                        => ['type' => Type::string()],
-            'ventes'                             => ['type' => Type::string()],
-            'form'                               => ['type' => Type::string()],
         ];
-    }
-
-    protected function resolveFormField($root, $args)
-    {
-        return "tet";
     }
 }

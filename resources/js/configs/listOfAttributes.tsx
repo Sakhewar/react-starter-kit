@@ -54,6 +54,11 @@ var listofAttributes : Record<any,any> =
         "id,libelle,description,activer,activer_fr",
     ],
 
+    produits : [
+        "id,libelle,code,famille_produit_id,famille_produit{id,libelle},sous_famille_produit_id,sous_famille_produit{id,libelle},marque_id,marque{id,libelle},description,activer,activer_fr",
+        "prix_ventes{id,point_vente_id,point_vente{id,libelle},prix_achat,frais,prix_revient,prix_vente}"
+    ],
+
 
     users : [
         "id,name,image,status,status_fr,email",

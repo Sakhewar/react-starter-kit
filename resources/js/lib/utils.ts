@@ -63,7 +63,7 @@ export interface TabConfig
   label: string;
   icon?: React.ReactNode;
   tableMode?: boolean;
-  fields: FieldConfig[];
+  fields: FieldConfig[] | React.ReactNode;
 }
 
 export interface ModalCreateGenericProps

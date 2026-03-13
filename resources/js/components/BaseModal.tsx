@@ -12,10 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2} from "lucide-react";
 import { cn, FieldConfig, ModalCreateGenericProps, TabConfig} from "@/lib/utils";
-import { addElement, toCapitalize } from "@/hooks/backoffice";
+import { addElement, checkInForm, emptyForm, toCapitalize } from "@/hooks/backoffice";
 import { FieldSeparator } from "./ui/field";
 import * as Icons from "lucide-react";
 import { FieldRenderer, TableTab } from "@/lib/utilsFunctiions";
+import { ta } from "date-fns/locale";
 
 
 export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabsProp, onSuccess, updateItem, isOpen, onOpenChange,}: ModalCreateGenericProps)
@@ -40,7 +41,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
     const allFields: FieldConfig[] = [];
     resolvedTabs.forEach(tab =>
     {
-      if (!tab.tableMode)
+      if (!tab.tableMode && Array.isArray(tab.fields))
       {
         tab.fields.forEach(f =>
         {
@@ -87,6 +88,8 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
           }));
         }
       });
+
+      checkInForm(entity, updateItem);
     }
   }, [updateItem, flatFields]);
 
@@ -183,6 +186,11 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
     setFileMap({});
     setTableRows({});
     setActiveTab(resolvedTabs[0]?.key ?? "");
+
+    if(!val)
+    {
+      emptyForm(entity);
+    }
   };
 
   return (
@@ -233,28 +241,31 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
               className={cn(tab.key !== activeTab && "hidden")}
             >
               {tab.tableMode ? (
-                <TableTab
-                  tab={tab}
-                  rows={tableRows[tab.key] ?? []}
-                  onAddRow={handleAddRow}
-                  onRemoveRow={handleRemoveRow}
-                  processing={processing}
-                />
+                Array.isArray(tab.fields) ?
+                  <TableTab
+                    tab={tab}
+                    rows={tableRows[tab.key] ?? []}
+                    onAddRow={handleAddRow}
+                    onRemoveRow={handleRemoveRow}
+                    processing={processing}
+                  /> : tab.fields
               ) : (
                 <div className="grid grid-cols-12 gap-x-4 gap-y-6">
-                  {tab.fields.map(field => (
-                    <FieldRenderer
-                      key={field.name}
-                      field={field}
-                      value={data[field.name]}
-                      onChange={handleChange}
-                      errors={errors}
-                      processing={processing}
-                      fileMap={fileMap}
-                      onFileChange={handleFileChange}
-                      onRemoveFile={handleRemoveFile}
-                    />
-                  ))}
+                  {Array.isArray(tab.fields) ? tab.fields.map(field =>
+                    (
+                      <FieldRenderer
+                        key={field.name}
+                        field={field}
+                        value={data[field.name]}
+                        onChange={handleChange}
+                        errors={errors}
+                        processing={processing}
+                        fileMap={fileMap}
+                        onFileChange={handleFileChange}
+                        onRemoveFile={handleRemoveFile}
+                      />
+                    )) : tab.fields
+                  }
                 </div>
               )}
             </div>

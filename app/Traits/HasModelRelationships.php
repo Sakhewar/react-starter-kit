@@ -8,6 +8,7 @@ use App\Models\{
     FamilleProduit,
     FileItem,
     Fournisseur,
+    Marque,
     Module,
     ModeLink,
     ModePaiement,
@@ -17,6 +18,7 @@ use App\Models\{
     Page,
     Pays,
     PointVente,
+    PrixVente,
     TypeClient,
     TypeDepot,
     TypeFournisseur,
@@ -106,6 +108,21 @@ trait HasModelRelationships
     public function famille_produit()
     {
         return $this->belongsTo(FamilleProduit::class);
+    }
+
+    public function sous_famille_produit()
+    {
+        return $this->belongsTo(FamilleProduit::class);
+    }
+
+    public function prix_ventes()
+    {
+        return $this->hasMany(PrixVente::class)->orderBy('id');
+    }
+
+    public function marque()
+    {
+        return $this->belongsTo(Marque::class);
     }
 
     public function point_vente()

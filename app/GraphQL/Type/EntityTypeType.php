@@ -15,6 +15,7 @@ class EntityTypeType extends RefactGraphQLType
         return [
             'id'                                 => ['type' => Type::int()],
 
+            'code'                               => ['type' => Type::string()],
             'libelle'                            => ['type' => Type::string()],
             'email'                              => ['type' => Type::string()],
             'telephone'                          => ['type' => Type::string()],
@@ -39,7 +40,15 @@ class EntityTypeType extends RefactGraphQLType
             'famille_produit_id'                 => ['type' => Type::int()],
             'famille_produit'                    => ['type' => GraphQL::type('EntityTypeType')],
 
+            'sous_famille_produit_id'            => ['type' => Type::int()],
+            'sous_famille_produit'               => ['type' => GraphQL::type('EntityTypeType')],
+
+
+            'marque_id'                          => ['type' => Type::int()],
+            'marque'                             => ['type' => GraphQL::type('EntityTypeType')],
+
             'contacts'                           => ['type' => Type::listOf(GraphQL::type('ContactType'))],
+            'prix_ventes'                        => ['type' => Type::listOf(GraphQL::type('PrixVenteType'))],
 
         ];
     }

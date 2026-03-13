@@ -3,13 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check } from "lucide-react";
 import { cn, FieldConfig, FieldRendererProps, TableTabProps } from "@/lib/utils";
@@ -59,6 +52,7 @@ function buildColClass(field: FieldConfig)
 
 function emptyRowFromFields(fields: FieldConfig[])
 {
+  if(!Array.isArray(fields)) return {};
   return Object.fromEntries(fields.map(f => [f.name, f.defaultValue ?? ""]));
 }
 
@@ -327,7 +321,7 @@ function SearchableSelect({ field, value, onChange, processing }: {
 export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: TableTabProps)
 {
   const [currentRow, setCurrentRow] = React.useState<Record<string, any>>(
-    emptyRowFromFields(tab.fields)
+    emptyRowFromFields(tab.fields as FieldConfig[])
   );
   const [uniqueError, setUniqueError] = React.useState<string | null>(null);
 
@@ -340,7 +334,7 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
     const hasValue = Object.values(currentRow).some(v => v !== "" && v !== false && v != null);
     if (!hasValue) return;
 
-    const violation = checkUniqueness(tab.fields, currentRow, rows, tab.key);
+    const violation = checkUniqueness(tab.fields as FieldConfig[], currentRow, rows, tab.key);
     if (violation)
     {
       toast.error(violation, {position: "top-center"});
@@ -350,11 +344,11 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
 
     setUniqueError(null);
     onAddRow(tab.key, currentRow);
-    setCurrentRow(emptyRowFromFields(tab.fields));
+    setCurrentRow(emptyRowFromFields(tab.fields as FieldConfig[]));
   };
 
   // Colonnes visibles : exclut id et champs cachés
-  const visibleFields = tab.fields.filter(f =>
+  const visibleFields =Array.isArray(tab.fields) && tab.fields.filter(f =>
     f.name !== "id" &&
     (!f.containerClassName || !f.containerClassName.includes("hidden"))
   );
@@ -363,7 +357,7 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
     <div className="flex flex-col gap-6">
       {/* Formulaire d'ajout */}
       <div className="grid grid-cols-12 gap-x-4 gap-y-4 items-end">
-        {tab.fields.map(field => (
+        {Array.isArray(tab.fields) && tab.fields.map(field => (
           <FieldRenderer
             key={field.name}
             field={
@@ -396,7 +390,7 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
         <TableShadCn.Table>
             <TableShadCn.TableHeader>
                 <TableShadCn.TableRow className="bg-black hover:bg-black">
-                {visibleFields.map((f) => (
+                {Array.isArray(visibleFields) && visibleFields.map((f) => (
                     <TableShadCn.TableHead key={f.name} className={cn("text-center text-white")}>
                     {f.label}
                     </TableShadCn.TableHead>
@@ -409,14 +403,14 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
             <TableShadCn.TableBody>
             {rows.length === 0 ? (
               <TableShadCn.TableRow className="bg-white">
-                <TableShadCn.TableCell colSpan={visibleFields.length} className="text-center">
+                <TableShadCn.TableCell colSpan={Array.isArray(visibleFields) ? visibleFields.length : 0} className="text-center">
                   Aucune ligne ajoutée
                 </TableShadCn.TableCell>
               </TableShadCn.TableRow>
             ): (
               rows.map((row, i) => (
                 <TableShadCn.TableRow key={i} className="bg-white hover:bg-gray-100">
-                  {visibleFields.map(f => (
+                  {Array.isArray(visibleFields) && visibleFields.map(f => (
                     <TableShadCn.TableCell key={f.name} className="text-center">
                        {f.type === "checkbox"
                         ? (row[f.name] ? "✓" : "—")

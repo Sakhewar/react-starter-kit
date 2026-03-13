@@ -304,6 +304,20 @@ export function can(name: string, permissions? : any [])
 export async function addElement(type: string, data : Record<string, any>)
 {
   let rtr : Record<string, any>  = {};
+  let goodType = type.replace('/', '');
+
+  let scope = useGlobalStore.getState().scope;
+  if(scope && scope.dataInTabPane)
+  {    
+    Object.entries(scope.dataInTabPane).forEach(([key, value]) =>
+    {
+      if(String(key).endsWith("_" + goodType))
+      {
+        let keyItem = key.substring(0, key.length - ("_" + goodType).length);
+        data = {...data,[keyItem]: value}
+      }
+    });
+  }
 
   return axios.post(type, data).then((response) =>
   { 
@@ -488,4 +502,44 @@ export function showToast(message: string, type: ToastT["type"] = "error",option
     },
     ...options,
   });
+}
+
+export function emptyForm(type: string)
+{
+  let scope = useGlobalStore.getState().scope;
+  if(scope && scope.dataInTabPane)
+  {
+    Object.entries(scope.dataInTabPane).forEach(([key, value]) =>
+    {
+      if(String(key).endsWith("_" + type))
+      {
+        scope.dataInTabPane[key] = [];
+      }
+    });
+  }
+}
+
+export function checkInForm(type: string, item :Record<any,any>)
+{
+  let scope = useGlobalStore.getState().scope;
+
+  console.log("diop log", scope.dataInTabPane);
+
+  if(scope && scope.dataInTabPane)
+  {
+ 
+    Object.entries(item).forEach(([key, value]) =>
+    {
+      if(Array.isArray(item[key]))
+      {
+        let tagInTabPane = key + "_" + type;
+        console.log("diop log", tagInTabPane, item[key], scope.dataInTabPane[tagInTabPane]);
+        
+        if(scope.dataInTabPane[tagInTabPane])
+        {
+          scope.dataInTabPane[tagInTabPane] = item[key];
+        }
+      }
+    });
+  }
 }
