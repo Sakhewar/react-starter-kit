@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use App\Models\Outil;
 use App\Models\PrixVente;
+use App\Models\Seuil;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\{Str};
 use App\RefactoringItems\{CRUDController};
@@ -53,20 +54,49 @@ class ProduitController extends CRUDController
     public function afterCRUDProcessing(&$model): void
     {
         $prix_ventes = parseArray($this->request->prix_ventes, PrixVente::class);
+        $seuils      = parseArray($this->request->seuils, Seuil::class);
 
         $line = 1;
-        array_map(function ($item) use ($model, &$line) 
+        $prix_ventes = array_map(function ($item) use (&$line) 
         {
             $endText = " ==> Pricing : Ligne $line";
             if(empty($item['prix_vente']))
             {
-                throw new \Exception("Le prix de vente est obligatoire". $endText);
+                throw new \Exception("Le prix de vente est obligatoire" . $endText);
+            }
+
+            foreach(['prix_achat', 'frais', 'prix_revient', 'prix_vente'] as $key)
+            {
+                $item = $this->setNullIfEmpty($item, $key);
             }
 
             $line++;
-            
+            return $item;
         }, $prix_ventes);
 
         $model->saveHasManyRelation($prix_ventes, PrixVente::class);
+
+        $seuils = array_map(function ($item) use (&$line) 
+        {
+            foreach(['min', 'max'] as $key)
+            {
+                $item = $this->setNullIfEmpty($item, $key);
+            }
+
+            $line++;
+            return $item;
+        }, $seuils);
+
+        $model->saveHasManyRelation($seuils, Seuil::class);
+
+   
+        Outil::uploadFileToModel($this->request, $model, 'image');
+    }
+
+    public function setNullIfEmpty($value, $key)
+    {
+        
+        if(empty($value[$key])) $value[$key] = null;
+        return $value;
     }
 }

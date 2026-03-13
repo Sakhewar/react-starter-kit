@@ -75,10 +75,10 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
   {
     if (updateItem != null)
     {
-      const newData = Object.fromEntries(
+      let newData = Object.fromEntries(
         flatFields.map(f => [f.name, updateItem?.[f.name] ?? f.defaultValue ?? ""])
       );
-      setData(newData);
+   
   
       resolvedTabs.forEach(tab =>
       {
@@ -93,10 +93,12 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
           }
           else
           {
-            setData({...newData, [tab.key]: updateItem[tab.key] });
+            newData = {...newData, [tab.key]: updateItem[tab.key]}
           }
         }
       });
+
+      setData(newData);
     }
   }, [updateItem, flatFields]);
 

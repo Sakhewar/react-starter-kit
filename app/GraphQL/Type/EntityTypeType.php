@@ -49,6 +49,7 @@ class EntityTypeType extends RefactGraphQLType
 
             'contacts'                           => ['type' => Type::listOf(GraphQL::type('ContactType'))],
             'prix_ventes'                        => ['type' => Type::listOf(GraphQL::type('PrixVenteType'))],
+            'seuils'                             => ['type' => Type::listOf(GraphQL::type('SeuilType'))],
 
         ];
     }

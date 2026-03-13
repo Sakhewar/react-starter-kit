@@ -16,6 +16,7 @@ class CreateProduitsTable extends Migration
         Schema::create('produits', function (Blueprint $table)
         {
             $table->id();
+            $table->string('image')->nullable();
             $table->string('code')->nullable();
             $table->string('libelle')->nullable();
             $table->boolean('no_impact_stock')->default(false);

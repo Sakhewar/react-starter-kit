@@ -23,6 +23,7 @@ export function managePageDeps(currentTemplateUrl:string, getElementsNeeds:{ ent
     {
         getElementsNeeds.push({entity: 'marques',fields: 'id,libelle', args:{activer:true}});
         getElementsNeeds.push({entity: 'pointventes',fields: 'id,libelle', args:{activer:true}});
+        getElementsNeeds.push({entity: 'depots',fields: 'id,libelle', args:{activer:true}});
         getElementsNeeds.push({entity: 'familleproduits',fields: 'id,libelle', args:{activer:true}});
         getElementsNeeds.push({entity: 'sousfamilleproduits',fields: 'id,libelle', args:{activer:true}});
     }

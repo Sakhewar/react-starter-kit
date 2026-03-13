@@ -13,6 +13,13 @@ type PrixVenteRow = {
   prix_vente: string;
 };
 
+type SeuilRow = {
+    depot_id: string | number;
+    depot: any;
+    min: string;
+    max: string;
+  };
+
 export function PrixVenteProduit({ type, data, setData }: { type: string, data:Record<string,any>, setData:Function })
 {
     const {dataPage} = useGlobalStore();
@@ -36,35 +43,38 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
     useEffect(() =>
     {
         if(!data) return;
-        if(!data[tagInTabPane]) data[tagInTabPane] = [];
-
-        if (dataPage["pointventes"] && Array.isArray(dataPage["pointventes"]))
+        if(!data.id)
         {
-            dataPage["pointventes"].sort((a,b) => a.id - b.id).forEach((pointvente: any) =>
+            if(!data[tagInTabPane]) data[tagInTabPane] = [];
+
+            if (dataPage["pointventes"] && Array.isArray(dataPage["pointventes"]))
             {
-                const alreadyExists = data[tagInTabPane].find((
-                    item: PrixVenteRow) => item.point_vente_id === pointvente.id
-                );
-
-                if (!alreadyExists)
+                dataPage["pointventes"].sort((a,b) => a.id - b.id).forEach((pointvente: any) =>
                 {
-                    data[tagInTabPane].push(
-                    {
-                        point_vente_id: pointvente.id,
-                        point_vente : pointvente,
-                        prix_achat: "",
-                        frais: "",
-                        prix_revient: "",
-                        prix_vente: "",
-                    });
-                }
-            });
-        }
+                    const alreadyExists = data[tagInTabPane].find((
+                        item: PrixVenteRow) => item.point_vente_id === pointvente.id
+                    );
 
+                    if (!alreadyExists)
+                    {
+                        data[tagInTabPane].push(
+                        {
+                            point_vente_id: pointvente.id,
+                            point_vente : pointvente,
+                            prix_achat: "",
+                            frais: "",
+                            prix_revient: "",
+                            prix_vente: "",
+                        });
+                    }
+                });
+            }
+        } 
         setRows([...data[tagInTabPane]]);
     }, [dataPage, tagInTabPane]);
 
-
+    console.log(data);
+    
     const setValueInRow = (value: string, index: number, key: keyof PrixVenteRow) =>
     {
         const updated = [...rows];
@@ -121,12 +131,130 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
                     
                     {editable_columns.map((key) => (
                     <TableShadCn.TableCell key={key + i} className="text-center">
+                        <div>
+                            <Input
+                                type="number"
+                                className="form-control text-center"
+                                min={1}
+                                autoComplete="off"
+                                value={String(row[key] ?? "")}
+                                onChange={(e) => setValueInRow(e.target.value, i, key)}
+                            />
+                        </div>
+                    </TableShadCn.TableCell>
+                    ))}
+
+                </TableShadCn.TableRow>
+                ))}
+            </TableShadCn.TableBody>
+            </TableShadCn.Table>
+        </div>
+        </div>
+    );
+}
+
+
+export function SeuilProduit({ type, data, setData }: { type: string, data:Record<string,any>, setData:Function })
+{
+    const {dataPage} = useGlobalStore();
+    
+    const tagInTabPane = "seuils";
+
+    const [rows, setRows] = useState<SeuilRow[]>([]);
+
+    const columns = [
+        { key: "depot",       label: "Dépôt" },
+        { key: "min",         label: "Seuil Min" },
+        { key: "max",         label: "Seuil Max" },
+    ];
+
+    const editable_columns: (keyof SeuilRow)[] = [
+        "min", "max",
+    ];
+
+    useEffect(() =>
+    {
+        if(!data) return;
+        if(!data[tagInTabPane]) data[tagInTabPane] = [];
+
+        if (dataPage["depots"] && Array.isArray(dataPage["depots"]))
+        {
+            dataPage["depots"].sort((a,b) => a.id - b.id).forEach((depot: any) =>
+            {
+                const alreadyExists = data[tagInTabPane].find((
+                    item: SeuilRow) => item.depot_id === depot.id
+                );
+
+                if (!alreadyExists)
+                {
+                    data[tagInTabPane].push(
+                    {
+                        depot_id: depot.id,
+                        depot : depot,
+                        min: "",
+                        max: "",
+                    });
+                }
+            });
+        }
+
+        setRows([...data[tagInTabPane]]);
+    }, [dataPage, tagInTabPane]);
+
+
+    const setValueInRow = (value: string, index: number, key: keyof SeuilRow) =>
+    {
+        const updated = [...rows];
+        updated[index] = { ...updated[index], [key]: value };
+
+        let val = parseFloat(value) || 0;
+        if(isNaN(val)) val = 0;
+
+        if(val < 0)
+        {
+            showToast(`${columns.find((col) => col.key === key)?.label} ne peut pas être négatif`, "error");
+            return;
+        }
+
+        data[tagInTabPane] = updated;
+        setRows(updated);
+    };
+
+    return (
+        <div className="flex flex-col gap-6">
+        <div className="rounded-md overflow-hidden border border-border">
+            <TableShadCn.Table>
+            <TableShadCn.TableHeader>
+                <TableShadCn.TableRow className="bg-black hover:bg-black">
+                {columns.map((col) => (
+                    <TableShadCn.TableHead
+                    key={col.key + type}
+                    className={cn("text-center text-white")}
+                    >
+                    {col.label}
+                    </TableShadCn.TableHead>
+                ))}
+                </TableShadCn.TableRow>
+            </TableShadCn.TableHeader>
+
+            <TableShadCn.TableBody>
+                {rows.map((row, i) => (
+                <TableShadCn.TableRow key={i} className="bg-white hover:bg-gray-100">
+
+                    
+                    <TableShadCn.TableCell className="text-center">
+                    {row.depot?.libelle}
+                    </TableShadCn.TableCell>
+
+                    
+                    {editable_columns.map((key) => (
+                    <TableShadCn.TableCell key={key + i} className="text-center">
                         <Input
                             type="number"
                             className="form-control text-center"
                             min={1}
                             autoComplete="off"
-                            value={row[key] as string}
+                            value={String(row[key] ?? "")}
                             onChange={(e) => setValueInRow(e.target.value, i, key)}
                         />
                     </TableShadCn.TableCell>

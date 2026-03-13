@@ -187,13 +187,14 @@ export const columnConfigs: Record<string, Column[]> =
     },  
   ],
   produit : [
+    { key: "image", label: "Image", className: "", render: (value) => <div className="flex items-center justify-center"><Avatar size="lg"><AvatarImage src={value} /> </Avatar></div>},
     { key: "code",    label: "Code", className: ""},
     { key: "libelle", label: "Libellé", className: "" },
     { key: "famille_produit_id", label: "Famille Produit",  render : (_,row) => <span>{row?.famille_produit?.libelle}</span> },
     { key: "sous_famille_produit_id", label: "Sous Famille Produit",  render : (_,row) => <span>{row?.sous_famille_produit?.libelle}</span> },
     { key: "marque_id", label: "Marque",  render : (_,row) => <span>{row?.marque?.libelle}</span> },
-
     { key: "description", label: "Description" },
+    { key: "activer", label: "Actif",render: (_,row) =>  <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge>},
     { key: "actions", label: "", className: "flex items-center justify-center",
       render: (_, row, extra) => (
         <RowActions config = {{}} row = {row} attributeName = {extra?.attributeName ?? "default"} namepage = {extra?.namepage}
@@ -244,76 +245,76 @@ export const columnConfigs: Record<string, Column[]> =
   
 
 
-    // orders: [
-    //   { key: "number", label: "N° Commande" },
-    //   { key: "client.nom_complet", label: "Client" },
-    //   {
-    //     key: "total",
-    //     label: "Total",
-    //     render: (v) => v ? `${Number(v).toLocaleString("fr-SN")} FCFA` : "—",
-    //   },
-    //   {
-    //     key: "status",
-    //     label: "Statut",
-    //     render: (v) => (
-    //       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-    //         v === "paid" ? "bg-green-100 text-green-800" : 
-    //         v === "pending" ? "bg-yellow-100 text-yellow-800" : 
-    //         "bg-red-100 text-red-800"
-    //       }`}>
-    //         {v}
-    //       </span>
-    //     ),
-    //   },
-    //   {
-    //     key: "actions",
-    //     label: "",
-    //     className: "w-12 text-right",
-    //     render: (_, row, extra) => (
-    //       <RowActions
-    //         config={{
-    //           clone: false,                          // désactiver Cloner
-    //           delete: (r) => r.status === "draft",   // supprimer seulement si draft
-    //         }}
-    //         extraActions={[
-    //           {
-    //             key: "print",
-    //             label: "Imprimer",
-    //             icon: Copy, // ou une vraie icône Printer si tu l'as
-    //             onClick: (r) => window.open(`/orders/${r.id}/print`, "_blank"),
-    //           },
-    //         ]}
-    //         row={row}
-    //         attributeName={extra?.attributeName ?? "orders"}
-    //       />
-    //     ),
-    //   },
-    // ],
+      // orders: [
+      //   { key: "number", label: "N° Commande" },
+      //   { key: "client.nom_complet", label: "Client" },
+      //   {
+      //     key: "total",
+      //     label: "Total",
+      //     render: (v) => v ? `${Number(v).toLocaleString("fr-SN")} FCFA` : "—",
+      //   },
+      //   {
+      //     key: "status",
+      //     label: "Statut",
+      //     render: (v) => (
+      //       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+      //         v === "paid" ? "bg-green-100 text-green-800" : 
+      //         v === "pending" ? "bg-yellow-100 text-yellow-800" : 
+      //         "bg-red-100 text-red-800"
+      //       }`}>
+      //         {v}
+      //       </span>
+      //     ),
+      //   },
+      //   {
+      //     key: "actions",
+      //     label: "",
+      //     className: "w-12 text-right",
+      //     render: (_, row, extra) => (
+      //       <RowActions
+      //         config={{
+      //           clone: false,                          // désactiver Cloner
+      //           delete: (r) => r.status === "draft",   // supprimer seulement si draft
+      //         }}
+      //         extraActions={[
+      //           {
+      //             key: "print",
+      //             label: "Imprimer",
+      //             icon: Copy, // ou une vraie icône Printer si tu l'as
+      //             onClick: (r) => window.open(`/orders/${r.id}/print`, "_blank"),
+      //           },
+      //         ]}
+      //         row={row}
+      //         attributeName={extra?.attributeName ?? "orders"}
+      //       />
+      //     ),
+      //   },
+      // ],
 
-    // // Ajoute ici products, suppliers, invoices, etc.
-    // // Exemple minimal pour products :
-    // products: [
-    //   // ... tes colonnes ...
-    //   {
-    //     key: "actions",
-    //     label: "",
-    //     className: "w-12 text-right",
-    //     render: (_, row, extra) => (
-    //       <RowActions
-    //         config={{
-    //           delete: (r) => r.stock <= 0,
-    //         }}
-    //         row={row}
-    //         attributeName={extra?.attributeName ?? "products"}
-    //       />
-    //     ),
-    //   },
-    // ],
+      // // Ajoute ici products, suppliers, invoices, etc.
+      // // Exemple minimal pour products :
+      // products: [
+      //   // ... tes colonnes ...
+      //   {
+      //     key: "actions",
+      //     label: "",
+      //     className: "w-12 text-right",
+      //     render: (_, row, extra) => (
+      //       <RowActions
+      //         config={{
+      //           delete: (r) => r.stock <= 0,
+      //         }}
+      //         row={row}
+      //         attributeName={extra?.attributeName ?? "products"}
+      //       />
+      //     ),
+      //   },
+      // ],
 };
 
-  // ────────────────────────────────────────────────
-  // Types
-  // ────────────────────────────────────────────────
+    // ────────────────────────────────────────────────
+    // Types
+    // ────────────────────────────────────────────────
 
 const baseActions: Record<string, Omit<Action, "key" | "onClick">> = {
   edit: {
@@ -422,10 +423,10 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName, 
     (act) => !act.condition || act.condition(row)
   );
 
-    // Toutes les actions (base + extra)
+      // Toutes les actions (base + extra)
   const allActions = [...baseVisible, ...extraVisible];
 
-    // Supprimer toujours en dernier si présent
+      // Supprimer toujours en dernier si présent
   const sortedActions = [
     ...allActions.filter((a) => a.key !== "delete"),
     ...allActions.filter((a) => a.key === "delete"),
@@ -453,8 +454,8 @@ export const RowActions = ({config = {}, extraActions = [], row, attributeName, 
         className = {
           action.variant === "destructive"
             ? "text-destructive focus:bg-destructive/10 focus:text-destructive"
-            :  action.variant === "success" ? "text-success focus:bg-success/10 focus:text-success"
-            :  ""
+            :   action.variant === "success" ? "text-success focus:bg-success/10 focus:text-success"
+            :   ""
         }
         onClick = {() => action.onClick?.(row)}
       >

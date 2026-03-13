@@ -1,6 +1,6 @@
 import { FieldConfig, TabConfig } from "@/lib/utils";
-import { PrixVenteProduit } from "@/pages/modalsTabPane/modalsTabPane";
-import { BookOpen, DollarSign, InfoIcon } from "lucide-react";
+import { PrixVenteProduit, SeuilProduit } from "@/pages/modalsTabPane/modalsTabPane";
+import { ArrowDownToLine, Bell, BookOpen, DollarSign, InfoIcon, Maximize, Warehouse } from "lucide-react";
 
 export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> = 
 {
@@ -170,6 +170,7 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
             label : "Infos Générales",
             fields: 
             [
+                { name: "image",                  label: "",                       type: "file",     accept: "image/*"                                          },
                 { name: "code",                   label: "Code",                   type: "text",     required: false, group: "left",  groupCol: 6, lgColSpan: 6, mdColSpan: 6 },
                 { name: "libelle",                label: "Désignation",            type: "text",     required: true,  group: "left"                                           },
                 { name: "description",            label: "Description",            type: "textarea",                  group: "right", groupCol: 6, nbRowsTextArea: 5           },
@@ -184,6 +185,13 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
             icon     : <DollarSign />,
             tableMode: true,
             fields   : (data, setData) => (<PrixVenteProduit type="produit" data={data} setData={setData} />),
+        },
+        {
+            key      : "seuils",
+            label    : "Seuils",
+            icon     : <Warehouse />,
+            tableMode: true,
+            fields   : (data, setData) => (<SeuilProduit type="produit" data={data} setData={setData} />),
         },
     ] as TabConfig[],
 };

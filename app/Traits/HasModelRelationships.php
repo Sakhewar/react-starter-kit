@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\{
     Client,
     Contact,
+    Depot,
     FamilleProduit,
     FileItem,
     Fournisseur,
@@ -19,6 +20,7 @@ use App\Models\{
     Pays,
     PointVente,
     PrixVente,
+    Seuil,
     TypeClient,
     TypeDepot,
     TypeFournisseur,
@@ -120,6 +122,11 @@ trait HasModelRelationships
         return $this->hasMany(PrixVente::class)->orderBy('id');
     }
 
+    public function seuils()
+    {
+        return $this->hasMany(Seuil::class)->orderBy('id');
+    }
+
     public function marque()
     {
         return $this->belongsTo(Marque::class);
@@ -128,6 +135,11 @@ trait HasModelRelationships
     public function point_vente()
     {
         return $this->belongsTo(PointVente::class);
+    }
+
+    public function depot()
+    {
+        return $this->belongsTo(Depot::class);
     }
 
     public function type_fournisseur()
