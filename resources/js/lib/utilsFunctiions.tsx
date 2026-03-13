@@ -84,29 +84,29 @@ function checkUniqueness(fields: FieldConfig[], currentRow: Record<string, any>,
 
 
 
-export function groupFields(fields: FieldConfig[]): FieldGroup[]
-{
+export function groupFields(fields: FieldConfig[]): FieldGroup[] {
   const result: FieldGroup[] = [];
+  const groupMap = new Map<string, FieldGroup & { kind: "grouped" }>();
 
-  fields.forEach(field =>
-  {
-    if (field.group)
-    {
-      const existing = result.find(g => g.group === field.group);
-      if (existing)
-      {
-        existing.fields.push(field);
+  for (const field of fields) {
+    if (field.group) {
+      if (!groupMap.has(field.group)) {
+        const g: FieldGroup & { kind: "grouped" } = {
+          kind: "grouped",
+          groupCol:   field.groupCol   ?? 12,
+          mdGroupCol: field.mdGroupCol,
+          lgGroupCol: field.lgGroupCol,
+          xlGroupCol: field.xlGroupCol,
+          fields: [],
+        };
+        groupMap.set(field.group, g);
+        result.push(g);
       }
-      else
-      {
-        result.push({ group: field.group, groupCol: field.groupCol ?? 6, fields: [field] });
-      }
+      groupMap.get(field.group)!.fields.push(field);
+    } else {
+      result.push({ kind: "solo", field });
     }
-    else
-    {
-      result.push({ groupCol: field.lgColSpan ?? field.mdColSpan ?? field.colSpan ?? 12, fields: [field] });
-    }
-  });
+  }
 
   return result;
 }
@@ -273,80 +273,87 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
     );
 }
 
-function SearchableSelect({ field, value, onChange, processing }: {
-    field: FieldConfig;
-    value: any;
-    onChange: (name: string, value: any) => void;
-    processing?: boolean;
-  }) {
-    const [open, setOpen] = React.useState(false);
-    const {dataPage} = useGlobalStore();
-    const triggerRef = React.useRef<HTMLButtonElement>(null);
+function SearchableSelect({ field, value, onChange, processing }: {field :FieldConfig; value :any; onChange :(name: string, value: any) => void; processing?: boolean;})
+{
+  const [open, setOpen]                 = React.useState(false);
+  const [popoverWidth, setPopoverWidth] = React.useState<number | undefined>();
+  const { dataPage }                    = useGlobalStore();
+  const triggerRef                      = React.useRef<HTMLButtonElement>(null);
 
+  const options = React.useMemo(
+    () => (field.options != null ? dataPage[field.options] : []) as { id: any; libelle: string }[],
+    [dataPage, field.options]
+  );
 
+  const placeholder = field.placeholder ?? toCapitalize(field.label.toLowerCase());
 
-    const options = field.options != null ? dataPage[field.options] : [];
-  
-    return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            ref={triggerRef}
-            type="button"
-            variant="outline"
-            role="combobox"
-            disabled={processing}
-            className={cn("w-full justify-between font-normal", field.inputClassName)}
-          >
-            {value
-              ? Array.isArray(options) && options.find(opt => String(opt.id) === String(value))?.libelle
-              : (field.placeholder ?? `${toCapitalize(field.label.toLowerCase())}`)}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent style={{ width : triggerRef.current?.offsetWidth ?? "auto" }} className="w-full p-0" align="start">
-          <Command>
-            <CommandInput placeholder="Rechercher..." />
-            <CommandList>
-              <CommandEmpty>Aucun résultat.</CommandEmpty>
-              <CommandGroup>
+  const selectedLabel = React.useMemo(
+    () => options.find(opt => String(opt.id) === String(value))?.libelle,
+    [options, value]
+  );
+
+  const handleSelect = React.useCallback((id: string) =>
+  {
+    onChange(field.name, id);
+    setOpen(false);
+  }, [field.name, onChange]);
+
+  const handleClear = React.useCallback(() =>
+  {
+    onChange(field.name, "");
+    setOpen(false);
+  }, [field.name, onChange]);
+
+  return (
+    <Popover open = {open}
+      onOpenChange = {(isOpen) =>
+        {
+        if (isOpen) setPopoverWidth(triggerRef.current?.offsetWidth);
+        setOpen(isOpen);
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          ref       = {triggerRef}
+          type      = "button"
+          variant   = "outline"
+          role      = "combobox"
+          disabled  = {processing}
+          className = {cn("w-full justify-between font-normal", field.inputClassName)}
+        >
+          {selectedLabel ?? placeholder}
+          <ChevronsUpDown className = "ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent style = {{ width: popoverWidth ?? "auto" }} className = "p-0" align = "start">
+        <Command>
+          <CommandInput placeholder = "Rechercher..." />
+          <CommandList>
+            <CommandEmpty>Aucun résultat.</CommandEmpty>
+            <CommandGroup>
+              <CommandItem value     = "__none__" onSelect = {handleClear}>
+              <span        className = "text-muted-foreground">{placeholder}</span>
+              </CommandItem>
+              {options.map((opt) => (
                 <CommandItem
-                  value="__none__"
-                  onSelect={() => {
-                    onChange(field.name, "");
-                    setOpen(false); // ← ferme
-                  }}
+                  key      = {opt.id}
+                  value    = {opt.libelle} 
+                  onSelect = {() => handleSelect(String(opt.id))}
                 >
-                  <span className="text-muted-foreground">
-                    {field.placeholder ?? `${toCapitalize(field.label.toLowerCase())}`}
-                  </span>
+                  <Check className={cn(
+                    "mr-2 h-4 w-4",
+                    String(value) === String(opt.id) ? "opacity-100" : "opacity-0"
+                  )} />
+                  {opt.libelle}
                 </CommandItem>
-                {Array.isArray(options) && options.map((opt) => (
-                  <CommandItem
-                    key={opt.id}
-                    value={String(opt.id)}
-                    onSelect={() => {
-                      onChange(field.name, String(opt.id));
-                      setOpen(false); // ← ferme
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        String(value) === String(opt.id) ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {opt.libelle}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    );
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
 }
-
 // ─── Sous-composant : tab en mode tableau ─────────────────────────────────────
 
 

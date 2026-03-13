@@ -33,15 +33,15 @@ export interface FieldConfig {
   inactiveClassName?: string;
   group?: "left" | "right";
   groupCol?: number;  
-  nbRowsTextArea? : number  
+  nbRowsTextArea? : number,
+  mdGroupCol?:number ,
+  lgGroupCol?:number ,
+  xlGroupCol?:number
 }
 
-export interface FieldGroup
-{
-  group?: string;
-  groupCol?: number;
-  fields: FieldConfig[];
-};
+export type FieldGroup =
+  | { kind: "grouped"; groupCol: number; mdGroupCol?: number; lgGroupCol?: number; xlGroupCol?: number; fields: FieldConfig[] }
+  | { kind: "solo";    field: FieldConfig };
 
 export interface RadioOption
 {

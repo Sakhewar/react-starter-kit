@@ -171,10 +171,10 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
             fields: 
             [
                 { name: "image",                  label: "",                       type: "file",     accept: "image/*"                                          },
-                { name: "code",                   label: "Code",                   type: "text",     required: false, group: "left",  groupCol: 6, lgColSpan: 6, mdColSpan: 6 },
-                { name: "libelle",                label: "Désignation",            type: "text",     required: true,  group: "left"                                           },
-                { name: "description",            label: "Description",            type: "textarea",                  group: "right", groupCol: 6, nbRowsTextArea: 5           },
-                { name: "famille_produit_id",     label: "Famille de produit",     type: "select",   required: true,  options: "familleproduits",    lgColSpan: 6, mdColSpan: 6, inputClassName: "w-full" },
+                { name: "code",    label: "Code",        type: "text", group: "left", groupCol: 12,  mdGroupCol: 6, lgGroupCol: 6 },
+                { name: "libelle", label: "Désignation", type: "text", group: "left",  mdGroupCol: 6, lgGroupCol: 6 },
+                { name: "description", label: "Description", type: "textarea", group: "right", groupCol: 12, mdGroupCol: 6, lgGroupCol: 6 },
+                { name: "famille_produit_id",     label: "Famille de produit",     type: "select",   required: true,  options: "familleproduits",    lgColSpan:6, inputClassName: "w-full" },
                 { name: "sous_famille_produit_id",label: "Sous Famille de produit",type: "select",   required: false, options: "sousfamilleproduits", lgColSpan: 6, mdColSpan: 6, inputClassName: "w-full" },
                 { name: "marque_id",              label: "Marque",                 type: "select",   required: false, options: "marques",             lgColSpan: 6, mdColSpan: 6, inputClassName: "w-full" },
             ],
