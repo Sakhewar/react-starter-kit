@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check } from "lucide-react";
-import { cn, FieldConfig, FieldRendererProps, TableTabProps } from "@/lib/utils";
+import { cn, FieldConfig, FieldGroup, FieldRendererProps, TableTabProps } from "@/lib/utils";
 import { toCapitalize, useGlobalStore } from "@/hooks/backoffice";
 import { DatePickerGloabal } from "@/components/DatePicker";
 import { toast } from "sonner";
@@ -84,6 +84,33 @@ function checkUniqueness(fields: FieldConfig[], currentRow: Record<string, any>,
 
 
 
+export function groupFields(fields: FieldConfig[]): FieldGroup[]
+{
+  const result: FieldGroup[] = [];
+
+  fields.forEach(field =>
+  {
+    if (field.group)
+    {
+      const existing = result.find(g => g.group === field.group);
+      if (existing)
+      {
+        existing.fields.push(field);
+      }
+      else
+      {
+        result.push({ group: field.group, groupCol: field.groupCol ?? 6, fields: [field] });
+      }
+    }
+    else
+    {
+      result.push({ groupCol: field.lgColSpan ?? field.mdColSpan ?? field.colSpan ?? 12, fields: [field] });
+    }
+  });
+
+  return result;
+}
+
 export function FieldRenderer({field, value, onChange, errors = {}, processing = false,fileMap = {}, onFileChange, onRemoveFile}: FieldRendererProps)
 {
   const {updateItem} = useGlobalStore();
@@ -108,6 +135,8 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
             id={field.name}
             placeholder={field.placeholder}
             value={value ?? ""}
+            rows={field.nbRowsTextArea ?? 3}
+            style={{ height: `${(field.nbRowsTextArea ?? 3) * 24}px` }}
             onChange={(e) => onChange(field.name, e.target.value)}
             disabled={processing}
             className={field.inputClassName}
@@ -252,6 +281,9 @@ function SearchableSelect({ field, value, onChange, processing }: {
   }) {
     const [open, setOpen] = React.useState(false);
     const {dataPage} = useGlobalStore();
+    const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+
 
     const options = field.options != null ? dataPage[field.options] : [];
   
@@ -259,6 +291,7 @@ function SearchableSelect({ field, value, onChange, processing }: {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
+            ref={triggerRef}
             type="button"
             variant="outline"
             role="combobox"
@@ -271,7 +304,7 @@ function SearchableSelect({ field, value, onChange, processing }: {
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent style={{ width : triggerRef.current?.offsetWidth ?? "auto" }} className="w-full p-0" align="start">
           <Command>
             <CommandInput placeholder="Rechercher..." />
             <CommandList>
@@ -312,7 +345,7 @@ function SearchableSelect({ field, value, onChange, processing }: {
         </PopoverContent>
       </Popover>
     );
-  }
+}
 
 // ─── Sous-composant : tab en mode tableau ─────────────────────────────────────
 

@@ -30,8 +30,18 @@ export interface FieldConfig {
   radioOptions?: RadioOption[];
   radioStyle?: "pill" | "box" | "minimal";
   activeClassName?: string;           // défaut actif pour toutes les options
-  inactiveClassName?: string;  
+  inactiveClassName?: string;
+  group?: "left" | "right";
+  groupCol?: number;  
+  nbRowsTextArea? : number  
 }
+
+export interface FieldGroup
+{
+  group?: string;
+  groupCol?: number;
+  fields: FieldConfig[];
+};
 
 export interface RadioOption
 {
@@ -63,7 +73,7 @@ export interface TabConfig
   label: string;
   icon?: React.ReactNode;
   tableMode?: boolean;
-  fields: FieldConfig[] | React.ReactNode;
+  fields: FieldConfig[] |  ((data: Record<string, any>, setData: (data: Record<string, any>) => void) => React.ReactNode);
 }
 
 export interface ModalCreateGenericProps

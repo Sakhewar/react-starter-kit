@@ -1,4 +1,4 @@
-var listofAttributes : Record<any,any> = 
+var listofAttributes : Record<any, any> = 
 {
     provenances : [
         "id,libelle,description"

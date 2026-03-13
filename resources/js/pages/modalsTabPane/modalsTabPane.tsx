@@ -13,10 +13,11 @@ type PrixVenteRow = {
   prix_vente: string;
 };
 
-export function PrixVenteProduit({ type }: { type: string })
+export function PrixVenteProduit({ type, data, setData }: { type: string, data:Record<string,any>, setData:Function })
 {
-    const { scope, dataPage, setState } = useGlobalStore();
-    const tagInTabPane = "prix_ventes_" + type;
+    const {dataPage} = useGlobalStore();
+    
+    const tagInTabPane = "prix_ventes";
 
     const [rows, setRows] = useState<PrixVenteRow[]>([]);
 
@@ -34,24 +35,23 @@ export function PrixVenteProduit({ type }: { type: string })
 
     useEffect(() =>
     {
-        if (!scope) return;
-
-        if (!scope.dataInTabPane) scope.dataInTabPane = {};
-        if (!scope.dataInTabPane[tagInTabPane]) scope.dataInTabPane[tagInTabPane] = [];
+        if(!data) return;
+        if(!data[tagInTabPane]) data[tagInTabPane] = [];
 
         if (dataPage["pointventes"] && Array.isArray(dataPage["pointventes"]))
         {
-            dataPage["pointventes"].forEach((pointvente: any) =>
+            dataPage["pointventes"].sort((a,b) => a.id - b.id).forEach((pointvente: any) =>
             {
-                const alreadyExists = scope.dataInTabPane[tagInTabPane].find((
+                const alreadyExists = data[tagInTabPane].find((
                     item: PrixVenteRow) => item.point_vente_id === pointvente.id
                 );
 
                 if (!alreadyExists)
                 {
-                    scope.dataInTabPane[tagInTabPane].push({
+                    data[tagInTabPane].push(
+                    {
                         point_vente_id: pointvente.id,
-                        point_vente : pointvente,           // ✅ clé cohérente avec le reste
+                        point_vente : pointvente,
                         prix_achat: "",
                         frais: "",
                         prix_revient: "",
@@ -61,8 +61,7 @@ export function PrixVenteProduit({ type }: { type: string })
             });
         }
 
-        setRows([...scope.dataInTabPane[tagInTabPane]]);
-        setState("scope", { ...scope });
+        setRows([...data[tagInTabPane]]);
     }, [dataPage, tagInTabPane]);
 
 
@@ -88,9 +87,8 @@ export function PrixVenteProduit({ type }: { type: string })
 
           updated[index].prix_revient = prixRevient > 0 ? (prixRevient).toString() : "";
         }
-      
-        scope.dataInTabPane[tagInTabPane] = updated;
-        setState("scope", { ...scope });
+
+        data[tagInTabPane] = updated;
         setRows(updated);
     };
 

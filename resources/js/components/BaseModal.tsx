@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2} from "lucide-react";
 import { cn, FieldConfig, ModalCreateGenericProps, TabConfig} from "@/lib/utils";
-import { addElement, checkInForm, emptyForm, toCapitalize } from "@/hooks/backoffice";
+import { addElement, emptyForm, toCapitalize } from "@/hooks/backoffice";
 import { FieldSeparator } from "./ui/field";
 import * as Icons from "lucide-react";
-import { FieldRenderer, TableTab } from "@/lib/utilsFunctiions";
+import { FieldRenderer, groupFields, TableTab } from "@/lib/utilsFunctiions";
 import { ta } from "date-fns/locale";
 
 
@@ -75,21 +75,28 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
   {
     if (updateItem != null)
     {
-      setData(Object.fromEntries(
+      const newData = Object.fromEntries(
         flatFields.map(f => [f.name, updateItem?.[f.name] ?? f.defaultValue ?? ""])
-      ));
+      );
+      setData(newData);
   
-      resolvedTabs.forEach(tab => {
-        if (tab.tableMode && Array.isArray(updateItem[tab.key]))
+      resolvedTabs.forEach(tab =>
+      {
+        if (Array.isArray(updateItem[tab.key]))
         {
-          setTableRows(prev => ({
-            ...prev,
-            [tab.key]: updateItem[tab.key],
-          }));
+          if(tab.tableMode && Array.isArray(tab.fields))
+          {
+            setTableRows(prev => ({
+              ...prev,
+              [tab.key]: updateItem[tab.key],
+            }));
+          }
+          else
+          {
+            setData({...newData, [tab.key]: updateItem[tab.key] });
+          }
         }
       });
-
-      checkInForm(entity, updateItem);
     }
   }, [updateItem, flatFields]);
 
@@ -186,12 +193,8 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
     setFileMap({});
     setTableRows({});
     setActiveTab(resolvedTabs[0]?.key ?? "");
-
-    if(!val)
-    {
-      emptyForm(entity);
-    }
   };
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -236,39 +239,61 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
         <form onSubmit={handleSubmit} className="py-2">
           {/* ── Contenu des tabs ── */}
           {resolvedTabs.map(tab => (
-            <div
-              key={tab.key}
-              className={cn(tab.key !== activeTab && "hidden")}
-            >
-              {tab.tableMode ? (
-                Array.isArray(tab.fields) ?
-                  <TableTab
-                    tab={tab}
-                    rows={tableRows[tab.key] ?? []}
-                    onAddRow={handleAddRow}
-                    onRemoveRow={handleRemoveRow}
-                    processing={processing}
-                  /> : tab.fields
-              ) : (
-                <div className="grid grid-cols-12 gap-x-4 gap-y-6">
-                  {Array.isArray(tab.fields) ? tab.fields.map(field =>
-                    (
-                      <FieldRenderer
-                        key={field.name}
-                        field={field}
-                        value={data[field.name]}
-                        onChange={handleChange}
-                        errors={errors}
-                        processing={processing}
-                        fileMap={fileMap}
-                        onFileChange={handleFileChange}
-                        onRemoveFile={handleRemoveFile}
-                      />
-                    )) : tab.fields
-                  }
-                </div>
-              )}
-            </div>
+              <div
+                key={tab.key}
+                className={cn(tab.key !== activeTab && "hidden")}
+              >
+                {tab.tableMode ? (
+                  Array.isArray(tab.fields) ?
+                    <TableTab
+                      tab={tab}
+                      rows={tableRows[tab.key] ?? []}
+                      onAddRow={handleAddRow}
+                      onRemoveRow={handleRemoveRow}
+                      processing={processing}
+                    /> : tab.fields(data, setData)
+                ) : (
+                  // <div className="grid grid-cols-12 gap-x-4 gap-y-6">
+                  //   {Array.isArray(tab.fields) ? tab.fields.map(field =>
+                  //     (
+                  //       <FieldRenderer
+                  //         key={field.name}
+                  //         field={field}
+                  //         value={data[field.name]}
+                  //         onChange={handleChange}
+                  //         errors={errors}
+                  //         processing={processing}
+                  //         fileMap={fileMap}
+                  //         onFileChange={handleFileChange}
+                  //         onRemoveFile={handleRemoveFile}
+                  //       />
+                  //     )) : tab.fields(data,setData)
+                  //   }
+                  // </div>
+                  <div className="grid grid-cols-12 gap-x-4 gap-y-6">
+                    {Array.isArray(tab.fields)
+                      ? groupFields(tab.fields).map((group, i) => (
+                          <div key={i} className={cn(`col-span-${group.groupCol}`, "flex flex-col gap-4")}>
+                            {group.fields.map(field => (
+                              <FieldRenderer
+                                key={field.name}
+                                field={field}
+                                value={data[field.name]}
+                                onChange={handleChange}
+                                errors={errors}
+                                processing={processing}
+                                fileMap={fileMap}
+                                onFileChange={handleFileChange}
+                                onRemoveFile={handleRemoveFile}
+                              />
+                            ))}
+                          </div>
+                        ))
+                      : tab.fields(data, setData)
+                    }
+                  </div>
+                )}
+              </div>
           ))}
 
           <DialogFooter className="mt-8">

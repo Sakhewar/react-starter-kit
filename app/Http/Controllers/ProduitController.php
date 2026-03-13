@@ -42,6 +42,14 @@ class ProduitController extends CRUDController
         ];
     }
 
+    public function beforeValidateData(): void
+    {
+        if (!isset($this->request->id))
+        {
+            $this->request['code']                       = empty($this->request['code']) ?  Outil::getCode($this->model, $this->modelValue->codePrefix) : $this->request['code'];
+        }
+    }
+
     public function afterCRUDProcessing(&$model): void
     {
         $prix_ventes = parseArray($this->request->prix_ventes, PrixVente::class);
