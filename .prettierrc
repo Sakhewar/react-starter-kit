@@ -4,6 +4,7 @@
     "singleAttributePerLine": false,
     "htmlWhitespaceSensitivity": "css",
     "printWidth": 80,
+    "braceStyle" : "allman",
     "plugins": [
         "prettier-plugin-tailwindcss"
     ],

@@ -27,13 +27,13 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
   {
     if (tabsProp && tabsProp.length > 0) return tabsProp;
     return [{
-      key: "infos",
-      label: "Infos Générales",
+      key   : "infos",
+      label : "Infos Générales",
       fields: legacyFields ?? [],
     }];
   }, [tabsProp, legacyFields]);
 
-  const showTabs = resolvedTabs.length > 1;
+  const showTabs                  = resolvedTabs.length > 1;
   const [activeTab, setActiveTab] = React.useState(resolvedTabs[0]?.key ?? "");
 
   const flatFields = React.useMemo(() =>
@@ -56,8 +56,8 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
     if (!allFields.some(f => f.name === "id"))
     {
       allFields.unshift({
-        name: "id", label: "id", type: "number",
-        defaultValue: "", containerClassName: "hidden",
+        name        : "id", label             : "id",     type: "number",
+        defaultValue: "",   containerClassName: "hidden",
       });
     }
     return allFields;
@@ -67,7 +67,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
     Object.fromEntries(flatFields.map(f => [f.name, f.defaultValue ?? ""]))
   );
 
-  const [fileMap, setFileMap] = React.useState<Record<string, File[]>>({});
+  const [fileMap, setFileMap]     = React.useState<Record<string, File[]>>({});
   const [tableRows, setTableRows] = React.useState<Record<string, Record<string, any>[]>>({});
 
 
@@ -115,7 +115,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
     const fileArray = Array.from(files);
     setFileMap(prev => ({
       ...prev,
-      [fieldName]: multiple ? [...(prev[fieldName] ?? []), ...fileArray] : fileArray,
+      [fieldName]: multiple ? [...(prev[fieldName] ?? []), ...fileArray]: fileArray,
     }));
     setData(fieldName, fileArray.map(f => f.name).join(", "));
   };
@@ -147,8 +147,8 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const hasFiles = Object.keys(fileMap).length > 0;
-      let payload: any = { ...data };
+      const hasFiles     = Object.keys(fileMap).length > 0;
+      let   payload: any = { ...data };
 
       Object.entries(tableRows).forEach(([key, rows]) => {
         payload[key] = rows;
@@ -197,35 +197,35 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
   
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent aria-describedby={undefined}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
-        className="sm:max-w-[60vw] max-h-[90vh] overflow-y-auto top-[50px] translate-y-0 mt-4 [&>button:last-of-type]:hidden"
+    <Dialog        open              = {isOpen} onOpenChange = {handleClose}>
+    <DialogContent aria-describedby  = {undefined}
+                   onOpenAutoFocus   = {(e) => e.preventDefault()}
+                   onInteractOutside = {(e) => e.preventDefault()}
+                   className         = "sm:max-w-[60vw] max-h-[90vh] overflow-y-auto top-[50px] translate-y-0 mt-4 [&>button:last-of-type]:hidden"
       >
         {/* ── Header : titre à gauche + tabs à droite ── */}
-        <DialogHeader className="flex flex-row items-center justify-between gap-4 pb-0">
-          <DialogTitle className="shrink-0 flex items-center gap-2">
+        <DialogHeader className = "flex flex-row items-center justify-between gap-4 pb-0">
+        <DialogTitle  className = "shrink-0 flex items-center gap-2">
             {PageIcon && <PageIcon className="w-4 h-4" />}
             {toCapitalize(title)}
           </DialogTitle>
 
           {showTabs && (
-            <div className="flex items-center gap-1">
+            <div className = "flex items-center gap-1">
               {resolvedTabs.map(tab => (
                 <Button
-                  key={tab.key}
-                  type="button"
-                  size="sm"
-                  variant={"ghost"}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={cn(
+                  key       = {tab.key}
+                  type      = "button"
+                  size      = "sm"
+                  variant   = {"ghost"}
+                  onClick   = {() => setActiveTab(tab.key)}
+                  className = {cn(
                     "flex items-center gap-1.5 h-8 px-3 text-xs font-medium cursor-pointer",
                     activeTab === tab.key ? "border-b-3 border-b-primary rounded-b-none" : ""
                   )}
                 >
                   {tab.icon && (
-                    <span className="[&>svg]:h-3.5 [&>svg]:w-3.5">{tab.icon}</span>
+                    <span className = "[&>svg]:h-3.5 [&>svg]:w-3.5">{tab.icon}</span>
                   )}
                   {tab.label}
                 </Button>
@@ -236,71 +236,71 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
 
         <FieldSeparator />
 
-        <form onSubmit={handleSubmit} className="py-2">
+        <form onSubmit = {handleSubmit} className = "py-2">
           {/* ── Contenu des tabs ── */}
           {resolvedTabs.map(tab => (
               <div
-                key={tab.key}
-                className={cn(tab.key !== activeTab && "hidden")}
+                key       = {tab.key}
+                className = {cn(tab.key !== activeTab && "hidden")}
               >
                 {tab.tableMode ? (
                   Array.isArray(tab.fields) ?
                     <TableTab
-                      tab={tab}
-                      rows={tableRows[tab.key] ?? []}
-                      onAddRow={handleAddRow}
-                      onRemoveRow={handleRemoveRow}
-                      processing={processing}
-                    /> : tab.fields(data, setData)
+                      tab         = {tab}
+                      rows        = {tableRows[tab.key] ?? []}
+                      onAddRow    = {handleAddRow}
+                      onRemoveRow = {handleRemoveRow}
+                      processing  = {processing}
+                />: tab.fields(data, setData)
                 ) : (
-                  // <div className="grid grid-cols-12 gap-x-4 gap-y-6">
-                  //   {Array.isArray(tab.fields) ? tab.fields.map(field =>
-                  //     (
-                  //       <FieldRenderer
-                  //         key={field.name}
-                  //         field={field}
-                  //         value={data[field.name]}
-                  //         onChange={handleChange}
-                  //         errors={errors}
-                  //         processing={processing}
-                  //         fileMap={fileMap}
-                  //         onFileChange={handleFileChange}
-                  //         onRemoveFile={handleRemoveFile}
-                  //       />
-                  //     )) : tab.fields(data,setData)
-                  //   }
-                  // </div>
-                  <div className="grid grid-cols-12 gap-x-4 gap-y-6">
+                    // <div className="grid grid-cols-12 gap-x-4 gap-y-6">
+                    //   {Array.isArray(tab.fields) ? tab.fields.map(field =>
+                    //     (
+                    //       <FieldRenderer
+                    //         key={field.name}
+                    //         field={field}
+                    //         value={data[field.name]}
+                    //         onChange={handleChange}
+                    //         errors={errors}
+                    //         processing={processing}
+                    //         fileMap={fileMap}
+                    //         onFileChange={handleFileChange}
+                    //         onRemoveFile={handleRemoveFile}
+                    //       />
+                    //     )) : tab.fields(data,setData)
+                    //   }
+                    // </div>
+                  <div className = "grid grid-cols-12 gap-x-4 gap-y-6">
                     {Array.isArray(tab.fields)
                       ? groupFields(tab.fields).map((group, i) => (
-                          <div key={i} className={cn(`col-span-${group.groupCol}`, "flex flex-col gap-4")}>
+                          <div key = {i} className = {cn(`col-span-${group.groupCol}`, "flex flex-col gap-4")}>
                             {group.fields.map(field => (
                               <FieldRenderer
-                                key={field.name}
-                                field={field}
-                                value={data[field.name]}
-                                onChange={handleChange}
-                                errors={errors}
-                                processing={processing}
-                                fileMap={fileMap}
-                                onFileChange={handleFileChange}
-                                onRemoveFile={handleRemoveFile}
+                                key          = {field.name}
+                                field        = {field}
+                                value        = {data[field.name]}
+                                onChange     = {handleChange}
+                                errors       = {errors}
+                                processing   = {processing}
+                                fileMap      = {fileMap}
+                                onFileChange = {handleFileChange}
+                                onRemoveFile = {handleRemoveFile}
                               />
                             ))}
                           </div>
                         ))
-                      : tab.fields(data, setData)
+                      :  tab.fields(data, setData)
                     }
                   </div>
                 )}
               </div>
           ))}
 
-          <DialogFooter className="mt-8">
-            <Button type="button" variant="outline" onClick={() => handleClose(false)} disabled={processing}>
+          <DialogFooter className = "mt-8">
+          <Button       type      = "button" variant = "outline" onClick = {() => handleClose(false)} disabled = {processing}>
               Annuler
             </Button>
-            <Button type="submit" disabled={processing}>
+            <Button type = "submit" disabled = {processing}>
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Valider
             </Button>

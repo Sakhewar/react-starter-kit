@@ -66,6 +66,10 @@ export default [
                 'error',
                 'prefer-top-level',
             ],
+            'brace-style': [
+                'error',
+                'allman'
+            ]
         },
     },
     {
