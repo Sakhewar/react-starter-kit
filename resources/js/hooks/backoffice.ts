@@ -30,6 +30,7 @@ interface InitOptions {
   pageSize?: number;        // Taille de page pour pagination
   force?: boolean;          // Pour forcer même si lastInitialized === attributeName
   filters?: Record<string, any>;
+  sort? : SortConfig
   // Ajoute d'autres options si besoin (filters, search, etc.)
 }
 
@@ -50,6 +51,7 @@ interface GlobalState {
 }
 import { persist } from "zustand/middleware";
 import { managePageDeps } from './routeChange';
+import { SortConfig } from './useDataTable';
 
 export const useGlobalStore = create<GlobalState>()(
   persist((set, get) => (

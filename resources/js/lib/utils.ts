@@ -132,6 +132,7 @@ export type Column = {
   key          : string;
   label        : string;
   className   ?: string;
+  sortable    ?: boolean;
   render      ?: (value: any, row: any, extra?: { namepage: string; attributeName: string }) => React.ReactNode;
   actionConfig?: ActionsConfig | (() => ActionsConfig);
   extraActions?: Action[];

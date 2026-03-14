@@ -16,7 +16,8 @@ export default function PaginationComponent({
   groupSize     : number
   totalPages    : number
   currentPage   : number
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
+  setCurrentPage: (page: number) => void
+  //setCurrentPage: React.Dispatch<React.SetStateAction<number>>
 }) {
   if (!totalPages || totalPages <= 1) return null
 
