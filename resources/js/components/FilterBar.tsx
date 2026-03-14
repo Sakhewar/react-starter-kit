@@ -105,8 +105,8 @@ export function FilterBar({
             type         = "button"
             onClick      = {onReset}
             className    = "h-8 px-3 text-xs rounded-md transition-all flex-shrink-0"
-            style        = {{ color: "#f87171", border: "1px solid #f87171", background: "transparent" }}
-            onMouseEnter = {(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.1)" }}
+            style        = {{ color: palette.danger, border: `1px solid ${palette.danger}`, background: "transparent" }}
+            onMouseEnter = {(e) => { e.currentTarget.style.background = palette.dangerHover}}
             onMouseLeave = {(e) => { e.currentTarget.style.background = "transparent" }}
           >
             Annuler

@@ -72,11 +72,11 @@ export function TableFooter({
                   onClick={onDeleteSelected}
                   className="flex items-center gap-1.5 h-7 px-3 text-xs rounded-md transition-all"
                   style={{
-                    color     : "#f87171",
-                    border    : "1px solid #f87171",
+                    color     : palette.danger,
+                    border    :  `1px solid ${palette.danger}`,
                     background: "transparent",
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.1)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = palette.dangerHover }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
                 >
                   <Icons.Trash2 className="h-3.5 w-3.5" />

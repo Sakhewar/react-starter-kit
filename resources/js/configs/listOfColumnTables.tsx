@@ -24,7 +24,7 @@ export const baseActions: Record<string, Omit<Action, "key" | "onClick">> = {
   // ─── columnConfigs ────────────────────────────────────
 
 export const columnConfigs: Record<string, Column[]> = {
-  provenance: [
+  "provenance": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     {
@@ -46,7 +46,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  modalitepaiement: [
+  "modalitepaiement": [
     { key: "libelle",     label: "Libellé"         },
     { key: "nbre_jour",   label: "Nombre de jours" },
     { key: "description", label: "Description"     },
@@ -59,7 +59,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  modepaiement: [
+  "modepaiement": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     {
@@ -71,7 +71,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  typeclient: [
+  "typeclient": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     {
@@ -83,7 +83,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  typefournisseur: [
+  "typefournisseur": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     {
@@ -95,7 +95,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  typedepot: [
+  "typedepot": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     {
@@ -107,7 +107,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  pointvente: [
+  "pointvente": [
     { key: "image",     label: "Image",     render: (value) => <div className="flex items-center justify-center"><Avatar size="lg"><AvatarImage src={value} /></Avatar></div> },
     { key: "libelle",   label: "Libellé"   },
     { key: "adresse",   label: "Adresse"   },
@@ -125,7 +125,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  depot: [
+  "depot": [
     { key: "libelle",        label: "Libellé"        },
     { key: "point_vente_id", label: "Point de vente", render: (_, row) => <span>{row?.point_vente?.libelle}</span> },
     { key: "type_depot_id",  label: "Type de dépôt",  render: (_, row) => <span>{row?.type_depot?.libelle}</span>  },
@@ -140,7 +140,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  client: [
+  "client": [
     { key: "code",                 label: "Code",                  render: (_, row) => <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge> },
     { key: "nom_complet",          label: "Nom Complet",           render: (_, row) => `${row?.nom_complet}` },
     { key: "email",                label: "Email"                  },
@@ -159,7 +159,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  fournisseur: [
+  "fournisseur": [
     { key: "code",                label: "Code",                   render: (_, row) => <Badge color="primary" className="text-white rounded-[5px]">{row?.code}</Badge> },
     { key: "nom_complet",         label: "Nom Complet"             },
     { key: "email",               label: "Email"                   },
@@ -176,7 +176,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  familleproduit: [
+  "familleproduit": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     { key: "activer",     label: "Actif",       render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
@@ -189,7 +189,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  sousfamilleproduit: [
+  "sousfamilleproduit": [
     { key: "libelle",            label: "Libellé"           },
     { key: "famille_produit_id", label: "Famille Produit",   render: (_, row) => <span>{row?.famille_produit?.libelle}</span> },
     { key: "description",        label: "Description"       },
@@ -203,7 +203,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  marque: [
+  "marque": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
     { key: "activer",     label: "Actif",       render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
@@ -216,7 +216,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  produit: [
+  "produit": [
     { key: "image",                   label: "Image",                render: (value) => <div className="flex items-center justify-center"><Avatar size="lg"><AvatarImage src={value} /></Avatar></div> },
     { key: "code",                    label: "Code"                  },
     { key: "libelle",                 label: "Libellé"               },
@@ -234,7 +234,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  role: [
+  "role": [
     { key: "libelle",        label: "Libellé"             },
     { key: "nb_permissions", label: "Nbre De Permissions" },
     { key: "description",    label: "Description"         },
@@ -247,7 +247,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  user: [
+  "user": [
     { key: "name",      label: "Nom complet"                                    },
     { key: "email",     label: "Email"                                          },
     { key: "role",      label: "Rôle",   render: (v) => <Badge>{v}</Badge>      },
@@ -261,7 +261,7 @@ export const columnConfigs: Record<string, Column[]> = {
     },
   ],
 
-  preference: [
+  "preference": [
     { key: "name",       label: "Nom complet"                                        },
     { key: "email",      label: "Email"                                              },
     { key: "role",       label: "Rôle",       render: (v) => <Badge>{v}</Badge>      },

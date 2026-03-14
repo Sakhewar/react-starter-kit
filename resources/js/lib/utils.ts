@@ -156,13 +156,24 @@ export const PaletteColorsGood = {
 }
 
 export type PaletteProps = {
-    bg: string,
-    border: string,
-    textActive: string,
-    text:string,
-    bgHover:string,
-    bgActive:string,
-    accent:string
+  bg          : string
+  bgHover     : string
+  bgActive    : string
+  border      : string
+  text        : string
+  textActive  : string
+  accent      : string
+  accentHover : string
+  accentFg    : string
+  danger      : string
+  dangerHover : string
+  dangerFg    : string
+  success     : string
+  successHover: string
+  successFg   : string
+  muted       : string
+  mutedText   : string
+  shadow      : string
 }
 
 

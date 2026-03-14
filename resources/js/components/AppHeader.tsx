@@ -183,9 +183,9 @@ export default function AppHeader({palette} : {palette:PaletteProps})
                         <DropdownMenuItem
                             onClick={logout}
                             className="cursor-pointer"
-                            style={{ color: "#f87171" }}
+                            style={{ color: palette.danger, border: `1px solid ${palette.danger}` }}
                             onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"
+                                (e.currentTarget as HTMLElement).style.background = palette.dangerHover
                             }}
                             onMouseLeave={(e) => {
                                 (e.currentTarget as HTMLElement).style.background = "transparent"
