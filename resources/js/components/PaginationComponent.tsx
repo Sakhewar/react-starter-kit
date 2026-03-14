@@ -5,18 +5,20 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { PaletteColors } from "@/lib/utils"
+import { PaletteColors, PaletteProps } from "@/lib/utils"
 
 export default function PaginationComponent({
   groupSize = 7,
   totalPages,
   currentPage = 1,
   setCurrentPage,
+  palette
 }: {
   groupSize     : number
   totalPages    : number
   currentPage   : number
   setCurrentPage: (page: number) => void
+  palette       : PaletteProps
   //setCurrentPage: React.Dispatch<React.SetStateAction<number>>
 }) {
   if (!totalPages || totalPages <= 1) return null
@@ -30,8 +32,8 @@ export default function PaginationComponent({
 
   const base: React.CSSProperties = {
       background    : "transparent",
-      color         : PaletteColors().text,
-      border        : `1px solid ${PaletteColors().border}`,
+      color         : palette.text,
+      border        : `1px solid ${palette.border}`,
       borderRadius  : 6,
       fontSize      : 12,
       width         : 30,
@@ -46,9 +48,9 @@ export default function PaginationComponent({
 
   const active: React.CSSProperties = {
       ...base,
-      background: PaletteColors().accent,
+      background: palette.accent,
       color     : "#fff",
-      border    : `1px solid ${PaletteColors().accent}`,
+      border    : `1px solid ${palette.accent}`,
       fontWeight: 600,
   }
 
@@ -60,8 +62,8 @@ export default function PaginationComponent({
   }
 
   const hover = (e: React.MouseEvent<HTMLElement>, on: boolean) => {
-      e.currentTarget.style.background = on ? PaletteColors().bgHover : "transparent"
-      e.currentTarget.style.color      = on ? PaletteColors().textActive : PaletteColors().text
+      e.currentTarget.style.background = on ? palette.bgHover : "transparent"
+      e.currentTarget.style.color      = on ? palette.textActive : palette.text
   }
 
   return (
@@ -84,9 +86,9 @@ export default function PaginationComponent({
               <PaginationItem className = "flex md:hidden">
                   <span
                       className = "flex items-center px-3 text-xs"
-                      style     = {{ color: PaletteColors().text }}
+                      style     = {{ color: palette.text }}
                   >
-                      <span style = {{ color: PaletteColors().textActive, fontWeight: 600 }}>
+                      <span style = {{ color: palette.textActive, fontWeight: 600 }}>
                           {currentPage}
                       </span>
                       <span className = "mx-1">/</span>

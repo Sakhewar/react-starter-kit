@@ -52,6 +52,7 @@ interface GlobalState {
 import { persist } from "zustand/middleware";
 import { managePageDeps } from './routeChange';
 import { SortConfig } from './useDataTable';
+import { PaletteColors } from '@/lib/utils';
 
 export const useGlobalStore = create<GlobalState>()(
   persist((set, get) => (
@@ -270,15 +271,24 @@ export const useGlobalStore = create<GlobalState>()(
     partialize: (state) => ({
       scope: {
         collapsed: state.scope?.collapsed ?? false,
+        theme : state.scope?.theme ?? localStorage.getItem("theme")
       },
     }),
-    merge: (persistedState: any, currentState) => ({
-      ...currentState, // garde tout le state initial
-      scope: {
-        ...currentState.scope,
-        collapsed: persistedState?.scope?.collapsed ?? false, // écrase uniquement collapsed
-      },
-    }),
+    merge: (persistedState: any, currentState) => {
+      const theme     = persistedState?.scope?.theme ?? localStorage.getItem("theme") ?? "system"
+      const isDark    = theme === "dark"
+        || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+  
+      return {
+        ...currentState,
+        scope: {
+          ...currentState.scope,
+          collapsed: persistedState?.scope?.collapsed ?? false,
+          theme,
+          palette  : PaletteColors(isDark), // ← recalculée au merge (hydration)
+        },
+      }
+    },
   }
   )
 );

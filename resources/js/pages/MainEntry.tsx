@@ -12,7 +12,7 @@ import AuthGuard from "@/components/authGuard/authguard";
 import { useAuthStore } from "@/hooks/authStore";
 import { pageWithTabs } from "@/configs/listOfPagesWithTabs";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, PaletteProps } from "@/lib/utils";
 
   // ----------- Types -----------
 
@@ -41,8 +41,16 @@ export default function MainEntry() {
 
   const attributeName = String(page?.link ?? "").replaceAll("/", "");
 
-  const { initialize, reset } = useGlobalStore();
+  const { initialize, reset, scope} = useGlobalStore();
   const { afterLogin }        = useAuthStore();
+
+  const [palette, setPalette] = useState({} as PaletteProps);
+
+  useEffect(()=>
+    {
+        setPalette(scope?.palette)
+        
+    },[scope && scope.palette])
 
   const hasTabs: Tab[] = 
     attributeName in pageWithTabs
@@ -96,7 +104,7 @@ export default function MainEntry() {
         </div>
 
         <div className = "flex-1 flex flex-col min-w-0 h-screen">
-          <AppHeader />
+          <AppHeader palette={palette} />
 
           <main className = "flex-1 overflow-y-auto">
           <div  className = "p-4 md:p-6 lg:py-6 lg:px-8">
@@ -136,6 +144,7 @@ export default function MainEntry() {
                   attributeName  = {queryName}
                   permissionName = {activeTab?.permissionName ?? null}
                   namepage       = {activeTab?.namepage ?? page?.title ?? ""}
+                  palette        = {palette}
                 />
               )}
             </div>

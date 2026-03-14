@@ -1,4 +1,4 @@
-import { cn, PaletteColors } from "@/lib/utils";
+import { cn, PaletteColors, PaletteProps } from "@/lib/utils";
 import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,
@@ -16,6 +16,7 @@ interface TableFooterProps {
   selectedCount : number;
   onDeleteSelected: () => void;
   onClearSelection: () => void;
+  palette         : PaletteProps
 }
 
 export function TableFooter({
@@ -28,6 +29,7 @@ export function TableFooter({
   selectedCount,
   onDeleteSelected,
   onClearSelection,
+  palette
 }: TableFooterProps) {
   return (
     <div
@@ -36,8 +38,8 @@ export function TableFooter({
         collapsed ? "md:left-[56px]" : "md:left-[260px]"
       )}
       style={{
-        background: PaletteColors().bg,
-        borderTop : `1px solid ${PaletteColors().border}`,
+        background: palette.bg,
+        borderTop : `1px solid ${palette.border}`,
       }}
     >
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-[5.5px]">
@@ -47,8 +49,8 @@ export function TableFooter({
             // ─── Actions groupées ─────────────────────
             <>
               <div className="flex items-center gap-2">
-                <span className="text-xs" style={{ color: PaletteColors().text }}>
-                  <span style={{ color: PaletteColors().accent, fontWeight: 600 }}>
+                <span className="text-xs" style={{ color: palette.text }}>
+                  <span style={{ color: palette.accent, fontWeight: 600 }}>
                     {selectedCount}
                   </span>
                   {" "}ligne{selectedCount > 1 ? "s" : ""} sélectionnée{selectedCount > 1 ? "s" : ""}
@@ -57,8 +59,8 @@ export function TableFooter({
                 <button
                   onClick={onClearSelection}
                   className="h-7 px-2 text-xs rounded-md transition-all"
-                  style={{ color: PaletteColors().text, border: `1px solid ${PaletteColors().border}` }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = PaletteColors().bgHover }}
+                  style={{ color: palette.text, border: `1px solid ${palette.border}` }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = palette.bgHover }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
                 >
                   Désélectionner
@@ -92,17 +94,17 @@ export function TableFooter({
                 <SelectTrigger
                   className="w-16 h-8 text-xs"
                   style={{
-                    background: PaletteColors().bgActive,
-                    border    : `1px solid ${PaletteColors().border}`,
-                    color     : PaletteColors().text,
+                    background: palette.bgActive,
+                    border    : `1px solid ${palette.border}`,
+                    color     : palette.text,
                   }}
                 >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent
                   style={{
-                    background: PaletteColors().bg,
-                    border    : `1px solid ${PaletteColors().border}`,
+                    background: palette.bg,
+                    border    : `1px solid ${palette.border}`,
                   }}
                 >
                   {[10, 25, 50, 100].map((size) => (
@@ -110,7 +112,7 @@ export function TableFooter({
                       key={size}
                       value={size.toString()}
                       className="text-xs cursor-pointer"
-                      style={{ color: PaletteColors().text }}
+                      style={{ color: palette.text }}
                     >
                       {size}
                     </SelectItem>
@@ -123,6 +125,7 @@ export function TableFooter({
                 currentPage={currentPage}
                 totalPages={totalPages}
                 setCurrentPage={setCurrentPage}
+                palette={palette}
               />
             </>
           )}

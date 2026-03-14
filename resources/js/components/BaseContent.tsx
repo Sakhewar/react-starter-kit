@@ -8,7 +8,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { useForm } from "@inertiajs/react";
 import * as Icons from "lucide-react";
 
-import { ActionsConfig, cn, Column, FieldConfig, TabConfig, PaletteColors } from "@/lib/utils";
+import { ActionsConfig, cn, Column, FieldConfig, TabConfig, PaletteProps } from "@/lib/utils";
 import { columnConfigs, useRowActions } from "@/configs/listOfColumnTables";
 import { fieldModals } from "@/configs/listOfFieldModal";
 import { can, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
@@ -48,12 +48,15 @@ export default function BaseContent({
   namepage,
   page,
   permissionName,
+  palette
 }: {
   attributeName  : string;
   namepage       : string;
   page           : PageProps;
   permissionName?: string | null;
+  palette        : PaletteProps
 }) {
+  
   const {
     initialize,
     dataPage,
@@ -236,20 +239,20 @@ export default function BaseContent({
         <div className = "flex items-center justify-between gap-4 flex-wrap">
         <div className = "flex items-center gap-3">
             {PageIcon && (
-              <PageIcon className = "w-4 h-4" style = {{ color: PaletteColors().accent }} />
+              <PageIcon className = "w-4 h-4" style = {{ color: palette.accent }} />
             )}
             <h1
               className = "text-sm font-semibold tracking-tight"
-              style     = {{ color: PaletteColors().textActive }}
+              style     = {{ color: palette.textActive }}
             >
               {namepage}
             </h1>
             <Badge
               className = "font-normal text-xs rounded-[4px] px-2 py-0.5"
               style     = {{
-                background: PaletteColors().bgActive,
-                color     : PaletteColors().accent,
-                border    : `1px solid ${PaletteColors().border}`,
+                background: palette.bgActive,
+                color     : palette.accent,
+                border    : `1px solid ${palette.border}`,
               }}
             >
               {metadata?.total ?? 0}
@@ -258,17 +261,17 @@ export default function BaseContent({
             {/* Raccourcis hint */}
             <span
               className = "hidden lg:flex items-center gap-2 text-[10px] ml-2"
-              style     = {{ color: PaletteColors().text }}
+              style     = {{ color: palette.text }}
             >
               <kbd
                 className = "px-1.5 py-0.5 rounded text-[10px]"
-                style     = {{ background: PaletteColors().bgActive, border: `1px solid ${PaletteColors().border}` }}
+                style     = {{ background: palette.bgActive, border: `1px solid ${palette.border}` }}
               >
                 N
               </kbd> Nouveau ·
               <kbd
                 className = "px-1.5 py-0.5 rounded text-[10px]"
-                style     = {{ background: PaletteColors().bgActive, border: `1px solid ${PaletteColors().border}` }}
+                style     = {{ background: palette.bgActive, border: `1px solid ${palette.border}` }}
               >
                 F
               </kbd> Filtrer
@@ -281,7 +284,7 @@ export default function BaseContent({
                 <Button
                   size      = "sm"
                   className = "gap-1.5 text-xs h-8"
-                  style     = {{ background: PaletteColors().accent, color: "#fff", border: "none" }}
+                  style     = {{ background: palette.accent, color: "#fff", border: "none" }}
                 >
                   <Plus className = "h-3.5 w-3.5" />
                   Ajouter
@@ -293,8 +296,8 @@ export default function BaseContent({
                 align      = "end"
                 sideOffset = {8}
                 style      = {{
-                  background: PaletteColors().bg,
-                  border    : `1px solid ${PaletteColors().border}`,
+                  background: palette.bg,
+                  border    : `1px solid ${palette.border}`,
                 }}
               >
                 <div className = "flex flex-col">
@@ -319,14 +322,14 @@ export default function BaseContent({
                       key          = {item.label}
                       onClick      = {item.onClick}
                       className    = "flex items-center px-3 py-2 text-xs rounded-md transition-all text-left w-full"
-                      style        = {{ color: PaletteColors().text }}
+                      style        = {{ color: palette.text }}
                       onMouseEnter = {(e) => {
-                        e.currentTarget.style.background = PaletteColors().bgHover
-                        e.currentTarget.style.color      = PaletteColors().textActive
+                        e.currentTarget.style.background = palette.bgHover
+                        e.currentTarget.style.color      = palette.textActive
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = "transparent"
-                        e.currentTarget.style.color      = PaletteColors().text
+                        e.currentTarget.style.color      = palette.text
                       }}
                     >
                       {item.icon}{item.label}
@@ -349,6 +352,7 @@ export default function BaseContent({
           onExportPdf    = {() => exportToPdfOrExcel(attributeName, "pdf", data)}
           onMoreFilters  = {() => setIsMoreFilterOpen(!isMoreFilterOpen)}
           searchInputRef = {searchInputRef}
+          palette        = {palette}
         />
 
         {/* ── Tableau ── */}
@@ -368,6 +372,7 @@ export default function BaseContent({
           contextActions = {contextActions}
           onContextMenu  = {setContextRow}
           contextRow     = {contextRow}
+          palette        = {palette}
         />
       </div>
 
@@ -382,6 +387,7 @@ export default function BaseContent({
         selectedCount    = {selectedRows.size}
         onDeleteSelected = {handleDeleteSelected}
         onClearSelection = {clearSelection}
+        palette          = {palette}
       />
 
       {/* ── Filtres avancés ── */}

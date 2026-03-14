@@ -142,29 +142,41 @@ export type Column = {
 
 
 export const PaletteColorsGood = {
-  bg        : "#fafafa",
-  bgHover   : "#f4f4f5",
-  bgActive  : "#ffffff",
+  bg      : "#fafafa",
+  bgHover : "#f4f4f5",
+  bgActive: "#ffffff",
 
-  border    : "#e5e5e5",
+  border: "#e5e5e5",
 
   text      : "#737373",
   textActive: "#111111",
 
-  accent    : "#000000",
+  accent: "#000000",
 }
 
-export const PaletteColors = () => {
-  const { theme } = useTheme();
+export type PaletteProps = {
+    bg: string,
+    border: string,
+    textActive: string,
+    text:string,
+    bgHover:string,
+    bgActive:string,
+    accent:string
+}
 
- // useMemo pour recalculer uniquement quand le theme change
- return useMemo(() => ({
-  bg        : theme === "dark" ? "#0f1117" : "#fafafa",
-  bgHover   : theme === "dark" ? "#161b27" : "#f4f4f5",
-  bgActive  : theme === "dark" ? "#1a2035" : "#ffffff", // card
-  border    : theme === "dark" ? "#1e2130" : "#e5e5e5",
-  text      : theme === "dark" ? "#94a3b8" : "#000000",
-  textActive: theme === "dark" ? "#e2e8f0" : "#111111",
-  accent    : theme === "dark" ? "#3b82f6" : "#000000",
-}), [theme]);
-};
+
+export function PaletteColors(dark = false)
+{
+  //const { resolvedTheme } = useTheme()
+  //const dark = true
+
+  return {
+    bg        : dark ? "#0f1117" : "#fafafa",
+    bgHover   : dark ? "#161b27" : "#f4f4f5",
+    bgActive  : dark ? "#1a2035" : "#ffffff",
+    border    : dark ? "#1e2130" : "#e5e5e5",
+    text      : dark ? "#94a3b8" : "#000000",
+    textActive: dark ? "#e2e8f0" : "#111111",
+    accent    : dark ? "#3b82f6" : "#000000",
+  }
+}
