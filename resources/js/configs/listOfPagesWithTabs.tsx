@@ -1,6 +1,14 @@
 import { Tag } from "lucide-react";
 import { permission } from "process";
 
+type Tab = {
+    key: number;
+    attributeName: string;
+    namepage: string;
+    permissionName: string | null;
+    icon?: React.ReactNode;
+  };
+
 export const pageWithTabs = 
 {
     familleproduit : [
@@ -16,7 +24,7 @@ export const pageWithTabs =
             namepage      : 'Sous Famille de produits',
             attributeName : 'sousfamilleproduit',
             icon          : <Tag/>,
-            permissionName: 'familleproduit'
+            permissionName: 'sousfamilleproduit'
         }
     ]
-}
+} as Record<string, Tab[]>;

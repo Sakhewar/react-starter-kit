@@ -1,4 +1,4 @@
-"use client";
+
 
 import { useForm, Head, router, usePage } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";

@@ -1,122 +1,147 @@
-"use client";
+
 
 import { usePage } from "@inertiajs/react";
-
-
 import AppSidebar from "@/components/AppSideBar";
-
 import * as CustomPages from "./CustomPages";
 import BaseContent from "@/components/BaseContent";
 import AppHeader from "@/components/AppHeader";
 import { useGlobalStore } from "@/hooks/backoffice";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import AuthGuard from "@/components/authGuard/authguard";
 import { useAuthStore } from "@/hooks/authStore";
 import { pageWithTabs } from "@/configs/listOfPagesWithTabs";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export default function MAinEntry()
-{
+  // ----------- Types -----------
 
-  const { namepage, page,auth} = usePage<{auth: { user: { name: string } }; breadcrumb: string[]; namepage:string; page : any}>().props;
+type Tab = {
+  key            : number;
+  attributeName  : string;
+  namepage       : string;
+  permissionName : string | null;
+  icon          ?: React.ReactNode;
+};
 
-  const attributeName = String(page?.link || "").replaceAll("/", "");
+type PageProps = {
+  auth      : { user: { name: string } | null };
+  breadcrumb: string[];
+  namepage  : string;
+  page      : {
+    link ?: string;
+    title?: string;
+  };
+};
 
-  const [queryName, setQueryName] = useState<string | null>(null);
+  // ----------- Composant principal -----------
 
-  const { initialize, reset, setState, scope} = useGlobalStore();
+export default function MainEntry() {
+  const { namepage, page, auth } = usePage<PageProps>().props;
 
-  //Si dans la page on doit avoir des tabs
+  const attributeName = String(page?.link ?? "").replaceAll("/", "");
 
-  const hasTabs = attributeName in pageWithTabs ? pageWithTabs[attributeName as keyof typeof pageWithTabs] : [];
-  const [activeTab, setActiveTab] = useState(hasTabs.length > 0 ? hasTabs[0] : null);
-  
+  const { initialize, reset } = useGlobalStore();
+  const { afterLogin }        = useAuthStore();
 
-  //Pour rediger vers sa propre page si on veux pas utiliser le composant de base
-  const DynamicComponent = (namepage in CustomPages ? CustomPages[namepage as keyof typeof CustomPages] : null);  
+  const hasTabs: Tab[] = 
+    attributeName in pageWithTabs
+      ? pageWithTabs[attributeName as keyof typeof pageWithTabs]
+      :  [];
 
+  const [activeTab, setActiveTab] = useState<Tab | null>(
+    hasTabs.length > 0 ? hasTabs[0]: null
+  );
 
-  const {afterLogin} = useAuthStore(); 
+    // On track la valeur précédente pour éviter les double-initialisations
+  const prevQueryRef = useRef<string | null>(null);
 
-  useEffect(() =>
-  {
-    if(queryName != null)
-    {
-      reset();
-      initialize({attributeName:queryName,page,onlyPageChange:false, force:true});
+  const queryName = 
+    hasTabs.length > 0
+      ? (activeTab?.attributeName ?? null)
+      :  attributeName;
+
+    // Réinitialisation du store quand queryName change réellement
+  useEffect(() => {
+    if (queryName == null) return;
+    if (queryName === prevQueryRef.current) return;
+
+    prevQueryRef.current = queryName;
+    reset();
+    initialize({ attributeName: queryName, page, onlyPageChange: false, force: true });
+  }, [queryName, page, reset, initialize]);
+
+    // Reset de l'onglet actif quand on change de page
+  useEffect(() => {
+    setActiveTab(hasTabs.length > 0 ? hasTabs[0] : null);
+  }, [attributeName]);
+
+    // Auth
+  useEffect(() => {
+    if (auth.user != null) {
+      afterLogin(auth.user);
     }
-  }, [queryName, namepage, initialize]);
+  }, [auth.user, afterLogin]);
 
-  useEffect(()=>
-  {
-    if(hasTabs.length == 0)
-    {
-      setQueryName(attributeName);
-    }
-    else
-    {
-      setQueryName(activeTab!= null ? activeTab.attributeName : null);
-    }
+  const DynamicComponent = 
+    namepage in CustomPages
+      ? CustomPages[namepage as keyof typeof CustomPages]
+      :  null;
 
-  },[attributeName])
-
-  useEffect(()=>
-    {
-      if(auth.user != null)
-      {
-        afterLogin(auth.user);
-      }
-  
-    },[auth])
-  
   return (
     <AuthGuard>
-      <div className="h-screen w-full flex overflow-hidden bg-background">
-          <div className="hidden md:block h-full">
-            <AppSidebar />
-          </div>
+      <div className = "h-screen w-full flex overflow-hidden bg-background">
+      <div className = "hidden md:block h-full">
+          <AppSidebar />
+        </div>
 
-        <div className="flex-1 flex flex-col min-w-0 h-screen">
-          
+        <div className = "flex-1 flex flex-col min-w-0 h-screen">
           <AppHeader />
-          
-          <main className="flex-1 overflow-y-auto">
-            <div className="p-4 md:p-6 lg:py-6 lg:px-8">
-              <div className="flex items-center justify-center mb-10">
-                {
-                  hasTabs.map((tab)=>
-                  {
-                    return(
-                      <Button
-                        key={tab.key}
-                        type="button"
-                        size="sm"
-                        variant={"ghost"}
-                        onClick={()=>{setActiveTab(tab);setQueryName(tab.attributeName)}}
-                        className={cn(
-                          "flex items-center gap-1.5 h-8 px-3 text-xs font-medium cursor-pointer",
-                          activeTab?.key === tab.key ? "border-b-3 border-b-primary rounded-b-none" : ""
-                        )}
-                      >
-                        {tab.icon && (
-                          <span className="[&>svg]:h-3.5 [&>svg]:w-3.5">{tab.icon}</span>
-                        )}
-                        {tab.namepage}
-                      </Button>
-                      )
-                  })
-                }
-              </div>
+
+          <main className = "flex-1 overflow-y-auto">
+          <div  className = "p-4 md:p-6 lg:py-6 lg:px-8">
+
+              {hasTabs.length > 0 && (
+                <div className = "flex items-center justify-center mb-10">
+                  {hasTabs.map((tab) => (
+                    <Button
+                      key       = {tab.key}
+                      type      = "button"
+                      size      = "sm"
+                      variant   = "ghost"
+                      onClick   = {() => setActiveTab(tab)}
+                      className = {cn(
+                        "flex items-center gap-1.5 h-8 px-3 text-xs font-medium cursor-pointer",
+                        activeTab?.key === tab.key
+                          ? "border-b-3 border-b-primary rounded-b-none"
+                          :  ""
+                      )}
+                    >
+                      {tab.icon && (
+                        <span className = "[&>svg]:h-3.5 [&>svg]:w-3.5">
+                          {tab.icon}
+                        </span>
+                      )}
+                      {tab.namepage}
+                    </Button>
+                  ))}
+                </div>
+              )}
 
               {DynamicComponent && <DynamicComponent page={page} />}
 
-              {!DynamicComponent && queryName && <BaseContent page={page} attributeName={queryName} permissionName={activeTab ? activeTab.permissionName : null} namepage={activeTab ? activeTab.namepage : page?.title ?? ""} />}
+              {!DynamicComponent && queryName && (
+                <BaseContent
+                  page           = {page}
+                  attributeName  = {queryName}
+                  permissionName = {activeTab?.permissionName ?? null}
+                  namepage       = {activeTab?.namepage ?? page?.title ?? ""}
+                />
+              )}
             </div>
           </main>
         </div>
+
         <Toaster richColors />
       </div>
     </AuthGuard>
