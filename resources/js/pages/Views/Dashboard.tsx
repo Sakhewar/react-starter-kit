@@ -30,7 +30,7 @@ const paiements = [
   {}
 ];
 
-export default function Dashboard({ page }) {
+export default function Dashboard({ page } : {page : any}) {
   return (
     <div className="space-y-6">
       {/* Header de la section */}
