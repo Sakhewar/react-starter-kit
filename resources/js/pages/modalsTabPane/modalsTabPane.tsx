@@ -119,28 +119,26 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
 
             <TableShadCn.TableBody>
                 {rows.map((row, i) => (
-                <TableShadCn.TableRow key={i} className="">
+                    <TableShadCn.TableRow key={i} className="">
+                        <TableShadCn.TableCell className="text-center">
+                        {toCapitalize(row.point_vente?.libelle)}
+                        </TableShadCn.TableCell>
 
-                    
-                    <TableShadCn.TableCell className="text-center">
-                    {toCapitalize(row.point_vente?.libelle)}
-                    </TableShadCn.TableCell>
+                        
+                        {editable_columns.map((key) => (
+                        <TableShadCn.TableCell key={key + i} className="text-center tabpane">
+                            <Input
+                                type="number"
+                                className=""
+                                min={1}
+                                autoComplete="off"
+                                value={String(row[key] ?? "")}
+                                onChange={(e) => setValueInRow(e.target.value, i, key)}
+                            />
+                        </TableShadCn.TableCell>
+                        ))}
 
-                    
-                    {editable_columns.map((key) => (
-                    <TableShadCn.TableCell key={key + i} className="text-center tabpane">
-                        <Input
-                            type="number"
-                            className=""
-                            min={1}
-                            autoComplete="off"
-                            value={String(row[key] ?? "")}
-                            onChange={(e) => setValueInRow(e.target.value, i, key)}
-                        />
-                    </TableShadCn.TableCell>
-                    ))}
-
-                </TableShadCn.TableRow>
+                    </TableShadCn.TableRow>
                 ))}
             </TableShadCn.TableBody>
             </TableShadCn.Table>
@@ -235,28 +233,28 @@ export function SeuilProduit({ type, data, setData }: { type: string, data:Recor
 
             <TableShadCn.TableBody>
                 {rows.map((row, i) => (
-                <TableShadCn.TableRow key={i} className="bg-white hover:bg-gray-100">
+                    <TableShadCn.TableRow key={i} className="">
 
-                    
-                    <TableShadCn.TableCell className="text-center">
-                    {toCapitalize(row.depot?.libelle)}
-                    </TableShadCn.TableCell>
+                        
+                        <TableShadCn.TableCell className="text-center">
+                        {toCapitalize(row.depot?.libelle)}
+                        </TableShadCn.TableCell>
 
-                    
-                    {editable_columns.map((key) => (
-                    <TableShadCn.TableCell key={key + i} className="text-center tabpane">
-                        <Input
-                            type="number"
-                            className=""
-                            min={1}
-                            autoComplete="off"
-                            value={String(row[key] ?? "")}
-                            onChange={(e) => setValueInRow(e.target.value, i, key)}
-                        />
-                    </TableShadCn.TableCell>
-                    ))}
+                        
+                        {editable_columns.map((key) => (
+                        <TableShadCn.TableCell key={key + i} className="text-center tabpane">
+                            <Input
+                                type="number"
+                                className=""
+                                min={1}
+                                autoComplete="off"
+                                value={String(row[key] ?? "")}
+                                onChange={(e) => setValueInRow(e.target.value, i, key)}
+                            />
+                        </TableShadCn.TableCell>
+                        ))}
 
-                </TableShadCn.TableRow>
+                    </TableShadCn.TableRow>
                 ))}
             </TableShadCn.TableBody>
             </TableShadCn.Table>
