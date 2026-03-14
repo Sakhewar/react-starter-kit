@@ -16,6 +16,7 @@ import { RadioGroupField } from "@/components/partials/RadioGroupMultiple";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { baseActions, columnConfigs } from "@/configs/listOfColumnTables";
 import { useGlobalStore } from "@/utils/fetchDataScope";
+import { toPlural } from "@/components/BaseContent";
 
 
 const colSpanMap: Record<number, string> = {
@@ -364,7 +365,7 @@ function Select2({field, value, onChange, processing} : {field : FieldConfig, va
   const [popoverWidth, setPopoverWidth]   = React.useState<number | undefined>()
   const [creating, setCreating]           = React.useState(false)
   const [search, setSearch]               = React.useState("")
-  const { dataPage }                      = useGlobalStore()
+  const { dataPage, getElements, scope}   = useGlobalStore()
   const triggerRef                        = React.useRef<HTMLButtonElement>(null)
 
   const options = React.useMemo(
@@ -408,46 +409,58 @@ function Select2({field, value, onChange, processing} : {field : FieldConfig, va
   {
     if (!field.createIfEmpty) return
     if (!field.endpoint || !search.trim()) return
+    if(!can(`creation-${field.endpoint}`)) return
+    
     setCreating(true)
 
     try
     {
       const endpoint = `/${field.endpoint}`
       const result   = await addElement(endpoint, { libelle: search.trim() }, false)
+      setCreating(false);
 
       if(result && result?.data)
       {
         if(!result?.data?.success)
         {
-          setCreating(false);
           showToast(result?.data?.message || "Une erreur est survenue", "error")
         }
         else
         {
-          
+          if(result && result?.data && result?.data?.data)
+          {
+            const created = result?.data?.data;
+            if(scope && Array.isArray(scope.needsEltsDeps))
+            {
+              let finalType = toPlural(field.endpoint);
+              let nEDep = scope.needsEltsDeps.find((dep) =>
+              {
+                if(dep.entity === finalType)
+                {
+                  return dep;
+                }
+              });
+
+              if(nEDep)
+              {
+                getElements({attributeName:finalType, fields: nEDep.fields, args: nEDep.args}).then((res) =>
+                {
+                  onChange(field.name, String(created.id));
+                  setOpen(false)
+                  setSearch("")
+                })
+              }
+            }
+          }
         }
       }
-
-      console.log("result", result);
-      
-
-      // if (result?.data?.success) {
-      //   // Recharge les options depuis le store
-      //   // Le store doit se mettre à jour via initialize
-      //   // On sélectionne directement par libelle après rechargement
-      //   //const newOptions = (useGlobalStore.getState().dataPage[field.options] ?? []) as { id: any; libelle: string }[]
-      //   const created    = newOptions.find(
-      //     (opt) => opt.libelle.toLowerCase() === search.trim().toLowerCase()
-      //   )
-      //   if (created) {
-      //     onChange(field.name, String(created.id))
-      //   }
-      //   setOpen(false)
-      //   setSearch("")
-      // }
-    } catch (err) {
+    } 
+    catch (err)
+    {
       console.error("Erreur création :", err)
-    } finally {
+    }
+    finally
+    {
       setCreating(false)
     }
   }, [field.options, field.name, search, onChange])

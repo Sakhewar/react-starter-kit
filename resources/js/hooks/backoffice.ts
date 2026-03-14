@@ -11,6 +11,9 @@ export function can(name: string, permissions? : any [])
 {
   const perms = permissions || useGlobalStore.getState().dataPage.permissions;
 
+  console.log(name,perms);
+  
+
   if (Array.isArray(perms))
   {
     return perms.some((permission) => permission.name === name);

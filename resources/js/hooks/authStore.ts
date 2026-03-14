@@ -11,14 +11,14 @@ import { create } from "zustand"
 
 export const useAuthStore = create<AuthState>((set, get) => (
 {
-    user: typeof window !== "undefined" ? localStorage.getItem("user") : null,
+    user: typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") ?? "null")  : null,
 
     isAuthenticated: !!localStorage.getItem("user"),
 
     afterLogin: (user) =>
-    {   
-        localStorage.setItem("user", user)
-        set({ user, isAuthenticated: true })
+    { 
+        localStorage.setItem("user", JSON.stringify(user))
+        set({user : user , isAuthenticated: true })
     },
     afterLogout: () =>
     {

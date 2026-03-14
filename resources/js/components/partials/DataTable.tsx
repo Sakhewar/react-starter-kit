@@ -205,7 +205,7 @@ export function DataTable({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    items.map((row, idx) => {
+                    items?.map((row, idx) => {
                       const isSelected = selectedRows.has(row.id)
                       return (
                         <TableRow

@@ -6,12 +6,13 @@ import { persist } from "zustand/middleware";
 import { toPlural } from "@/components/BaseContent";
 import listofAttributes from "@/configs/listOfAttributes";
 import { managePageDeps } from "@/hooks/routeChange";
-
+import { useAuthStore } from "@/hooks/authStore";
 
 type StoreQueryArgs = 
 {
     attributeName : string
     args         ?: Record<string, any>
+    fields?      : string[],     
     optionals    ?: 
     {
       toType       ?: string
@@ -120,7 +121,7 @@ export const useGlobalStore = create<GlobalState>()(
         lastInitialized: null,
         scope          : {},
 
-        getElements: async ({ attributeName, args = {}, optionals }: StoreQueryArgs) =>
+        getElements: async ({ attributeName, fields, args = {}, optionals }: StoreQueryArgs) =>
         {
             set({ isLoading: true })
 
@@ -130,8 +131,8 @@ export const useGlobalStore = create<GlobalState>()(
             const needs : eltQuery[] = [
                 {
                     entity   : goodType,
-                    fields   : (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],
-                    args     : { page: 1, count: 100, ...args },
+                    fields   : fields && Array.isArray(fields) ? fields : ((listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"]),
+                    args,
                     optionals: optionals ?? {},
                 },
             ]
@@ -191,11 +192,16 @@ export const useGlobalStore = create<GlobalState>()(
                 errors         : {},
             })
         
-            const needs: eltQuery[] = []
+            const needs: eltQuery[] = [];
+
+            let currentUser = useAuthStore.getState().user;
+            
+
+            let argPerms = { search: `-${attributeName}` };
             needs.push({
                 entity: "permissions",
                 fields: "id,name",
-                args  : { search: `-${attributeName}` },
+                args  :  !currentUser ?  argPerms : {...argPerms, user_id : currentUser.id},
             })
         
             let needsEltsDeps: eltQuery[] = []
