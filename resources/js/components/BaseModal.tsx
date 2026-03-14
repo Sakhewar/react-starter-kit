@@ -235,7 +235,7 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
       >
         {/* ── Header : titre à gauche + tabs à droite ── */}
         <DialogHeader className = "flex flex-row items-center justify-between gap-4 pb-0">
-        <DialogTitle  className = "shrink-0 flex items-center gap-2">
+        <DialogTitle  className = "shrink-0 flex items-center gap-2 text-sm">
             {PageIcon && <PageIcon className="w-4 h-4" />}
             {toCapitalize(title)}
           </DialogTitle>
@@ -283,45 +283,6 @@ export function BaseModal({page, title, entity, fields: legacyFields, tabs: tabs
                       processing  = {processing}
                 />: tab.fields(data, setData)
                 ) : (
-                    // <div className="grid grid-cols-12 gap-x-4 gap-y-6">
-                    //   {Array.isArray(tab.fields) ? tab.fields.map(field =>
-                    //     (
-                    //       <FieldRenderer
-                    //         key={field.name}
-                    //         field={field}
-                    //         value={data[field.name]}
-                    //         onChange={handleChange}
-                    //         errors={errors}
-                    //         processing={processing}
-                    //         fileMap={fileMap}
-                    //         onFileChange={handleFileChange}
-                    //         onRemoveFile={handleRemoveFile}
-                    //       />
-                    //     )) : tab.fields(data,setData)
-                    //   }
-                    // </div>
-                  // <div className = "grid grid-cols-12 gap-x-4 gap-y-6">
-                  //   {Array.isArray(tab.fields)
-                  //     ? groupFields(tab.fields).map((group, i) => (
-                  //         <div key = {i} className = {cn(`col-span-${group.groupCol}`, "flex flex-col gap-4")}>
-                  //           {group.fields.map(field => (
-                  //             <FieldRenderer
-                  //               key          = {field.name}
-                  //               field        = {field}
-                  //               value        = {data[field.name]}
-                  //               onChange     = {handleChange}
-                  //               errors       = {errors}
-                  //               processing   = {processing}
-                  //               fileMap      = {fileMap}
-                  //               onFileChange = {handleFileChange}
-                  //               onRemoveFile = {handleRemoveFile}
-                  //             />
-                  //           ))}
-                  //         </div>
-                  //       ))
-                  //     :  tab.fields(data, setData)
-                  //   }
-                  // </div>
                   <div className="grid grid-cols-12 gap-x-4 gap-y-6">
                     {Array.isArray(tab.fields)
                       ? groupFields(tab.fields).map((group, i) =>

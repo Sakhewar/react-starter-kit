@@ -1,6 +1,6 @@
 import * as TableShadCn from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { showToast, useGlobalStore } from "@/hooks/backoffice";
+import { showToast, toCapitalize, useGlobalStore } from "@/hooks/backoffice";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 
@@ -121,11 +121,11 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
 
             <TableShadCn.TableBody>
                 {rows.map((row, i) => (
-                <TableShadCn.TableRow key={i} className="bg-white hover:bg-gray-100">
+                <TableShadCn.TableRow key={i} className="">
 
                     
                     <TableShadCn.TableCell className="text-center">
-                    {row.point_vente?.libelle}
+                    {toCapitalize(row.point_vente?.libelle)}
                     </TableShadCn.TableCell>
 
                     
@@ -134,7 +134,7 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
                         <div>
                             <Input
                                 type="number"
-                                className="form-control text-center"
+                                className="text-center !text-[13px] !font-normal !border !border-[#D0D5DD] !rounded-md !py-1 !px-2 !w-[120px] !h-[30px]"
                                 min={1}
                                 autoComplete="off"
                                 value={String(row[key] ?? "")}
@@ -225,7 +225,7 @@ export function SeuilProduit({ type, data, setData }: { type: string, data:Recor
         <div className="rounded-md overflow-hidden border border-border">
             <TableShadCn.Table>
             <TableShadCn.TableHeader>
-                <TableShadCn.TableRow className="bg-black hover:bg-black">
+                <TableShadCn.TableRow className="">
                 {columns.map((col) => (
                     <TableShadCn.TableHead
                     key={col.key + type}
