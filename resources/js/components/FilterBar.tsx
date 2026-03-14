@@ -15,7 +15,7 @@ interface FilterBarProps {
   onExportExcel  : () => void;
   onExportPdf    : () => void;
   onMoreFilters  : () => void;
-  searchInputRef?: React.RefObject<HTMLInputElement>;
+  searchInputRef?: React.Ref<HTMLInputElement>;   
 }
 
 export function FilterBar({
