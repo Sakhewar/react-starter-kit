@@ -76,16 +76,35 @@ class ProduitController extends CRUDController
 
         $model->saveHasManyRelation($prix_ventes, PrixVente::class);
 
+        $line = 1;
         $seuils = array_map(function ($item) use (&$line) 
         {
+            $endText = " ==> Seuils : Ligne $line";
             foreach(['min', 'max'] as $key)
             {
                 $item = $this->setNullIfEmpty($item, $key);
             }
 
             $line++;
-            return $item;
+            if(!empty($item['min']) || !empty($item['max']))
+            {
+                if(!empty($item['min']) && !empty($item['max']))
+                {
+                    if($item['min'] > $item['max'])
+                    {
+                        throw new \Exception("Le seuil min doit être inférieur au seuil max" . $endText);
+                    }
+                    if($item['max'] < $item['min'])
+                    {
+                        throw new \Exception("Le seuil max doit être supérieur au seuil min" . $endText);
+                    }
+                }
+                return $item;
+            }
+            return null;
         }, $seuils);
+
+        $seuils = array_filter($seuils);
 
         $model->saveHasManyRelation($seuils, Seuil::class);
 
