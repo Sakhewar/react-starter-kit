@@ -231,6 +231,7 @@ export default function BaseContent({
 
   const canAddElement = can(`creation-${permissionName ?? attributeName}`, permissionPages);
 
+
     // ─── JSX ──────────────────────────────────────────
 
   return (

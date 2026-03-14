@@ -19,11 +19,6 @@ export function KeyboardShortcutsHint({ palette, canAddElement }: { palette: Pal
   const [open,    setOpen]   = useState(false)
   const [hovered, setHovered] = useState(false)
 
-  if(!canAddElement)
-  {
-    
-  }
-
   return (
     <div className="relative">
       <button
@@ -63,26 +58,31 @@ export function KeyboardShortcutsHint({ palette, canAddElement }: { palette: Pal
           </div>
 
           <div className="py-1.5">
-            {shortcuts.map((s) => (
-              <div
-                key={s.key}
-                className="flex items-center justify-between px-3 py-1.5 gap-6"
-              >
-                <span className="text-xs" style={{ color: palette.text }}>
-                  {s.description}
-                </span>
-                <kbd
-                  className="text-[10px] px-1.5 py-0.5 rounded font-mono flex-shrink-0"
-                  style={{
-                    background: palette.bg,
-                    border    : `1px solid ${palette.border}`,
-                    color     : palette.textActive,
-                  }}
-                >
-                  {s.key}
-                </kbd>
-              </div>
-            ))}
+            {shortcuts.map((s) =>
+            {
+
+              if(!canAddElement && s.key == 'N')
+              {
+                return null;
+              }
+              
+              return (
+                <div key={s.key}className="flex items-center justify-between px-3 py-1.5 gap-6">
+                  <span className="text-xs" style={{ color: palette.text }}>
+                    {s.description}
+                  </span>
+                  <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono flex-shrink-0"
+                    style={{
+                      background: palette.bg,
+                      border    : `1px solid ${palette.border}`,
+                      color     : palette.textActive,
+                    }}
+                  >
+                    {s.key}
+                  </kbd>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
