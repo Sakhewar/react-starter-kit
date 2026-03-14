@@ -130,17 +130,15 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
 
                     
                     {editable_columns.map((key) => (
-                    <TableShadCn.TableCell key={key + i} className="text-center">
-                        <div>
-                            <Input
-                                type="number"
-                                className="text-center !text-[13px] !font-normal !border !border-[#D0D5DD] !rounded-md !py-1 !px-2 !w-[120px] !h-[30px]"
-                                min={1}
-                                autoComplete="off"
-                                value={String(row[key] ?? "")}
-                                onChange={(e) => setValueInRow(e.target.value, i, key)}
-                            />
-                        </div>
+                    <TableShadCn.TableCell key={key + i} className="text-center tabpane">
+                        <Input
+                            type="number"
+                            className=""
+                            min={1}
+                            autoComplete="off"
+                            value={String(row[key] ?? "")}
+                            onChange={(e) => setValueInRow(e.target.value, i, key)}
+                        />
                     </TableShadCn.TableCell>
                     ))}
 
@@ -225,7 +223,7 @@ export function SeuilProduit({ type, data, setData }: { type: string, data:Recor
         <div className="rounded-md overflow-hidden border border-border">
             <TableShadCn.Table>
             <TableShadCn.TableHeader>
-                <TableShadCn.TableRow className="">
+                <TableShadCn.TableRow className="bg-black hover:bg-black">
                 {columns.map((col) => (
                     <TableShadCn.TableHead
                     key={col.key + type}
@@ -243,15 +241,15 @@ export function SeuilProduit({ type, data, setData }: { type: string, data:Recor
 
                     
                     <TableShadCn.TableCell className="text-center">
-                    {row.depot?.libelle}
+                    {toCapitalize(row.depot?.libelle)}
                     </TableShadCn.TableCell>
 
                     
                     {editable_columns.map((key) => (
-                    <TableShadCn.TableCell key={key + i} className="text-center">
+                    <TableShadCn.TableCell key={key + i} className="text-center tabpane">
                         <Input
                             type="number"
-                            className="form-control text-center"
+                            className=""
                             min={1}
                             autoComplete="off"
                             value={String(row[key] ?? "")}
