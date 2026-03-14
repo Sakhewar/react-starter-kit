@@ -1,8 +1,9 @@
 import * as TableShadCn from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { showToast, toCapitalize, useGlobalStore } from "@/hooks/backoffice";
+import { showToast, toCapitalize} from "@/hooks/backoffice";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { useGlobalStore } from "@/utils/fetchDataScope";
 
 type PrixVenteRow = {
   point_vente_id: string | number;

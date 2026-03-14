@@ -11,7 +11,7 @@ import * as Icons from "lucide-react";
 import { ActionsConfig, cn, Column, FieldConfig, TabConfig, PaletteProps } from "@/lib/utils";
 import { columnConfigs} from "@/configs/listOfColumnTables";
 import { fieldModals } from "@/configs/listOfFieldModal";
-import { can, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
+import { can, deleteElement, exportToPdfOrExcel} from "@/hooks/backoffice";
 import listofFilters from "@/configs/listOfFilters";
 
 import { ConfirmDialog } from "./partials/ConfirmDialog";
@@ -22,8 +22,10 @@ import { DataTable } from "./partials/DataTable";
 import { TableFooter } from "./partials/TableFooter";
 import { useDataTable } from "@/hooks/useDataTable";
 import { useRowActions } from "@/lib/utilsFunctiions";
+import { useGlobalStore } from "@/utils/fetchDataScope";
+import { count } from "console";
 
-  // ─── Types ───────────────────────────────────────────
+          // ─── Types ───────────────────────────────────────────
 
 type PageProps = {
   icon ?: string;
@@ -38,40 +40,31 @@ interface EntityItem {
 
 const pluralMap: Record<string, string> = {};
 
-function toPlural(name: string): string {
+export function toPlural(name: string): string
+{
   return pluralMap[name] ?? (name.endsWith("s") ? name : name + "s");
 }
 
-  // ─── Composant principal ──────────────────────────────
-
-export default function BaseContent({
-  attributeName,
-  namepage,
-  page,
-  permissionName,
-  palette
-}: {
+type baseContentProps = 
+{
   attributeName  : string;
   namepage       : string;
   page           : PageProps;
   permissionName?: string | null;
   palette        : PaletteProps
-}) {
+};
+export default function BaseContent({attributeName,namepage,page,permissionName,palette}: baseContentProps)
+{
   
-  const {
-    initialize,
-    dataPage,
-    errors: errorGraphQL,
-    updateItem,
-    scope,
-  } = useGlobalStore();
+  const {setState, pageChanged, dataPage, errors: errorGraphQL, updateItem, scope} = useGlobalStore();
 
-  const {
+  const { 
     currentPage, setCurrentPage,
     pageSize, setPageSize,
-    filters, applyFilters, resetFilters,
-    sort, handleSort,
-    selectedRows, toggleRow, toggleAll, clearSelection,
+    filters, applyFilters,
+    resetFilters, sort,
+    handleSort, selectedRows,
+    toggleRow, toggleAll, clearSelection,
   } = useDataTable();
 
   const [items, setItems]                       = useState<EntityItem[]>([]);
@@ -95,7 +88,7 @@ export default function BaseContent({
   const  resolvedActionConfig: ActionsConfig   = 
   typeof actionCol?.actionConfig             === "function"
       ? actionCol.actionConfig()
-      :  actionCol?.actionConfig ?? {};
+      :      actionCol?.actionConfig ?? {};
 
   const contextActions = useRowActions(
     contextRow ?? {},
@@ -105,7 +98,7 @@ export default function BaseContent({
     actionCol?.extraActions ?? []
   );
 
-    // ─── Effects ──────────────────────────────────────
+            // ─── Effects ──────────────────────────────────────
 
   const entityData = dataPage[goodType];
 
@@ -119,28 +112,24 @@ export default function BaseContent({
     }
   }, [entityData, errorGraphQL]);
 
-  useEffect(() => {
-    if (!attributeName || columns.length === 0) {
+  useEffect(() =>
+  {
+    if (!attributeName || columns.length === 0)
+    {
       setLoading(false);
       return;
     }
-    initialize({
-      page,
+    pageChanged({
       attributeName,
-      onlyPageChange: true,
-      currentPage,
-      pageSize,
-      filters,
-      sort,
-      force: true,
+      args: {...filters, page: currentPage,count: pageSize, sort}
     });
-  }, [attributeName, currentPage, pageSize, initialize, refreshList, filters, sort]);
+  }, [attributeName, currentPage, pageSize, refreshList, filters, sort]);
 
   useEffect(() => {
     setIsModalOpen(updateItem != null);
   }, [updateItem]);
 
-    // ─── Raccourcis clavier ───────────────────────────
+            // ─── Raccourcis clavier ───────────────────────────
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -165,17 +154,17 @@ export default function BaseContent({
     return () => window.removeEventListener("keydown", handleKey)
   }, [clearSelection])
 
-    // ─── Handlers ─────────────────────────────────────
+            // ─── Handlers ─────────────────────────────────────
 
-  const handleCloseModal = useCallback(() => {
+  const handleCloseModal = useCallback(() =>
+  {
     setIsModalOpen(false);
-    useGlobalStore.setState((s) => ({ ...s, updateItem: null }));
+    setState("updateItem", null);
   }, []);
 
-  const handleCloseConfirm = useCallback(() => {
-    useGlobalStore.setState((s) => ({
-      scope: { ...s.scope, itemToChange: null },
-    }));
+  const handleCloseConfirm = useCallback(() =>
+  {
+    setState("scope", { ...scope, itemToChange: null });
   }, []);
 
   const handleConfirm = useCallback(() => {
@@ -216,11 +205,11 @@ export default function BaseContent({
     }));
   }, [selectedRows, attributeName, clearSelection]);
 
-    // ─── Render guards ────────────────────────────────
+            // ─── Render guards ────────────────────────────────
 
   const PageIcon = page?.icon
     ? (Icons[page.icon as keyof typeof Icons] as React.ElementType)
-    :  null;
+    :      null;
 
   if (columns.length === 0) {
     return (
@@ -233,7 +222,7 @@ export default function BaseContent({
   const canAddElement = can(`creation-${permissionName ?? attributeName}`, permissionPages);
 
 
-    // ─── JSX ──────────────────────────────────────────
+            // ─── JSX ──────────────────────────────────────────
 
   return (
     <div className = "flex flex-col h-full relative">
@@ -391,10 +380,10 @@ export default function BaseContent({
 
       {/* ── Modal ── */}
       <BaseModal
-        page   = {page}
+        page    = {page}
         palette = {palette}
-        title  = {namepage}
-        entity = {attributeName}
+        title   = {namepage}
+        entity  = {attributeName}
         {...(isTabs
           ? { tabs: fieldModal as TabConfig[] }
           : { fields: fieldModal as FieldConfig[] })}

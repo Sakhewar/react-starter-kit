@@ -5,44 +5,44 @@ import { ArrowDownToLine, Bell, BookOpen, DollarSign, InfoIcon, Maximize, Wareho
 export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> = 
 {
             // Backoffice
-    provenance: 
+    "provenance": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    modalitepaiement: 
+    "modalitepaiement": 
     [
         { name: "libelle",     label: "Libellé",         type: "text",     required: true, lgColSpan: 8, xlColSpan: 8 },
         { name: "nbre_jour",   label: "Nombre de jours", type: "number",   required: true, lgColSpan: 4, xlColSpan: 4 },
         { name: "description", label: "Description",     type: "textarea" },
     ],
 
-    modepaiement: 
+    "modepaiement": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    typeclient: 
+    "typeclient": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    typefournisseur: 
+    "typefournisseur": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    typedepot: 
+    "typedepot": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    pointvente: 
+    "pointvente": 
     [
         {
             key   : "infos",
@@ -72,7 +72,7 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
         },
     ] as TabConfig[],
 
-    depot: 
+    "depot": 
     [
         { name: "libelle",        label: "Libellé",        type: "text",     required: true                                                          },
         { name: "point_vente_id", label: "Point de vente", type: "select",   required: true, options: "pointventes", lgColSpan: 6, inputClassName: "w-full" },
@@ -81,7 +81,7 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
     ],
 
             // Modal Tiers
-    client: 
+    "client": 
     [
         {
             key   : "infos",
@@ -89,15 +89,15 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
             label : "Infos Générales",
             fields: 
             [
-                { name: "nom_complet",          label: "Prénom(s) et nom",     type: "text",     required: true,                                          lgColSpan: 12, mdColSpan: 12                   },
-                { name: "type_client_id",        label: "Type de client",       type: "select",   required: true,  options: "typeclients",                 lgColSpan: 6,  mdColSpan: 6,  inputClassName: "w-full" },
-                { name: "telephone",             label: "Nº de téléphone",      type: "number",   required: true,                                          lgColSpan: 6,  mdColSpan: 6                   },
-                { name: "email",                 label: "Email",                type: "email",                                                             lgColSpan: 6,  mdColSpan: 6                   },
-                { name: "modalite_paiement_id",  label: "Modalité de paiement", type: "select",   required: false, options: "modalitepaiements",           lgColSpan: 6,  mdColSpan: 6,  inputClassName: "w-full" },
-                { name: "adresse",               label: "Adresse",              type: "textarea",                                                          lgColSpan: 6,  mdColSpan: 6                   },
-                { name: "description",           label: "Commentaire",          type: "textarea",                                                          lgColSpan: 6,  mdColSpan: 6                   },
-                { name: "plafond",               label: "Plafond",              type: "number",                                                            lgColSpan: 3,  mdColSpan: 3                   },
-                { name: "remise",                label: "Remise(%)",            type: "number",                                                            lgColSpan: 3,  mdColSpan: 3                   },
+                { name: "nom_complet",          label: "Prénom(s) et nom",     type: "text",        required: true,                                                                 lgColSpan: 12, mdColSpan: 12                   },
+                { name: "type_client_id",        label: "Type de client",       type: "select",     required: true,     options: "typeclients", createIfEmpty : true, endpoint: "typeclient",               lgColSpan: 6,  mdColSpan: 6,  inputClassName: "w-full" },
+                { name: "telephone",             label: "Nº de téléphone",      type: "number",     required: true,                                                                 lgColSpan: 6,  mdColSpan: 6                   },
+                { name: "email",                 label: "Email",                type: "email",                                                                                      lgColSpan: 6,  mdColSpan: 6                   },
+                { name: "modalite_paiement_id",  label: "Modalité de paiement", type: "select",     required: false,    options: "modalitepaiements",                               lgColSpan: 6,  mdColSpan: 6,  inputClassName: "w-full" },
+                { name: "adresse",               label: "Adresse",              type: "textarea",                                                                                   lgColSpan: 6,  mdColSpan: 6                   },
+                { name: "description",           label: "Commentaire",          type: "textarea",                                                                                   lgColSpan: 6,  mdColSpan: 6                   },
+                { name: "plafond",               label: "Plafond",              type: "number",                                                                                     lgColSpan: 3,  mdColSpan: 3                   },
+                { name: "remise",                label: "Remise(%)",            type: "number",                                                                                     lgColSpan: 3,  mdColSpan: 3                   },
             ],
         },
         {
@@ -114,7 +114,7 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
         },
     ] as TabConfig[],
 
-    fournisseur: 
+    "fournisseur": 
     [
         {
             key   : "infos",
@@ -143,26 +143,26 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
         },
     ] as TabConfig[],
 
-    familleproduit: 
+    "familleproduit": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    sousfamilleproduit: 
+    "sousfamilleproduit": 
     [
         { name: "libelle",             label: "Libellé",            type: "text",     required: true,                                      lgColSpan: 6                          },
         { name: "famille_produit_id",  label: "Famille de produit", type: "select",   required: true, options: "familleproduits2",         lgColSpan: 6, inputClassName: "w-full" },
         { name: "description",         label: "Description",        type: "textarea"                                                                                              },
     ],
 
-    marque: 
+    "marque": 
     [
         { name: "libelle",     label: "Libellé",     type: "text",     required: true },
         { name: "description", label: "Description", type: "textarea" },
     ],
 
-    produit: 
+    "produit": 
     [
         {
             key   : "infos",

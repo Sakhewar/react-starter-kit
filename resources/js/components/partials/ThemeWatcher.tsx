@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import { useTheme } from "next-themes"
-import { useGlobalStore } from "@/hooks/backoffice"
 import { PaletteColors } from "@/lib/utils"
+import { useGlobalStore } from "@/utils/fetchDataScope"
 
 
 function resolveIsDark(theme: string): boolean
@@ -25,9 +25,8 @@ function applyPalette(theme: string)
 export function ThemeWatcher() {
   const { resolvedTheme } = useTheme()
 
-  useEffect(() => {
-    console.log("resolved", resolvedTheme);
-    
+  useEffect(() =>
+  {
     if (!resolvedTheme) return
     const dark    = resolvedTheme === "dark"
     const palette = PaletteColors(dark)

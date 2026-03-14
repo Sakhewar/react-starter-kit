@@ -92,7 +92,7 @@ export function TableFooter({
                 onValueChange={(v) => { setPageSize(Number(v)); setCurrentPage(1); }}
               >
                 <SelectTrigger
-                  className="w-16 h-8 text-xs"
+                  className="w-20 h-8 text-xs text-center"
                   style={{
                     background: palette.bgActive,
                     border    : `1px solid ${palette.border}`,

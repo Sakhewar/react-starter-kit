@@ -72,6 +72,10 @@ class EntityTypeController extends CRUDController
         }
         return $baseArray;
     }
+    public function beforeValidateData(): void
+    {
+        //dd($this->request->all());
+    }
 
     protected function afterValidation(\Illuminate\Validation\Validator $validator): void
     {

@@ -14,14 +14,14 @@ export function useDataTable() {
   // ─── Filtres ──────────────────────────────────────
   const [filters, setFilters] = useState<Record<string, any>>({});
 
-  const applyFilters = useCallback((data: Record<string, any>) => {
+  const applyFilters = useCallback((data: Record<string, any>) =>
+  {
     setFilters((prev) => ({ ...prev, ...data }));
     setCurrentPage(1);
   }, []);
 
   const resetFilters = useCallback(() => {
     setFilters({});
-    setCurrentPage(1);
   }, []);
 
   // ─── Tri ──────────────────────────────────────────

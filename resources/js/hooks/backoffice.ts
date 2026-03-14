@@ -1,304 +1,10 @@
-// src/stores/globalStore.ts
-import { create, useStore } from 'zustand';
 import { generateArgsFilters, graphqlGet } from '@/utils/graphql';
 
 import axios from 'axios';
 import { toast, type ToastT } from 'sonner';
 import listofAttributes from '@/configs/listOfAttributes';
-
-
-interface EntityItem {
-  id: number | string;
-  [key: string]: any;
-}
-
-interface PaginatedResponse<T> {
-  data: T[];
-  metadata: {
-    total: number;
-    per_page: number;
-    current_page: number;
-    last_page: number;
-  };
-}
-
-interface InitOptions {
-  page: any; // Type ton objet page (ex: { link: string, title: string })
-  attributeName: string;
-  onlyPageChange?: boolean; // Limiter à pageChangeNeeds
-  currentPage?: number;     // Page actuelle pour pagination
-  pageSize?: number;        // Taille de page pour pagination
-  force?: boolean;          // Pour forcer même si lastInitialized === attributeName
-  filters?: Record<string, any>;
-  sort? : SortConfig
-  // Ajoute d'autres options si besoin (filters, search, etc.)
-}
-
-interface GlobalState {
-  dataPage: Record<string, PaginatedResponse<EntityItem>>;
-  updateItem: any;
-  isLoading: boolean;
-  error: string | null;
-  errors: Record<string, string>; // Erreurs par entity pour plus de robustesse
-  lastInitialized: string | null; // attributeName pour savoir pour quelle page,
-  scope: Record<any, any>
-
-  initialize: (options: InitOptions) => Promise<void>;
-
-  reset: () => void;
-
-  setState: (key: keyof GlobalState, value: any) => void
-}
-import { persist } from "zustand/middleware";
-import { managePageDeps } from './routeChange';
-import { SortConfig } from './useDataTable';
-import { PaletteColors } from '@/lib/utils';
-
-export const useGlobalStore = create<GlobalState>()(
-  persist((set, get) => (
-  {
-
-    dataPage: {}, // Init vide
-    updateItem: null,
-    isLoading: false,
-    error: null,
-    errors: {}, // Erreurs spécifiques
-    lastInitialized: null,
-    scope: {},
-
-    initialize: async (options: InitOptions) => {
-      const defaultCount = 10;
-      const{ 
-        page, 
-        attributeName, 
-        onlyPageChange = false, 
-        currentPage = 1, 
-        pageSize = defaultCount, 
-        force = false,
-        filters = {}
-      } = options;
-
-      const goodType = !attributeName.endsWith("s") ? attributeName + "s" : attributeName;
-      const currentTemplateUrl = page?.link;
-
-      // Évite rechargement inutile si même attributeName et pas force
-      if (!force && get().lastInitialized === attributeName)
-      {
-        return;
-      }
-
-      if(!currentTemplateUrl)
-      {
-        return;
-      }
-
-      set({ isLoading: true, error: null, errors: {} });
-
-      const getElementsNeeds: { entity: string; fields: string; args?: any, optionals?: Record<string,any> }[] = [];
-      const pageChangeNeeds: { entity: string; fields: string; args?: any, optionals?: Record<string,any>}[] = [];
-      
-      if (!onlyPageChange)
-      {
-        set({ dataPage: {}, updateItem: null});
-
-        //Pour vider le dataPage apres chaque changement de page
-    
-        getElementsNeeds.push(
-          {entity: 'permissions', fields: 'id,name',args: { search: `-${attributeName}` },
-        });
-
-        let needsEltsDeps: { entity: string; fields: string; args?: any }[] = [];
-
-        needsEltsDeps = managePageDeps(currentTemplateUrl, needsEltsDeps);
-
-        getElementsNeeds.push(...needsEltsDeps);
-
-      }
-      else
-      {
-        // Requête pour l'entité principale (avec pagination dynamique)
-        pageChangeNeeds.push(
-          {entity: goodType,fields: (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],args: {...filters, page: currentPage, count: pageSize }
-        });
-
-      }
-
-      try
-      {  
-        let afterGetElement: { entity: string; data?: PaginatedResponse<EntityItem>; error?: string }[] = [];
-        if (getElementsNeeds.length > 0)
-        {
-          const promises = getElementsNeeds.map(async (element) =>
-          {
-            let finalType = element.entity;
-              
-            if(element.optionals && element.optionals?.toType)
-            { 
-              finalType = element.optionals.toType;
-            }
-           
-            try
-            {
-              const data = await graphqlGet<PaginatedResponse<EntityItem>>({
-                entity: element.entity,
-                fields: element.fields,
-                args: element.args || { page: 1, count: defaultCount },
-              });
-              return { entity: finalType, data };
-            }
-            catch (err: any)
-            {
-              
-              return { entity: finalType, error: err.message || `Erreur pour ${element.entity}` };
-            }
-          });
-
-          const settled = await Promise.allSettled(promises);
-
-          afterGetElement = settled.map((result, index) =>
-          {
-            if (result.status === 'fulfilled')
-            {
-              return result.value;
-            }
-            else
-            {
-              let currentElt = getElementsNeeds[index];
-              let finalType = currentElt.entity;
-              
-              if(currentElt.optionals && currentElt.optionals?.toType)
-              {
-               
-                finalType = currentElt.optionals.toType;
-              }
-              return { entity: finalType, error: result.reason?.message || 'Erreur inconnue' };
-            }
-          });
-        }
-
-        // Lance les spécifiques à la page de la même façon
-        const promisesPage = pageChangeNeeds.map(async (element) =>
-        {
-          try
-          {
-            const data = await graphqlGet<PaginatedResponse<EntityItem>>({
-              entity: element.entity,
-              fields: element.fields,
-              args: element.args,
-            });
-            return { entity: element.entity, data };
-          } 
-          catch (err: any)
-          {
-            return { entity: element.entity, error: err.message || `Erreur pour ${element.entity}` };
-          }
-        });
-        const settledPage = await Promise.allSettled(promisesPage);
-        const afterPageChanged = settledPage.map((result, index) =>
-        {
-          if (result.status === 'fulfilled')
-          {
-            return result.value;
-          }
-          else
-          {
-            return { entity: pageChangeNeeds[index].entity, error: result.reason?.message || 'Erreur inconnue' };
-          }
-        });
-
-        const newDataPage = { ...get().dataPage };
-        const newErrors: Record<string, string> = {};
-
-        afterGetElement.forEach(({ entity, data, error }) =>
-        { 
-          if (data)
-          {
-            newDataPage[entity] = data;
-          }
-          else if (error)
-          {
-            newErrors[entity] = error;
-          }
-        });
-
-        afterPageChanged.forEach(({ entity, data, error }) =>
-        {
-          if (data)
-          {
-            newDataPage[entity] = data;
-          }
-          else if (error)
-          {
-            newErrors[entity] = error;
-          }
-        });
-
-        set({
-          dataPage: newDataPage,
-          errors:{...get().errors, ...newErrors},
-          error: Object.keys(newErrors).length > 0 ? 'Erreurs partielles lors du chargement' : null,
-          isLoading: false,
-          lastInitialized: attributeName,
-        });
-      } catch (err: any)
-      {
-        set({
-          error: err.message || 'Erreur chargement données globales',
-          isLoading: false,
-        });
-        console.error('[globalStore] Erreur initialize:', err);
-      }
-    },
-
-    reset: () => {
-      set({
-        dataPage: {},
-        updateItem: null,
-        isLoading: false,
-        error: null,
-        errors: {},
-        lastInitialized: null,
-      });
-    },
-
-    setState: (key, value) => set(
-      (state) => ({...state, [key]: value,})
-    ),
-    
-  }),
-  {
-    name: "global-store",
-    partialize: (state) => ({
-      scope: {
-        collapsed: state.scope?.collapsed ?? false,
-        theme : state.scope?.theme ?? localStorage.getItem("theme")
-      },
-    }),
-    merge: (persistedState: any, currentState) => {
-      const theme     = persistedState?.scope?.theme ?? localStorage.getItem("theme") ?? "system"
-      const isDark    = theme === "dark"
-        || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
-  
-      return {
-        ...currentState,
-        scope: {
-          ...currentState.scope,
-          collapsed: persistedState?.scope?.collapsed ?? false,
-          theme,
-          palette  : PaletteColors(isDark), // ← recalculée au merge (hydration)
-        },
-      }
-    },
-  }
-  )
-);
-
-// uniquement en dev
-if (typeof window !== "undefined") {
-  // @ts-ignore
-  window.store = useGlobalStore;
-}
-
+import { useGlobalStore } from '@/utils/fetchDataScope';
+import { EntityItem, PaginatedResponse } from '@/lib/utils';
 
 
 export function can(name: string, permissions? : any [])
@@ -313,7 +19,7 @@ export function can(name: string, permissions? : any [])
   return false;
 }
 
-export async function addElement(type: string, data : Record<string, any>)
+export async function addElement(type: string, data : Record<string, any>, canShowToast = true)
 {
   let rtr : Record<string, any>  = {};
   let goodType = type.replace('/', '');
@@ -338,31 +44,45 @@ export async function addElement(type: string, data : Record<string, any>)
       let dataRes = response.data;
       if(dataRes.errors || dataRes.data.errors)
       {
-        showToast(dataRes.errors || dataRes.data.errors);
-        rtr['success'] = false;
+        throw new Error(dataRes.errors || dataRes.data.errors);
       }
       else
       { 
-        showToast(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, 'success');
+        canShowToast && showToast(`${String(data.id).length <= 0 ? 'Ajout' : 'Modification' } effectué avec succès`, 'success');
         rtr['success'] = true;
+
+        let getObj = null;
+        if(dataRes.data && dataRes.data[goodType + 's'])
+        {
+          getObj = dataRes.data[goodType + 's'][0];
+        }
+
+        rtr['data'] = getObj
       }
     }
     return {data: rtr};
   }).catch((error) =>
   {
-    if(error.response.status === 500)
+    rtr['success'] = false;
+    let message = String(error);
+    if(error.response && error.response.status === 500)
     {
-      showToast('Une erreur est survenue, Merci de contacter l\'administrateur');
-      rtr['success'] = false;
+      message = "Une erreur est survenue, Merci de contacter l\'administrateur";
     }
     if(error.response && error.response.data)
     {
       if(error.response.data.message)
       {
-        showToast(error.response.data.message);
-        rtr['success'] = false;
+        message = error.response.data.message;
       }
     }
+
+    if(canShowToast)
+    {
+      showToast(message);
+    }
+    rtr['message'] = message;
+   
     return {data: rtr};
   })
 } 

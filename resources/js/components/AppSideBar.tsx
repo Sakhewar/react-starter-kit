@@ -7,8 +7,8 @@ import { ChevronDown, PanelLeft } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn, PaletteProps } from "@/lib/utils"
 import { FaSitemap } from "react-icons/fa"
-import { useGlobalStore } from "@/hooks/backoffice"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { useGlobalStore } from "@/utils/fetchDataScope"
 
     // ─── Types ───────────────────────────────────────────
 

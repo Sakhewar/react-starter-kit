@@ -1,13 +1,29 @@
 import { clsx, type ClassValue } from "clsx"
-import { useTheme } from "next-themes";
-import { useMemo } from "react";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export interface FieldConfig {
+export interface EntityItem
+{
+  id: number | string;
+  [key: string]: any;
+}
+
+export interface PaginatedResponse<T>
+{
+  data: T[];
+  metadata: {
+    total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
+  };
+}
+
+export interface FieldConfig
+{
   key               ?: string;
   name               : string;
   label              : string;
@@ -38,7 +54,9 @@ export interface FieldConfig {
   nbRowsTextArea?    : number,
   mdGroupCol        ?: number,
   lgGroupCol        ?: number,
-  xlGroupCol        ?: number
+  xlGroupCol        ?: number,
+  endpoint?         : string;
+  createIfEmpty?    : boolean;
 }
 
 export type FieldGroup = 

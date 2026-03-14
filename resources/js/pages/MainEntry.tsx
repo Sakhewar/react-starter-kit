@@ -5,7 +5,6 @@ import AppSidebar from "@/components/AppSideBar";
 import * as CustomPages from "./CustomPages";
 import BaseContent from "@/components/BaseContent";
 import AppHeader from "@/components/AppHeader";
-import { useGlobalStore } from "@/hooks/backoffice";
 import { useEffect, useRef, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import AuthGuard from "@/components/authGuard/authguard";
@@ -14,6 +13,7 @@ import { pageWithTabs } from "@/configs/listOfPagesWithTabs";
 import { Button } from "@/components/ui/button";
 import { cn, PaletteProps } from "@/lib/utils";
 import { ScrollToTop } from "@/components/partials/ScrollToTop";
+import { useGlobalStore } from "@/utils/fetchDataScope";
 
   // ----------- Types -----------
 
@@ -77,7 +77,7 @@ export default function MainEntry() {
 
     prevQueryRef.current = queryName;
     reset();
-    initialize({ attributeName: queryName, page, onlyPageChange: false, force: true });
+    initialize({ page,attributeName, force: true});
   }, [queryName, page, reset, initialize]);
 
     // Reset de l'onglet actif quand on change de page

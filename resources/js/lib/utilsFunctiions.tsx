@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check, Settings, ChevronDown, ThumbsDown, ThumbsUp, Loader2 } from "lucide-react";
 import { Action, ActionsConfig, cn, FieldConfig, FieldGroup, FieldRendererProps, TableTabProps } from "@/lib/utils";
-import { can, changeStatut, deleteElement, toCapitalize, updateElement, useGlobalStore } from "@/hooks/backoffice";
+import { addElement, can, changeStatut, deleteElement, showToast, toCapitalize, updateElement} from "@/hooks/backoffice";
 import { DatePickerGloabal } from "@/components/partials/DatePicker";
 import { toast } from "sonner";
 import * as TableShadCn from "@/components/ui/table";
@@ -15,6 +15,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { RadioGroupField } from "@/components/partials/RadioGroupMultiple";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { baseActions, columnConfigs } from "@/configs/listOfColumnTables";
+import { useGlobalStore } from "@/utils/fetchDataScope";
 
 
 const colSpanMap: Record<number, string> = {
@@ -357,17 +358,8 @@ function Select3({ field, value, onChange, processing }: {field :FieldConfig; va
   );
 }
 
-function Select2({
-  field,
-  value,
-  onChange,
-  processing,
-}: {
-  field      : FieldConfig
-  value      : any
-  onChange   : (name: string, value: any) => void
-  processing?: boolean
-}) {
+function Select2({field, value, onChange, processing} : {field : FieldConfig, value: any, onChange   : (name: string, value: any) => void,processing?: boolean})
+{
   const [open, setOpen]                   = React.useState(false)
   const [popoverWidth, setPopoverWidth]   = React.useState<number | undefined>()
   const [creating, setCreating]           = React.useState(false)
@@ -398,24 +390,46 @@ function Select2({
 
   // ── Handlers ─────────────────────────────────────
 
-  const handleSelect = React.useCallback((id: string) => {
+  const handleSelect = React.useCallback((id: string) =>
+  {
     onChange(field.name, id)
     setOpen(false)
     setSearch("")
   }, [field.name, onChange])
 
-  const handleClear = React.useCallback(() => {
+  const handleClear = React.useCallback(() =>
+  {
     onChange(field.name, "")
     setOpen(false)
     setSearch("")
   }, [field.name, onChange])
 
-  const handleCreate = React.useCallback(async () => {
-    if (!field.options || !search.trim()) return
+  const handleCreate = React.useCallback(async () =>
+  {
+    if (!field.createIfEmpty) return
+    if (!field.endpoint || !search.trim()) return
     setCreating(true)
-    try {
-      const endpoint = `/${field.options}`
-      //const result   = await addElement(endpoint, { libelle: search.trim() })
+
+    try
+    {
+      const endpoint = `/${field.endpoint}`
+      const result   = await addElement(endpoint, { libelle: search.trim() }, false)
+
+      if(result && result?.data)
+      {
+        if(!result?.data?.success)
+        {
+          setCreating(false);
+          showToast(result?.data?.message || "Une erreur est survenue", "error")
+        }
+        else
+        {
+          
+        }
+      }
+
+      console.log("result", result);
+      
 
       // if (result?.data?.success) {
       //   // Recharge les options depuis le store
@@ -466,7 +480,7 @@ function Select2({
         className="p-0"
         align="start"
       >
-        <Command>
+        <Command filter={(val, ss) => val.toLowerCase().includes(ss.toLowerCase()) ? 1 : 0}>
           <CommandInput
             placeholder="Rechercher..."
             value={search}
@@ -475,22 +489,33 @@ function Select2({
           <CommandList>
             <CommandEmpty>
               {showCreateButton ? (
-                // ── Bouton créer ──────────────────────
-                <button
-                  type="button"
-                  disabled={creating}
-                  onClick={handleCreate}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-xs transition-all hover:bg-accent rounded-md"
-                >
-                  {creating
-                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    : <Plus    className="h-3.5 w-3.5" />
-                  }
-                  {creating
-                    ? "Création en cours..."
-                    : `Créer "${search.trim()}"`
-                  }
-                </button>
+                <div  className       = "flex items-center justify-between px-3 py-2 gap-2">
+                <span className       = "text-xs text-muted-foreground truncate">
+                Créer <span className = "font-medium">"{search.trim()}"</span> ?
+                  </span>
+                  <button
+                    type      = "button"
+                    disabled  = {creating}
+                    onClick   = {handleCreate}
+                    className = "flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md transition-all flex-shrink-0"
+                    style     = {{
+                      background: creating ? "rgba(34,197,94,0.1)": "rgba(34,197,94,0.15)",
+                      color     : "#22c55e",
+                      border    : "1px solid rgba(34,197,94,0.3)",
+                    }}
+                    onMouseEnter={(e) =>
+                    {
+                      if (!creating) e.currentTarget.style.background = "rgba(34,197,94,0.25)"
+                    }}
+                    onMouseLeave={(e) =>
+                    {
+                      if (!creating) e.currentTarget.style.background = "rgba(34,197,94,0.15)"
+                    }}
+                  >
+                    {creating ? <Loader2 className = "h-3 w-3 animate-spin" /> : <Check   className = "h-3 w-3" />}
+                    {creating ? "Création..." : "Oui"}
+                  </button>
+                </div>
               ) : (
                 "Aucun résultat."
               )}
@@ -498,7 +523,7 @@ function Select2({
 
             <CommandGroup>
               {/* Option vide */}
-              <CommandItem value="__none__" onSelect={handleClear}>
+              <CommandItem value="__none__" onSelect={handleClear} forceMount style={{ display: search.trim().length > 0 ? "none" : undefined }}>
                 <span className="text-muted-foreground">{placeholder}</span>
               </CommandItem>
 
