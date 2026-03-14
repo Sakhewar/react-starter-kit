@@ -72,8 +72,6 @@ export function PrixVenteProduit({ type, data, setData }: { type: string, data:R
         } 
         setRows([...data[tagInTabPane]]);
     }, [dataPage, tagInTabPane]);
-
-    console.log(data);
     
     const setValueInRow = (value: string, index: number, key: keyof PrixVenteRow) =>
     {

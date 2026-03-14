@@ -535,8 +535,6 @@ export function checkInForm(type: string, item :Record<any,any>)
 {
   let scope = useGlobalStore.getState().scope;
 
-  console.log("diop log", scope.dataInTabPane);
-
   if(scope && scope.dataInTabPane)
   {
  
@@ -545,7 +543,6 @@ export function checkInForm(type: string, item :Record<any,any>)
       if(Array.isArray(item[key]))
       {
         let tagInTabPane = key + "_" + type;
-        console.log("diop log", tagInTabPane, item[key], scope.dataInTabPane[tagInTabPane]);
         
         if(scope.dataInTabPane[tagInTabPane])
         {

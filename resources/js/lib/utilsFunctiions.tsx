@@ -288,7 +288,7 @@ function SearchableSelect({ field, value, onChange, processing }: {field :FieldC
   const placeholder = field.placeholder ?? toCapitalize(field.label.toLowerCase());
 
   const selectedLabel = React.useMemo(
-    () => options.find(opt => String(opt.id) === String(value))?.libelle,
+    () => options?.find(opt => String(opt.id) === String(value))?.libelle,
     [options, value]
   );
 

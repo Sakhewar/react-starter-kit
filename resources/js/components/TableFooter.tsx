@@ -119,14 +119,15 @@ export function TableFooter({
                   ))}
                 </SelectContent>
               </Select>
-
-              <PaginationComponent
-                groupSize={6}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
-                palette={palette}
-              />
+              <div>
+                <PaginationComponent
+                  groupSize={6}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  setCurrentPage={setCurrentPage}
+                  palette={palette}
+                />
+              </div>
             </>
           )}
 
