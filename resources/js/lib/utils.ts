@@ -173,11 +173,13 @@ export type PaletteProps = {
   successFg   : string
   muted       : string
   mutedText   : string
-  shadow      : string
+  shadow      : string,
+  cardShadow  : string
 }
 
 
-export function PaletteColors(dark = false) {
+export function PaletteColors(dark = false)
+{
   return {
     // ── Backgrounds ───────────────────────────────
     bg        : dark ? "#1c1917" : "#fafaf9",   // fond principal warm
@@ -212,5 +214,7 @@ export function PaletteColors(dark = false) {
 
     // ── Shadow ────────────────────────────────────
     shadow: dark ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.08)",
+    cardShadow: dark ? "0 1px 3px rgba(0,0,0,0.4)" : "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+    
   }
 }

@@ -63,6 +63,7 @@ export function FilterBar({
       style     = {{
         background: palette.bgActive,
         border    : `1px solid ${palette.border}`,
+        boxShadow : palette.cardShadow,
       }}
     >
       <CardContent className = "flex px-3 justify-between items-center gap-3 flex-wrap">

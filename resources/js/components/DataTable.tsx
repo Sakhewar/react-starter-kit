@@ -128,6 +128,7 @@ export function DataTable({
           style     = {{
             background: palette.bgActive,
             border    : `1px solid ${palette.border}`,
+            boxShadow : palette.cardShadow,
           }}
         >
           <CardContent className = "p-0">
