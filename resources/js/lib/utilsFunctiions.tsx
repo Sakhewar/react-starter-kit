@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check, Settings, ChevronDown, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check, Settings, ChevronDown, ThumbsDown, ThumbsUp, Loader2 } from "lucide-react";
 import { Action, ActionsConfig, cn, FieldConfig, FieldGroup, FieldRendererProps, TableTabProps } from "@/lib/utils";
 import { can, changeStatut, deleteElement, toCapitalize, updateElement, useGlobalStore } from "@/hooks/backoffice";
 import { DatePickerGloabal } from "@/components/partials/DatePicker";
@@ -275,7 +275,7 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
     );
 }
 
-function Select2({ field, value, onChange, processing }: {field :FieldConfig; value :any; onChange :(name: string, value: any) => void; processing?: boolean;})
+function Select3({ field, value, onChange, processing }: {field :FieldConfig; value :any; onChange :(name: string, value: any) => void; processing?: boolean;})
 {
   const [open, setOpen]                 = React.useState(false);
   const [popoverWidth, setPopoverWidth] = React.useState<number | undefined>();
@@ -355,6 +355,193 @@ function Select2({ field, value, onChange, processing }: {field :FieldConfig; va
       </PopoverContent>
     </Popover>
   );
+}
+
+function Select2({
+  field,
+  value,
+  onChange,
+  processing,
+}: {
+  field      : FieldConfig
+  value      : any
+  onChange   : (name: string, value: any) => void
+  processing?: boolean
+}) {
+  const [open, setOpen]                   = React.useState(false)
+  const [popoverWidth, setPopoverWidth]   = React.useState<number | undefined>()
+  const [creating, setCreating]           = React.useState(false)
+  const [search, setSearch]               = React.useState("")
+  const { dataPage }                      = useGlobalStore()
+  const triggerRef                        = React.useRef<HTMLButtonElement>(null)
+
+  const options = React.useMemo(
+    () => (field.options != null ? dataPage[field.options] : []) as { id: any; libelle: string }[],
+    [dataPage, field.options]
+  )
+
+  const placeholder   = field.placeholder ?? toCapitalize(field.label.toLowerCase())
+  const selectedLabel = React.useMemo(
+    () => options?.find((opt) => String(opt.id) === String(value))?.libelle,
+    [options, value]
+  )
+
+  // ── Vérifie si la recherche correspond exactement à une option ──
+  const exactMatch = React.useMemo(
+    () => options?.some(
+      (opt) => opt.libelle.toLowerCase() === search.toLowerCase()
+    ),
+    [options, search]
+  )
+
+  const showCreateButton = search.trim().length > 0 && !exactMatch
+
+  // ── Handlers ─────────────────────────────────────
+
+  const handleSelect = React.useCallback((id: string) => {
+    onChange(field.name, id)
+    setOpen(false)
+    setSearch("")
+  }, [field.name, onChange])
+
+  const handleClear = React.useCallback(() => {
+    onChange(field.name, "")
+    setOpen(false)
+    setSearch("")
+  }, [field.name, onChange])
+
+  const handleCreate = React.useCallback(async () => {
+    if (!field.options || !search.trim()) return
+    setCreating(true)
+    try {
+      const endpoint = `/${field.options}`
+      //const result   = await addElement(endpoint, { libelle: search.trim() })
+
+      // if (result?.data?.success) {
+      //   // Recharge les options depuis le store
+      //   // Le store doit se mettre à jour via initialize
+      //   // On sélectionne directement par libelle après rechargement
+      //   //const newOptions = (useGlobalStore.getState().dataPage[field.options] ?? []) as { id: any; libelle: string }[]
+      //   const created    = newOptions.find(
+      //     (opt) => opt.libelle.toLowerCase() === search.trim().toLowerCase()
+      //   )
+      //   if (created) {
+      //     onChange(field.name, String(created.id))
+      //   }
+      //   setOpen(false)
+      //   setSearch("")
+      // }
+    } catch (err) {
+      console.error("Erreur création :", err)
+    } finally {
+      setCreating(false)
+    }
+  }, [field.options, field.name, search, onChange])
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (isOpen)  setPopoverWidth(triggerRef.current?.offsetWidth)
+        if (!isOpen) setSearch("")
+        setOpen(isOpen)
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          ref={triggerRef}
+          type="button"
+          variant="outline"
+          role="combobox"
+          disabled={processing}
+          className={cn("w-full justify-between font-normal", field.inputClassName)}
+        >
+          {selectedLabel ?? placeholder}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        style={{ width: popoverWidth ?? "auto" }}
+        className="p-0"
+        align="start"
+      >
+        <Command>
+          <CommandInput
+            placeholder="Rechercher..."
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>
+              {showCreateButton ? (
+                // ── Bouton créer ──────────────────────
+                <button
+                  type="button"
+                  disabled={creating}
+                  onClick={handleCreate}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs transition-all hover:bg-accent rounded-md"
+                >
+                  {creating
+                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    : <Plus    className="h-3.5 w-3.5" />
+                  }
+                  {creating
+                    ? "Création en cours..."
+                    : `Créer "${search.trim()}"`
+                  }
+                </button>
+              ) : (
+                "Aucun résultat."
+              )}
+            </CommandEmpty>
+
+            <CommandGroup>
+              {/* Option vide */}
+              <CommandItem value="__none__" onSelect={handleClear}>
+                <span className="text-muted-foreground">{placeholder}</span>
+              </CommandItem>
+
+              {options?.map((opt) => (
+                <CommandItem
+                  key={opt.id}
+                  value={opt.libelle}
+                  onSelect={() => handleSelect(String(opt.id))}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      String(value) === String(opt.id) ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {opt.libelle}
+                </CommandItem>
+              ))}
+
+              {/* Bouton créer en bas de liste si options existantes */}
+              {showCreateButton && options.length > 0 && (
+                <>
+                  <div className="mx-2 my-1 h-px bg-border" />
+                  <CommandItem
+                    value="__create__"
+                    disabled={creating}
+                    onSelect={handleCreate}
+                    className="gap-2 text-xs"
+                  >
+                    {creating
+                      ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      : <Plus    className="h-3.5 w-3.5" />
+                    }
+                    {creating ? "Création en cours..." : `Créer "${search.trim()}"`}
+                  </CommandItem>
+                </>
+              )}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
 }
 // ─── Sous-composant : tab en mode tableau ─────────────────────────────────────
 
