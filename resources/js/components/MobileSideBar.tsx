@@ -1,18 +1,23 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import AppSidebar from "./AppSideBar"
+import { PaletteColors } from "@/lib/utils"
 
 
 export default function MobileSidebar() {
     return (
-        <div className="md:hidden">
+        <div className = "md:hidden">
             <Sheet>
                 <SheetTrigger>
-                    <Menu className="w-6 h-6" />
+                    <Menu className = "w-6 h-6" />
                 </SheetTrigger>
 
-                <SheetContent side="left" className="p-0 w-[72px]">
-                    <AppSidebar isMobile={true} />
+                <SheetContent
+                    side      = "left"
+                    className = "p-0 w-fit border-none"
+                    style     = {{ background: PaletteColors.bg }}
+                >
+                    <AppSidebar isMobile = {true} />
                 </SheetContent>
             </Sheet>
         </div>
