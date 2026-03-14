@@ -13,6 +13,7 @@ import { useAuthStore } from "@/hooks/authStore";
 import { pageWithTabs } from "@/configs/listOfPagesWithTabs";
 import { Button } from "@/components/ui/button";
 import { cn, PaletteProps } from "@/lib/utils";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
   // ----------- Types -----------
 
@@ -107,7 +108,7 @@ export default function MainEntry() {
           <AppHeader palette={palette} />
 
           <main className = "flex-1 overflow-y-auto">
-          <div  className = "p-4 md:p-6 lg:py-6 lg:px-8">
+            <div  className = "p-4 md:p-6 lg:py-6 lg:px-8">
 
               {hasTabs.length > 0 && (
                 <div className = "flex items-center justify-center mb-10">
@@ -152,6 +153,7 @@ export default function MainEntry() {
         </div>
 
         <Toaster richColors />
+        <ScrollToTop palette={palette} />
       </div>
     </AuthGuard>
   );

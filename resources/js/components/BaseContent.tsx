@@ -269,7 +269,7 @@ export default function BaseContent({
                 <Button
                   size      = "sm"
                   className = "gap-1.5 text-xs h-8"
-                  style     = {{ background: palette.accent, color: "#fff", border: "none" }}
+                  style     = {{ background: palette.accent, color: palette.accentFg, border: "none" }}
                 >
                   <Plus className = "h-3.5 w-3.5" />
                   Ajouter
@@ -293,12 +293,12 @@ export default function BaseContent({
                       onClick: () => setIsModalOpen(true),
                     },
                     {
-                      icon   : <FaRegFileExcel className="mr-2 h-3.5 w-3.5 text-green-500" />,
+                      icon   : <FaRegFileExcel className="mr-2 h-3.5 w-3.5" style={{ color: palette.success }} />,
                       label  : "Import Excel",
                       onClick: () => console.log("Import Excel"),
                     },
                     {
-                      icon   : <FaRegFileExcel className="mr-2 h-3.5 w-3.5 text-green-500" />,
+                      icon   : <FaRegFileExcel className="mr-2 h-3.5 w-3.5" style={{ color: palette.success }} />,
                       label  : "Trame Excel",
                       onClick: () => window.open(`/${attributeName}.feuille`, "_self"),
                     },

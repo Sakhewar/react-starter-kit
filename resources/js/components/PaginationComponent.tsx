@@ -49,7 +49,7 @@ export default function PaginationComponent({
   const active: React.CSSProperties = {
       ...base,
       background: palette.accent,
-      color     : "#fff",
+      color     : palette.accentFg,
       border    : `1px solid ${palette.accent}`,
       fontWeight: 600,
   }

@@ -176,7 +176,7 @@ export function MoreFilters({
               onMouseEnter={(e) => { e.currentTarget.style.background = palette?.bgHover ?? "" }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
             >
-              <FaRegFileExcel className="text-green-500" />
+              <FaRegFileExcel className="" style={{ color: palette.success }} />
               Excel
             </button>
 

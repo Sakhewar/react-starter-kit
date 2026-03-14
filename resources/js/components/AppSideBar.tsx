@@ -215,7 +215,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                             {hasActiveChild && (
                                                 <span
                                                     className = "absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full"
-                                                    style     = {{ background: palette.accent }}
+                                                    style     = {{ background: palette.accent, color: palette.accentFg }}
                                                 />
                                             )}
 

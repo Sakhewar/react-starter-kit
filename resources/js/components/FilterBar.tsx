@@ -115,7 +115,7 @@ export function FilterBar({
 
         {/* Actions droite */}
         <div className = "flex items-center gap-1 flex-shrink-0">
-          {btn(onExportExcel, <><FaRegFileExcel className="text-green-500 text-sm" /> Excel</>)}
+          {btn(onExportExcel, <><FaRegFileExcel className="text-sm" style={{ color: palette.success }} /> Excel</>)}
           {btn(onExportPdf,   <><FaRegFilePdf   className="text-red-400   text-sm" /> Pdf</>)}
 
           <div className = "w-px h-5 mx-1" style = {{ background: palette.border }} />
