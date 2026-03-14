@@ -117,8 +117,8 @@ export function DataTable({
   palette
 }: DataTableProps) {
   
-  const allSelected  = items.length > 0 && items.every((r) => selectedRows.has(r.id))
-  const someSelected = items.some((r) => selectedRows.has(r.id))
+  const allSelected  = items?.length > 0 && items?.every((r) => selectedRows.has(r.id))
+  const someSelected = items?.some((r) => selectedRows.has(r.id))
 
   return (
     <ContextMenu>

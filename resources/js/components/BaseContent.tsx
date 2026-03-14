@@ -400,11 +400,13 @@ export default function BaseContent({
         open         = {isMoreFilterOpen}
         onOpenChange = {() => setIsMoreFilterOpen(!isMoreFilterOpen)}
         handleSubmit = {handleApplyFilters}
+        palette      = {palette}
       />
 
       {/* ── Modal ── */}
       <BaseModal
         page   = {page}
+        palette = {palette}
         title  = {namepage}
         entity = {attributeName}
         {...(isTabs

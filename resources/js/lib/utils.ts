@@ -90,6 +90,7 @@ export interface ModalCreateGenericProps
   updateItem  ?: any;
   isOpen       : boolean;
   onOpenChange : (open: boolean) => void;
+  palette      : PaletteProps
 }
 
 export interface TableTabProps
