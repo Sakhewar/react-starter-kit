@@ -1,6 +1,8 @@
+// KeyboardShortcutsHint.tsx — ajout de palette en prop
+
 import { useState } from "react"
-import { Keyboard } from "lucide-react"
-import { useGlobalStore } from "@/hooks/backoffice"
+import { Command } from "lucide-react"
+import { PaletteProps } from "@/lib/utils"
 
 type Shortcut = {
   key        : string
@@ -13,10 +15,14 @@ const shortcuts: Shortcut[] = [
   { key: "Escape", description: "Fermer / Désélectionner" },
 ]
 
-export function KeyboardShortcutsHint() {
-  const palette          = useGlobalStore((s) => s.scope?.palette)
-  const [open, setOpen]  = useState(false)
+export function KeyboardShortcutsHint({ palette, canAddElement }: { palette: PaletteProps, canAddElement: boolean }) {
+  const [open,    setOpen]   = useState(false)
   const [hovered, setHovered] = useState(false)
+
+  if(!canAddElement)
+  {
+    
+  }
 
   return (
     <div className="relative">
@@ -25,32 +31,32 @@ export function KeyboardShortcutsHint() {
         onMouseLeave={() => { setOpen(false); setHovered(false) }}
         className="flex items-center justify-center w-7 h-7 rounded-md transition-all"
         style={{
-          color     : hovered ? palette?.textActive : palette?.text,
-          border    : `1px solid ${palette?.border}`,
-          background: hovered ? palette?.bgHover    : "transparent",
+          color     : hovered ? palette.textActive : palette.text,
+          border    : `1px solid ${palette.border}`,
+          background: hovered ? palette.bgHover    : "transparent",
         }}
       >
-        <Keyboard className="h-3.5 w-3.5" />
+        <Command className="h-3.5 w-3.5" />
       </button>
 
       {open && (
         <div
-          className="absolute bottom-full mb-2 right-0 z-50 rounded-lg overflow-hidden"
+          className="absolute top-full mt-2 left-0 z-50 rounded-lg overflow-hidden"
           style={{
-            background: palette?.bgActive,
-            border    : `1px solid ${palette?.border}`,
+            background: palette.bgActive,
+            border    : `1px solid ${palette.border}`,
             boxShadow : "0 8px 24px rgba(0,0,0,0.3)",
             minWidth  : 220,
           }}
         >
           <div
             className="px-3 py-2 flex items-center gap-2"
-            style={{ borderBottom: `1px solid ${palette?.border}` }}
+            style={{ borderBottom: `1px solid ${palette.border}` }}
           >
-            <Keyboard className="h-3.5 w-3.5" style={{ color: palette?.accent }} />
+            <Command className="h-3.5 w-3.5" style={{ color: palette.accent }} />
             <span
               className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: palette?.textActive }}
+              style={{ color: palette.textActive }}
             >
               Raccourcis
             </span>
@@ -62,15 +68,15 @@ export function KeyboardShortcutsHint() {
                 key={s.key}
                 className="flex items-center justify-between px-3 py-1.5 gap-6"
               >
-                <span className="text-xs" style={{ color: palette?.text }}>
+                <span className="text-xs" style={{ color: palette.text }}>
                   {s.description}
                 </span>
                 <kbd
                   className="text-[10px] px-1.5 py-0.5 rounded font-mono flex-shrink-0"
                   style={{
-                    background: palette?.bg,
-                    border    : `1px solid ${palette?.border}`,
-                    color     : palette?.textActive,
+                    background: palette.bg,
+                    border    : `1px solid ${palette.border}`,
+                    color     : palette.textActive,
                   }}
                 >
                   {s.key}

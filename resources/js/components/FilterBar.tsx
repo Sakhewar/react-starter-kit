@@ -5,9 +5,11 @@ import { Input } from "./ui/input";
 import { Card, CardContent } from "./ui/card";
 import { PaletteProps } from "@/lib/utils";
 import listofFilters from "@/configs/listOfFilters";
+import { KeyboardShortcutsHint } from "./KeyboardShortcutsHint";
 
 interface FilterBarProps {
   attributeName  : string;
+  canAddElement  : boolean;
   data           : { search: string };
   setData        : (data: { search: string }) => void;
   onSubmit       : () => void;
@@ -21,6 +23,7 @@ interface FilterBarProps {
 
 export function FilterBar({
   attributeName,
+  canAddElement,
   data,
   setData,
   onSubmit,
@@ -66,6 +69,10 @@ export function FilterBar({
 
         {/* Recherche */}
         <div className = "flex flex-1 gap-2 items-center min-w-0">
+
+          <div className="flex-shrink-0">
+            <KeyboardShortcutsHint palette={palette} canAddElement={canAddElement} />
+          </div>
           <form
             onSubmit  = {(e) => { e.preventDefault(); onSubmit(); }}
             className = "flex flex-1 min-w-0"

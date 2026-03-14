@@ -229,6 +229,8 @@ export default function BaseContent({
     );
   }
 
+  const canAddElement = can(`creation-${permissionName ?? attributeName}`, permissionPages);
+
     // ─── JSX ──────────────────────────────────────────
 
   return (
@@ -259,7 +261,7 @@ export default function BaseContent({
             </Badge>
           </div>
 
-          {can(`creation-${permissionName ?? attributeName}`, permissionPages) && (
+          {canAddElement && (
             <HoverCard openDelay = {80} closeDelay = {150}>
               <HoverCardTrigger asChild>
                 <Button
@@ -325,6 +327,7 @@ export default function BaseContent({
         {/* ── Filtres ── */}
         <FilterBar
           attributeName  = {attributeName}
+          canAddElement  = {canAddElement}
           data           = {data}
           setData        = {setData}
           onSubmit       = {handleApplyFilters}
