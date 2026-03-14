@@ -1,8 +1,8 @@
 
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import * as Icons from "lucide-react";
-import { Input } from "./ui/input";
-import { Card, CardContent } from "./ui/card";
+import { Input } from "../ui/input";
+import { Card, CardContent } from "../ui/card";
 import { PaletteProps } from "@/lib/utils";
 import listofFilters from "@/configs/listOfFilters";
 import { KeyboardShortcutsHint } from "./KeyboardShortcutsHint";

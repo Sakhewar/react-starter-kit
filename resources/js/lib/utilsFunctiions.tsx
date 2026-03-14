@@ -7,12 +7,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check, Settings, ChevronDown, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Action, ActionsConfig, cn, FieldConfig, FieldGroup, FieldRendererProps, TableTabProps } from "@/lib/utils";
 import { can, changeStatut, deleteElement, toCapitalize, updateElement, useGlobalStore } from "@/hooks/backoffice";
-import { DatePickerGloabal } from "@/components/DatePicker";
+import { DatePickerGloabal } from "@/components/partials/DatePicker";
 import { toast } from "sonner";
 import * as TableShadCn from "@/components/ui/table";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { RadioGroupField } from "@/components/RadioGroupMultiple";
+import { RadioGroupField } from "@/components/partials/RadioGroupMultiple";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { baseActions, columnConfigs } from "@/configs/listOfColumnTables";
 

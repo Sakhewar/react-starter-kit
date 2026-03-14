@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import MobileSidebar from "./MobileSideBar"
-import { ThemeToggle } from "./ThemeToggle"
+import { ThemeToggle } from "./partials/ThemeToggle"
 import { useAuthStore } from "@/hooks/authStore"
 import { PaletteProps } from "@/lib/utils"
 

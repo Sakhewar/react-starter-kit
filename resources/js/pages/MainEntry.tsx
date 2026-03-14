@@ -13,7 +13,7 @@ import { useAuthStore } from "@/hooks/authStore";
 import { pageWithTabs } from "@/configs/listOfPagesWithTabs";
 import { Button } from "@/components/ui/button";
 import { cn, PaletteProps } from "@/lib/utils";
-import { ScrollToTop } from "@/components/ScrollToTop";
+import { ScrollToTop } from "@/components/partials/ScrollToTop";
 
   // ----------- Types -----------
 

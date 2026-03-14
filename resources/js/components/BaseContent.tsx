@@ -14,12 +14,12 @@ import { fieldModals } from "@/configs/listOfFieldModal";
 import { can, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
 import listofFilters from "@/configs/listOfFilters";
 
-import { ConfirmDialog } from "./ConfirmDialog";
-import { MoreFilters } from "./MoreFilters";
+import { ConfirmDialog } from "./partials/ConfirmDialog";
+import { MoreFilters } from "./partials/MoreFilters";
 import { BaseModal } from "./BaseModal";
-import { FilterBar } from "./FilterBar";
-import { DataTable } from "./DataTable";
-import { TableFooter } from "./TableFooter";
+import { FilterBar } from "./partials/FilterBar";
+import { DataTable } from "./partials/DataTable";
+import { TableFooter } from "./partials/TableFooter";
 import { useDataTable } from "@/hooks/useDataTable";
 import { useRowActions } from "@/lib/utilsFunctiions";
 

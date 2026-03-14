@@ -6,8 +6,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { FieldSeparator } from "./ui/field"
-import { Input } from "./ui/input"
+import { FieldSeparator } from "../ui/field"
+import { Input } from "../ui/input"
 import { DatePickerGloabal } from "./DatePicker"
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa"
 import { useCallback, useEffect, useState } from "react"

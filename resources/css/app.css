@@ -256,5 +256,30 @@
             height: 30px !important;
         }
     }
+
+    ::-webkit-scrollbar {
+        width : 6px;
+        height: 6px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: var(--palette-bg) !important;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background   : var(--palette-border);
+        border-radius: 999px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--palette-accent);
+      }
+      
+      /* Firefox */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--palette-border) transparent;
+      }
+      
     
 }

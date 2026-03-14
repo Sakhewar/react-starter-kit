@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ContextMenu, ContextMenuContent, ContextMenuItem,
   ContextMenuSeparator, ContextMenuTrigger,
-} from "./ui/context-menu";
+} from "../ui/context-menu";
 import * as Icons from "lucide-react";
 import { cn, Column, PaletteProps } from "@/lib/utils";
 import { SortConfig } from "@/hooks/useDataTable";
