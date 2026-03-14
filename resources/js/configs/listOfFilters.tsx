@@ -109,6 +109,29 @@ var listofFilters : Record<string, Record<string, string | FieldConfig[]>> =
             },
         ] 
     },
+    produit: 
+    {
+        placeholder: "Rechercher libellé, description ...",
+        fields     : [
+            { name: "search",          label: "", placeholder: "Rechercher libellé, description ...",         type: "text"},
+            { name: "famille_produit_id",  label: "Famille de produit", labelClassName:"text-[13px]",        type: "select",  options: "familleproduits",  inputClassName: "w-full" },
+            { name: "sous_famille_produit_id",  label: "Sous Famille de produit", labelClassName:"text-[13px]",        type: "select",  options: "sousfamilleproduits",  inputClassName: "w-full" },
+            { name: "marque_id",  label: "Marque", labelClassName:"text-[13px]",        type: "select",  options: "marques",  inputClassName: "w-full" },
+            {
+                name          : "activer",
+                label         : "Actif ?",
+                labelClassName: "text-[13px]",
+                type          : "radio-group",
+                radioStyle    : "minimal",
+                colSpan       : 12,
+                radioOptions  : [
+                    { label: "Oui",  value: true, activeClassName: "border-emerald-500", radioActiveClassName: "bg-emerald-500", labelClassName: "text-emerald-500 font-bold"},
+                    { label: "Non",  value: false, activeClassName: "border-red-500", radioActiveClassName: "bg-red-500", labelClassName: "text-red-500 font-bold"},
+                    { label: "Tout", value: null, labelClassName: "font-bold"},
+                ],
+            },
+        ] 
+    },
 }
 
 export default listofFilters;

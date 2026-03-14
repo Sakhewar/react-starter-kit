@@ -9,7 +9,7 @@ import { useForm } from "@inertiajs/react";
 import * as Icons from "lucide-react";
 
 import { ActionsConfig, cn, Column, FieldConfig, TabConfig, PaletteProps } from "@/lib/utils";
-import { columnConfigs, useRowActions } from "@/configs/listOfColumnTables";
+import { columnConfigs} from "@/configs/listOfColumnTables";
 import { fieldModals } from "@/configs/listOfFieldModal";
 import { can, deleteElement, exportToPdfOrExcel, useGlobalStore } from "@/hooks/backoffice";
 import listofFilters from "@/configs/listOfFilters";
@@ -21,6 +21,7 @@ import { FilterBar } from "./FilterBar";
 import { DataTable } from "./DataTable";
 import { TableFooter } from "./TableFooter";
 import { useDataTable } from "@/hooks/useDataTable";
+import { useRowActions } from "@/lib/utilsFunctiions";
 
   // ─── Types ───────────────────────────────────────────
 

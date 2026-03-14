@@ -4,15 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check } from "lucide-react";
-import { cn, FieldConfig, FieldGroup, FieldRendererProps, TableTabProps } from "@/lib/utils";
-import { toCapitalize, useGlobalStore } from "@/hooks/backoffice";
+import { Paperclip, X, Plus, Trash2, Table, ChevronsUpDown, Check, Settings, ChevronDown, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Action, ActionsConfig, cn, FieldConfig, FieldGroup, FieldRendererProps, TableTabProps } from "@/lib/utils";
+import { can, changeStatut, deleteElement, toCapitalize, updateElement, useGlobalStore } from "@/hooks/backoffice";
 import { DatePickerGloabal } from "@/components/DatePicker";
 import { toast } from "sonner";
 import * as TableShadCn from "@/components/ui/table";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { RadioGroupField } from "@/components/RadioGroupMultiple";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { baseActions, columnConfigs } from "@/configs/listOfColumnTables";
 
 
 const colSpanMap: Record<number, string> = {
@@ -142,7 +144,7 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
             className={field.inputClassName}
             />
         ) : field.type === "select" ? (
-                <SearchableSelect
+                <Select2
                     field={field}
                     value={value}
                     onChange={onChange}
@@ -273,7 +275,7 @@ export function FieldRenderer({field, value, onChange, errors = {}, processing =
     );
 }
 
-function SearchableSelect({ field, value, onChange, processing }: {field :FieldConfig; value :any; onChange :(name: string, value: any) => void; processing?: boolean;})
+function Select2({ field, value, onChange, processing }: {field :FieldConfig; value :any; onChange :(name: string, value: any) => void; processing?: boolean;})
 {
   const [open, setOpen]                 = React.useState(false);
   const [popoverWidth, setPopoverWidth] = React.useState<number | undefined>();
@@ -334,7 +336,7 @@ function SearchableSelect({ field, value, onChange, processing }: {field :FieldC
               <CommandItem value     = "__none__" onSelect = {handleClear}>
               <span        className = "text-muted-foreground">{placeholder}</span>
               </CommandItem>
-              {options.map((opt) => (
+              {options?.map((opt) => (
                 <CommandItem
                   key      = {opt.id}
                   value    = {opt.libelle} 
@@ -479,3 +481,168 @@ export function TableTab({ tab, rows, onAddRow, onRemoveRow, processing }: Table
     </div>
   );
 }
+
+  // ─── Hook partagé ────────────────────────────────────
+
+  export function useRowActions(
+    row           : any,
+    attributeName : string,
+    namepage     ?: string,
+    config        : ActionsConfig = {},
+    extraActions  : Action[] = []
+    )             : Action[] {
+      const hasColumnActiver = columnConfigs[attributeName]?.some(
+        (col) => col.key === "activer"
+      );
+    
+      const shouldShowBase = (key: keyof typeof baseActions): boolean => {
+        const rule = config[key];
+        if (rule === undefined) return true;
+        if (typeof rule === "boolean") return rule;
+        return rule(row);
+      };
+    
+      const baseVisible: Action[] = Object.entries(baseActions)
+        .filter(([key]) => shouldShowBase(key as keyof typeof baseActions))
+        .map(([key, action]) => ({
+          key,
+          ...action,
+          onClick: () => {
+            if (key === "delete") {
+              useGlobalStore.setState((state) => ({
+                scope: {
+                  ...state.scope,
+                  itemToChange: {
+                    changedItem: row,
+                    title      : `Suppression ${toCapitalize(namepage ?? "")}`,
+                    description: "Voulez-vous vraiment effectuer la suppression ?",
+                    confirmText: "Oui Supprimer",
+                    onConfirm  : async () => deleteElement(attributeName, row?.id),
+                  },
+                },
+              }));
+            } else if (key === "edit" || key === "clone") {
+              updateElement(attributeName, row.id).then((data) => {
+                if (key === "clone") {
+                  data.id = null;
+                  Object.keys(data).forEach((k) => {
+                    if (Array.isArray(data[k])) {
+                      data[k] = data[k].map((item: any) => {
+                        delete item.id;
+                        return item;
+                      });
+                    }
+                  });
+                }
+                useGlobalStore.setState((state) => ({ ...state, updateItem: data }));
+              });
+            }
+          },
+        }));
+    
+      const extraWithActiver = [...extraActions];
+    
+      if (hasColumnActiver) {
+        extraWithActiver.push({
+          key  : "activer",
+          label: row.activer == 1 ? "Désactiver": "Activer",
+          icon : row.activer == 1
+          ?       <ThumbsDown className  = "mr-2 text-red-600" />
+          :       <ThumbsUp className    = "mr-2 text-green-600" />,
+          variant: row.activer          == 1 ? "destructive" : "success",
+          condition: () => can("statut-" + (attributeName ?? "default")),
+          onClick  : (r) => {
+            useGlobalStore.setState((state) => ({
+              scope: {
+                ...state.scope,
+                itemToChange: {
+                  changedItem: r,
+                  title      : (r.activer == 1 ? "Désactiver" : "Activer") + " cet élément",
+                  description: 
+                    "Voulez-vous vraiment procéder à " +
+                    (r.activer == 1 ? "la désactivation" : "l'activation") + " ?",
+                  confirmText: "Oui " + (r.activer == 1 ? "Désactiver" : "Activer"),
+                  onConfirm  : async () =>
+                    changeStatut(
+                      attributeName ?? "",
+                      { id: r.id, status: r.activer == 1 ? 0 : 1 },
+                      null,
+                      namepage?.slice(0, -1) + " " +
+                      (r.activer == 1 ? "désactivé" : "activé") + " avec succès"
+                    ),
+                },
+              },
+            }));
+          },
+        });
+      }
+    
+      const extraVisible = extraWithActiver.filter(
+        (act) => !act.condition || act.condition(row)
+      );
+    
+      const all = [...baseVisible, ...extraVisible];
+    
+      return [
+        ...all.filter((a) => a.key !== "delete"),
+        ...all.filter((a) => a.key === "delete"),
+      ];
+    }
+    
+      // ─── RowActions component ─────────────────────────────
+    
+    export const RowActions = ({
+      config       = {},
+      extraActions = [],
+      row,
+      attributeName,
+      namepage,
+    }: {
+      config       ?: ActionsConfig;
+      extraActions ?: Action[];
+      row           : any;
+      attributeName : string;
+      namepage     ?: string;
+    }) => {
+      const sortedActions = useRowActions(row, attributeName, namepage, config, extraActions);
+    
+      if (sortedActions.length === 0) return null;
+    
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button      size      = "sm" variant = "ghost">
+            <Settings    className = "h-4 w-4" />
+            <ChevronDown className = "h-3 w-3 opacity-70 ml-1" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {sortedActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <DropdownMenuItem
+                  key       = {action.key}
+                  className = {
+                    action.variant === "destructive"
+                      ? "text-destructive focus:bg-destructive/10 focus:text-destructive"
+                      : action.variant === "success"
+                      ? "text-green-600 focus:bg-green-50 focus:text-green-600"
+                      :  ""
+                  }
+                  onClick = {() => action.onClick?.(row)}
+                >
+                  {React.isValidElement(Icon) ? Icon : Icon && <Icon className="mr-2 h-4 w-4" />}
+                  <span className={
+                      action.variant === "destructive" ? "text-destructive"
+                    : action.variant === "success"   ? "text-green-600"
+                    :  ""
+                  }>
+                    {action.label}
+                  </span>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    };

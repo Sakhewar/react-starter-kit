@@ -166,18 +166,40 @@ export type PaletteProps = {
 }
 
 
-export function PaletteColors(dark = false)
-{
-  //const { resolvedTheme } = useTheme()
-  //const dark = true
-
+export function PaletteColors(dark = false) {
   return {
-    bg        : dark ? "#0f1117" : "#fafafa",
-    bgHover   : dark ? "#161b27" : "#f4f4f5",
-    bgActive  : dark ? "#1a2035" : "#ffffff",
-    border    : dark ? "#1e2130" : "#e5e5e5",
-    text      : dark ? "#94a3b8" : "#000000",
-    textActive: dark ? "#e2e8f0" : "#111111",
-    accent    : dark ? "#3b82f6" : "#000000",
+    // ── Backgrounds ───────────────────────────────
+    bg        : dark ? "#1c1917" : "#fafaf9",   // fond principal warm
+    bgHover   : dark ? "#292524" : "#f5f5f4",   // hover
+    bgActive  : dark ? "#211f1c" : "#ffffff",   // cards / surfaces
+
+    // ── Borders ───────────────────────────────────
+    border    : dark ? "#3d3a35" : "#e7e5e4",   // bordures warm
+
+    // ── Textes ────────────────────────────────────
+    text      : dark ? "#a8a29e" : "#78716c",   // texte secondaire
+    textActive: dark ? "#f5f5f4" : "#1c1917",   // texte principal
+
+    // ── Accent (orange cuivré Claude) ─────────────
+    accent      : dark ? "#d97757" : "#c2410c", // accent principal
+    accentHover : dark ? "#c4623e" : "#9a3412", // accent hover
+    accentFg    : "#ffffff",                    // texte sur fond accent
+
+    // ── Danger ────────────────────────────────────
+    danger      : "#ef4444",
+    dangerHover : "rgba(239,68,68,0.1)",
+    dangerFg    : "#ffffff",
+
+    // ── Success ───────────────────────────────────
+    success     : "#22c55e",
+    successHover: "rgba(34,197,94,0.1)",
+    successFg   : "#ffffff",
+
+    // ── Muted ─────────────────────────────────────
+    muted    : dark ? "#292524" : "#f5f5f4",    // zones secondaires
+    mutedText: dark ? "#57534e" : "#a8a29e",    // texte très atténué
+
+    // ── Shadow ────────────────────────────────────
+    shadow: dark ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.08)",
   }
 }
