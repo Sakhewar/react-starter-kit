@@ -236,20 +236,20 @@ export default function BaseContent({
         <div className = "flex items-center justify-between gap-4 flex-wrap">
         <div className = "flex items-center gap-3">
             {PageIcon && (
-              <PageIcon className = "w-4 h-4" style = {{ color: PaletteColors.accent }} />
+              <PageIcon className = "w-4 h-4" style = {{ color: PaletteColors().accent }} />
             )}
             <h1
               className = "text-sm font-semibold tracking-tight"
-              style     = {{ color: PaletteColors.textActive }}
+              style     = {{ color: PaletteColors().textActive }}
             >
               {namepage}
             </h1>
             <Badge
               className = "font-normal text-xs rounded-[4px] px-2 py-0.5"
               style     = {{
-                background: PaletteColors.bgActive,
-                color     : PaletteColors.accent,
-                border    : `1px solid ${PaletteColors.border}`,
+                background: PaletteColors().bgActive,
+                color     : PaletteColors().accent,
+                border    : `1px solid ${PaletteColors().border}`,
               }}
             >
               {metadata?.total ?? 0}
@@ -258,17 +258,17 @@ export default function BaseContent({
             {/* Raccourcis hint */}
             <span
               className = "hidden lg:flex items-center gap-2 text-[10px] ml-2"
-              style     = {{ color: PaletteColors.text }}
+              style     = {{ color: PaletteColors().text }}
             >
               <kbd
                 className = "px-1.5 py-0.5 rounded text-[10px]"
-                style     = {{ background: PaletteColors.bgActive, border: `1px solid ${PaletteColors.border}` }}
+                style     = {{ background: PaletteColors().bgActive, border: `1px solid ${PaletteColors().border}` }}
               >
                 N
               </kbd> Nouveau ·
               <kbd
                 className = "px-1.5 py-0.5 rounded text-[10px]"
-                style     = {{ background: PaletteColors.bgActive, border: `1px solid ${PaletteColors.border}` }}
+                style     = {{ background: PaletteColors().bgActive, border: `1px solid ${PaletteColors().border}` }}
               >
                 F
               </kbd> Filtrer
@@ -281,7 +281,7 @@ export default function BaseContent({
                 <Button
                   size      = "sm"
                   className = "gap-1.5 text-xs h-8"
-                  style     = {{ background: PaletteColors.accent, color: "#fff", border: "none" }}
+                  style     = {{ background: PaletteColors().accent, color: "#fff", border: "none" }}
                 >
                   <Plus className = "h-3.5 w-3.5" />
                   Ajouter
@@ -293,8 +293,8 @@ export default function BaseContent({
                 align      = "end"
                 sideOffset = {8}
                 style      = {{
-                  background: PaletteColors.bg,
-                  border    : `1px solid ${PaletteColors.border}`,
+                  background: PaletteColors().bg,
+                  border    : `1px solid ${PaletteColors().border}`,
                 }}
               >
                 <div className = "flex flex-col">
@@ -319,14 +319,14 @@ export default function BaseContent({
                       key          = {item.label}
                       onClick      = {item.onClick}
                       className    = "flex items-center px-3 py-2 text-xs rounded-md transition-all text-left w-full"
-                      style        = {{ color: PaletteColors.text }}
+                      style        = {{ color: PaletteColors().text }}
                       onMouseEnter = {(e) => {
-                        e.currentTarget.style.background = PaletteColors.bgHover
-                        e.currentTarget.style.color      = PaletteColors.textActive
+                        e.currentTarget.style.background = PaletteColors().bgHover
+                        e.currentTarget.style.color      = PaletteColors().textActive
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = "transparent"
-                        e.currentTarget.style.color      = PaletteColors.text
+                        e.currentTarget.style.color      = PaletteColors().text
                       }}
                     >
                       {item.icon}{item.label}

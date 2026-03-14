@@ -15,7 +15,7 @@ export default function MobileSidebar() {
                 <SheetContent
                     side      = "left"
                     className = "p-0 w-fit border-none"
-                    style     = {{ background: PaletteColors.bg }}
+                    style     = {{ background: PaletteColors().bg }}
                 >
                     <AppSidebar isMobile = {true} />
                 </SheetContent>

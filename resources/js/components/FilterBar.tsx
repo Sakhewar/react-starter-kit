@@ -39,14 +39,14 @@ export function FilterBar({
       type         = "button"
       onClick      = {onClick}
       className    = "flex items-center gap-1.5 h-8 px-2 text-xs rounded-md transition-all"
-      style        = {{ color: PaletteColors.text, background: "transparent", ...extraStyle }}
+      style        = {{ color: PaletteColors().text, background: "transparent", ...extraStyle }}
       onMouseEnter = {(e) => {
-        e.currentTarget.style.background = PaletteColors.bgHover
-        e.currentTarget.style.color      = PaletteColors.textActive
+        e.currentTarget.style.background = PaletteColors().bgHover
+        e.currentTarget.style.color      = PaletteColors().textActive
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.background = "transparent"
-        e.currentTarget.style.color      = extraStyle?.color ?? PaletteColors.text
+        e.currentTarget.style.color      = extraStyle?.color ?? PaletteColors().text
       }}
     >
       {children}
@@ -57,8 +57,8 @@ export function FilterBar({
     <Card
       className = "shadow-sm py-2 rounded-[7px]"
       style     = {{
-        background: PaletteColors.bgActive,
-        border    : `1px solid ${PaletteColors.border}`,
+        background: PaletteColors().bgActive,
+        border    : `1px solid ${PaletteColors().border}`,
       }}
     >
       <CardContent className = "flex px-3 justify-between items-center gap-3 flex-wrap">
@@ -75,9 +75,9 @@ export function FilterBar({
                 type      = "search"
                 className = "pr-9 h-8 text-xs [&::-webkit-search-cancel-button]:hidden [&::-ms-clear]:hidden"
                 style     = {{
-                  background: PaletteColors.bg,
-                  border    : `1px solid ${PaletteColors.border}`,
-                  color     : PaletteColors.textActive,
+                  background: PaletteColors().bg,
+                  border    : `1px solid ${PaletteColors().border}`,
+                  color     : PaletteColors().textActive,
                 }}
                 value       = {data.search}
                 onChange    = {(e) => setData({ ...data, search: e.target.value })}
@@ -88,7 +88,7 @@ export function FilterBar({
               />
               <Icons.Search
                 className = "absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5"
-                style     = {{ color: PaletteColors.text }}
+                style     = {{ color: PaletteColors().text }}
               />
             </div>
           </form>
@@ -110,12 +110,12 @@ export function FilterBar({
           {btn(onExportExcel, <><FaRegFileExcel className="text-green-500 text-sm" /> Excel</>)}
           {btn(onExportPdf,   <><FaRegFilePdf   className="text-red-400   text-sm" /> Pdf</>)}
 
-          <div className = "w-px h-5 mx-1" style = {{ background: PaletteColors.border }} />
+          <div className = "w-px h-5 mx-1" style = {{ background: PaletteColors().border }} />
 
           {btn(
             onMoreFilters,
             <><Icons.ArrowUpRightIcon className = "h-3 w-3" /> Autres filtres</>,
-            { border: `1px solid ${PaletteColors.border}`, paddingLeft: 12, paddingRight: 12 }
+            { border: `1px solid ${PaletteColors().border}`, paddingLeft: 12, paddingRight: 12 }
           )}
         </div>
 

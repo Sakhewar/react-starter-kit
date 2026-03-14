@@ -45,7 +45,7 @@ export default function AppHeader() {
     return (
         <header
             className="h-14 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-10"
-            style={{ background: PaletteColors.bg, borderBottom: `1px solid ${PaletteColors.border}` }}
+            style={{ background: PaletteColors().bg, borderBottom: `1px solid ${PaletteColors().border}` }}
         >
             {/* Gauche */}
             <div className="flex items-center gap-4">
@@ -55,10 +55,10 @@ export default function AppHeader() {
                         {breadcrumb.map((crumb, i) => (
                             <span key={i} className="flex items-center gap-1">
                                 {i > 0 && (
-                                    <span style={{ color: PaletteColors.border }}>/</span>
+                                    <span style={{ color: PaletteColors().border }}>/</span>
                                 )}
                                 <span style={{
-                                    color: i === breadcrumb.length - 1 ? PaletteColors.textActive : PaletteColors.text,
+                                    color: i === breadcrumb.length - 1 ? PaletteColors().textActive : PaletteColors().text,
                                     fontWeight: i === breadcrumb.length - 1 ? 500 : 400,
                                 }}>
                                     {crumb}
@@ -77,14 +77,14 @@ export default function AppHeader() {
                 {/* Notifications */}
                 <button
                     className="relative w-9 h-9 flex items-center justify-center rounded-lg transition-all"
-                    style={{ color: PaletteColors.text }}
+                    style={{ color: PaletteColors().text }}
                     onMouseEnter={(e) => {
-                        e.currentTarget.style.background = PaletteColors.bgHover
-                        e.currentTarget.style.color = PaletteColors.textActive
+                        e.currentTarget.style.background = PaletteColors().bgHover
+                        e.currentTarget.style.color = PaletteColors().textActive
                     }}
                     onMouseLeave={(e) => {
                         e.currentTarget.style.background = "transparent"
-                        e.currentTarget.style.color = PaletteColors.text
+                        e.currentTarget.style.color = PaletteColors().text
                     }}
                 >
                     <Bell className="w-4 h-4" />
@@ -96,7 +96,7 @@ export default function AppHeader() {
                 {/* Séparateur */}
                 <div
                     className="w-px h-5 mx-2"
-                    style={{ background: PaletteColors.border }}
+                    style={{ background: PaletteColors().border }}
                 />
 
                 {/* Avatar + menu */}
@@ -105,7 +105,7 @@ export default function AppHeader() {
                         <button
                             className="flex items-center gap-2 px-2 py-1 rounded-lg transition-all"
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = PaletteColors.bgHover
+                                e.currentTarget.style.background = PaletteColors().bgHover
                             }}
                             onMouseLeave={(e) => {
                                 e.currentTarget.style.background = "transparent"
@@ -115,14 +115,14 @@ export default function AppHeader() {
                                 <AvatarImage src={auth?.user?.image} alt={auth?.user?.name} />
                                 <AvatarFallback
                                     className="text-xs font-bold"
-                                    style={{ background: PaletteColors.bgActive, color: PaletteColors.textActive }}
+                                    style={{ background: PaletteColors().bgActive, color: PaletteColors().textActive }}
                                 >
                                     {initials}
                                 </AvatarFallback>
                             </Avatar>
                             <span
                                 className="hidden md:block text-xs font-medium"
-                                style={{ color: PaletteColors.text }}
+                                style={{ color: PaletteColors().text }}
                             >
                                 {auth?.user?.name?.split(" ")[0]}
                             </span>
@@ -132,30 +132,30 @@ export default function AppHeader() {
                     <DropdownMenuContent
                         align="end"
                         className="w-48"
-                        style={{ background: PaletteColors.bg, border: `1px solid ${PaletteColors.border}` }}
+                        style={{ background: PaletteColors().bg, border: `1px solid ${PaletteColors().border}` }}
                     >
                         <DropdownMenuLabel className="font-normal">
                             <span
                                 className="font-medium text-sm"
-                                style={{ color: PaletteColors.textActive }}
+                                style={{ color: PaletteColors().textActive }}
                             >
                                 {auth?.user?.name}
                             </span>
                         </DropdownMenuLabel>
 
-                        <DropdownMenuSeparator style={{ background: PaletteColors.border }} />
+                        <DropdownMenuSeparator style={{ background: PaletteColors().border }} />
 
                         <DropdownMenuItem
                             onClick={() => router.visit("/profil")}
                             className="cursor-pointer"
-                            style={{ color: PaletteColors.text }}
+                            style={{ color: PaletteColors().text }}
                             onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = PaletteColors.bgHover
-                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors.textActive
+                                (e.currentTarget as HTMLElement).style.background = PaletteColors().bgHover
+                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors().textActive
                             }}
                             onMouseLeave={(e) => {
                                 (e.currentTarget as HTMLElement).style.background = "transparent"
-                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors.text
+                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors().text
                             }}
                         >
                             Profil
@@ -164,20 +164,20 @@ export default function AppHeader() {
                         <DropdownMenuItem
                             onClick={() => router.visit("/parametres")}
                             className="cursor-pointer"
-                            style={{ color: PaletteColors.text }}
+                            style={{ color: PaletteColors().text }}
                             onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = PaletteColors.bgHover
-                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors.textActive
+                                (e.currentTarget as HTMLElement).style.background = PaletteColors().bgHover
+                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors().textActive
                             }}
                             onMouseLeave={(e) => {
                                 (e.currentTarget as HTMLElement).style.background = "transparent"
-                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors.text
+                                ;(e.currentTarget as HTMLElement).style.color = PaletteColors().text
                             }}
                         >
                             Paramètres
                         </DropdownMenuItem>
 
-                        <DropdownMenuSeparator style={{ background: PaletteColors.border }} />
+                        <DropdownMenuSeparator style={{ background: PaletteColors().border }} />
 
                         <DropdownMenuItem
                             onClick={logout}

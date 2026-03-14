@@ -36,8 +36,8 @@ export function TableFooter({
         collapsed ? "md:left-[56px]" : "md:left-[260px]"
       )}
       style={{
-        background: PaletteColors.bg,
-        borderTop : `1px solid ${PaletteColors.border}`,
+        background: PaletteColors().bg,
+        borderTop : `1px solid ${PaletteColors().border}`,
       }}
     >
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-[5.5px]">
@@ -47,8 +47,8 @@ export function TableFooter({
             // ─── Actions groupées ─────────────────────
             <>
               <div className="flex items-center gap-2">
-                <span className="text-xs" style={{ color: PaletteColors.text }}>
-                  <span style={{ color: PaletteColors.accent, fontWeight: 600 }}>
+                <span className="text-xs" style={{ color: PaletteColors().text }}>
+                  <span style={{ color: PaletteColors().accent, fontWeight: 600 }}>
                     {selectedCount}
                   </span>
                   {" "}ligne{selectedCount > 1 ? "s" : ""} sélectionnée{selectedCount > 1 ? "s" : ""}
@@ -57,8 +57,8 @@ export function TableFooter({
                 <button
                   onClick={onClearSelection}
                   className="h-7 px-2 text-xs rounded-md transition-all"
-                  style={{ color: PaletteColors.text, border: `1px solid ${PaletteColors.border}` }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = PaletteColors.bgHover }}
+                  style={{ color: PaletteColors().text, border: `1px solid ${PaletteColors().border}` }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = PaletteColors().bgHover }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
                 >
                   Désélectionner
@@ -92,17 +92,17 @@ export function TableFooter({
                 <SelectTrigger
                   className="w-16 h-8 text-xs"
                   style={{
-                    background: PaletteColors.bgActive,
-                    border    : `1px solid ${PaletteColors.border}`,
-                    color     : PaletteColors.text,
+                    background: PaletteColors().bgActive,
+                    border    : `1px solid ${PaletteColors().border}`,
+                    color     : PaletteColors().text,
                   }}
                 >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent
                   style={{
-                    background: PaletteColors.bg,
-                    border    : `1px solid ${PaletteColors.border}`,
+                    background: PaletteColors().bg,
+                    border    : `1px solid ${PaletteColors().border}`,
                   }}
                 >
                   {[10, 25, 50, 100].map((size) => (
@@ -110,7 +110,7 @@ export function TableFooter({
                       key={size}
                       value={size.toString()}
                       className="text-xs cursor-pointer"
-                      style={{ color: PaletteColors.text }}
+                      style={{ color: PaletteColors().text }}
                     >
                       {size}
                     </SelectItem>

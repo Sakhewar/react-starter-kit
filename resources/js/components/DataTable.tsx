@@ -16,12 +16,12 @@ import { SortConfig } from "@/hooks/useDataTable";
 
 function SkeletonRow({ columns }: { columns: Column[] }) {
   return (
-    <TableRow style = {{ borderBottom: `1px solid ${PaletteColors.border}` }}>
+    <TableRow style = {{ borderBottom: `1px solid ${PaletteColors().border}` }}>
       {/* Checkbox */}
       <TableCell className = "w-8 py-1.5">
         <div
           className = "w-4 h-4 rounded animate-pulse mx-auto"
-          style     = {{ background: PaletteColors.bgHover }}
+          style     = {{ background: PaletteColors().bgHover }}
         />
       </TableCell>
       {columns.map((col) => (
@@ -29,7 +29,7 @@ function SkeletonRow({ columns }: { columns: Column[] }) {
           <div
             className = "h-3 rounded animate-pulse"
             style     = {{
-              background: PaletteColors.bgHover,
+              background: PaletteColors().bgHover,
               width     : `${Math.floor(Math.random() * 40) + 40}%`,
               margin    : "0 auto",
             }}
@@ -47,8 +47,8 @@ function SortIcon({ colKey, sort }: { colKey: string; sort: SortConfig }) {
     return <Icons.ChevronsUpDown className = "h-3 w-3 ml-1 opacity-30" />
   }
   return sort.direction               === "asc"
-  ?      <Icons.ChevronUp   className   = "h-3 w-3 ml-1" style = {{ color: PaletteColors.accent }} />
-  :      <Icons.ChevronDown className   = "h-3 w-3 ml-1" style = {{ color: PaletteColors.accent }} />
+  ?      <Icons.ChevronUp   className   = "h-3 w-3 ml-1" style = {{ color: PaletteColors().accent }} />
+  :      <Icons.ChevronDown className   = "h-3 w-3 ml-1" style = {{ color: PaletteColors().accent }} />
 }
 
   // ─── ActionMenuItem ───────────────────────────────────
@@ -64,7 +64,7 @@ function ActionMenuItem({ action, row }: { action: any; row: any }) {
           ? "text-green-600 focus:bg-green-50 focus:text-green-600"
           :  ""
       }
-      style   = {{ color: PaletteColors.text, fontSize: 13 }}
+      style   = {{ color: PaletteColors().text, fontSize: 13 }}
       onClick = {() => action.onClick?.(row)}
     >
       {React.isValidElement(Icon) ? Icon : Icon && <Icon className="mr-2 h-4 w-4" />}
@@ -122,8 +122,8 @@ export function DataTable({
         <Card
           className = "shadow-sm p-0 rounded-[7px] overflow-hidden"
           style     = {{
-            background: PaletteColors.bgActive,
-            border    : `1px solid ${PaletteColors.border}`,
+            background: PaletteColors().bgActive,
+            border    : `1px solid ${PaletteColors().border}`,
           }}
         >
           <CardContent className = "p-0">
@@ -134,10 +134,10 @@ export function DataTable({
                 <TableHeader>
                   <TableRow
                     className = "hover:bg-transparent"
-                    style     = {{ background: PaletteColors.bg }}
+                    style     = {{ background: PaletteColors().bg }}
                   >
                     {/* Checkbox tout sélectionner */}
-                    <TableHead className = "w-8 text-center" style = {{ borderBottom: `1px solid ${PaletteColors.border}` }}>
+                    <TableHead className = "w-8 text-center" style = {{ borderBottom: `1px solid ${PaletteColors().border}` }}>
                       <input
                         type      = "checkbox"
                         checked   = {allSelected}
@@ -156,8 +156,8 @@ export function DataTable({
                           col.className
                         )}
                         style={{
-                          color       : PaletteColors.text,
-                          borderBottom: `1px solid ${PaletteColors.border}`,
+                          color       : PaletteColors().text,
+                          borderBottom: `1px solid ${PaletteColors().border}`,
                         }}
                         onClick = {() => col.sortable && onSort(col.key)}
                       >
@@ -190,10 +190,10 @@ export function DataTable({
                       <TableCell
                         colSpan   = {columns.length + 1}
                         className = "h-32 text-center text-xs"
-                        style     = {{ color: PaletteColors.text }}
+                        style     = {{ color: PaletteColors().text }}
                       >
                         <div           className = "flex flex-col items-center gap-2">
-                        <Icons.SearchX className = "h-6 w-6" style = {{ color: PaletteColors.text }} />
+                        <Icons.SearchX className = "h-6 w-6" style = {{ color: PaletteColors().text }} />
                           Aucun résultat trouvé
                         </div>
                       </TableCell>
@@ -206,15 +206,15 @@ export function DataTable({
                           key       = {row.id ?? idx}
                           className = "transition-all duration-150 text-center cursor-context-menu"
                           style     = {{
-                            borderBottom: `1px solid ${PaletteColors.border}`,
+                            borderBottom: `1px solid ${PaletteColors().border}`,
                             background  : isSelected
-                              ? `${PaletteColors.accent}18`
+                              ? `${PaletteColors().accent}18`
                               :  "transparent",
                           }}
                           onContextMenu = {() => onContextMenu(row)}
                           onMouseEnter  = {(e) => {
                             if (!isSelected)
-                              e.currentTarget.style.background = PaletteColors.bgHover
+                              e.currentTarget.style.background = PaletteColors().bgHover
                           }}
                           onMouseLeave={(e) => {
                             if (!isSelected)
@@ -236,7 +236,7 @@ export function DataTable({
                             <TableCell
                               key       = {col.key}
                               className = {cn("py-1.5 text-[12px]", col.className)}
-                              style     = {{ color: PaletteColors.textActive }}
+                              style     = {{ color: PaletteColors().textActive }}
                             >
                               {col.render
                                 ? col.render(row[col.key], row, { namepage, attributeName })
@@ -258,21 +258,21 @@ export function DataTable({
       <ContextMenuContent
         className = "w-48"
         style     = {{
-          background: PaletteColors.bg,
-          border    : `1px solid ${PaletteColors.border}`,
+          background: PaletteColors().bg,
+          border    : `1px solid ${PaletteColors().border}`,
         }}
       >
         {contextRow && contextActions.length > 0 ? (
           contextActions.map((action: any, idx: number) => (
             <React.Fragment key = {action.key}>
               {action.key === "delete" && idx > 0 && (
-                <ContextMenuSeparator style = {{ background: PaletteColors.border }} />
+                <ContextMenuSeparator style = {{ background: PaletteColors().border }} />
               )}
               <ActionMenuItem action = {action} row = {contextRow} />
             </React.Fragment>
           ))
         ) : (
-          <ContextMenuItem disabled style = {{ color: PaletteColors.text, fontSize: 13 }}>
+          <ContextMenuItem disabled style = {{ color: PaletteColors().text, fontSize: 13 }}>
             Aucune action disponible
           </ContextMenuItem>
         )}

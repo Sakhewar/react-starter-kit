@@ -158,12 +158,12 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     animate    = {{ width: collapsed ? 56 : 260 }}
                     transition = {{ type: "spring", stiffness: 260, damping: 30 }}
                     className  = "flex flex-col h-screen overflow-hidden z-20"
-                    style      = {{ background: PaletteColors.bg, borderRight: `1px solid ${PaletteColors.border}` }}
+                    style      = {{ background: PaletteColors().bg, borderRight: `1px solid ${PaletteColors().border}` }}
                 >
                     {/* Header */}
                     <div
                         className = "h-14 flex items-center flex-shrink-0 px-3"
-                        style     = {{ borderBottom: `1px solid ${PaletteColors.border}` }}
+                        style     = {{ borderBottom: `1px solid ${PaletteColors().border}` }}
                     >
                         <div
                             onClick   = {() => router.visit("/")}
@@ -171,16 +171,16 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                         >
                             <div
                                 className = "w-8 h-8 flex items-center justify-center rounded-lg flex-shrink-0"
-                                style     = {{ background: PaletteColors.bgActive }}
+                                style     = {{ background: PaletteColors().bgActive }}
                             >
-                                <FaSitemap className = "h-4 w-4" style = {{ color: PaletteColors.accent }} />
+                                <FaSitemap className = "h-4 w-4" style = {{ color: PaletteColors().accent }} />
                             </div>
                             {!collapsed && (
                                 <div className = "overflow-hidden whitespace-nowrap">
-                                <div className = "font-semibold text-sm" style = {{ color: PaletteColors.textActive }}>
+                                <div className = "font-semibold text-sm" style = {{ color: PaletteColors().textActive }}>
                                         POS
                                     </div>
-                                    <div className = "text-[10px]" style = {{ color: PaletteColors.text }}>
+                                    <div className = "text-[10px]" style = {{ color: PaletteColors().text }}>
                                         Build By DIOP ❤️
                                     </div>
                                 </div>
@@ -207,7 +207,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                         {hasActiveChild && (
                                             <span
                                                 className = "absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full"
-                                                style     = {{ background: PaletteColors.accent }}
+                                                style     = {{ background: PaletteColors().accent }}
                                             />
                                         )}
 
@@ -217,12 +217,12 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                     onClick   = {(e) => handleModuleClick(module, e)}
                                                     className = "flex w-full items-center justify-between px-2 py-2 rounded-lg text-[13px] font-medium transition-all duration-150"
                                                     style     = {{
-                                                        background: isHighlighted ? PaletteColors.bgActive  : "transparent",
-                                                        color     : isHighlighted ? PaletteColors.textActive: PaletteColors.text,
+                                                        background: isHighlighted ? PaletteColors().bgActive  : "transparent",
+                                                        color     : isHighlighted ? PaletteColors().textActive: PaletteColors().text,
                                                     }}
                                                     onMouseEnter={(e) => {
                                                         if (!isHighlighted)
-                                                            e.currentTarget.style.background = PaletteColors.bgHover
+                                                            e.currentTarget.style.background = PaletteColors().bgHover
                                                     }}
                                                     onMouseLeave={(e) => {
                                                         if (!isHighlighted)
@@ -232,7 +232,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                     <div className = "flex items-center gap-3">
                                                         <ModuleIcon
                                                             className = "h-4 w-4 flex-shrink-0"
-                                                            style     = {{ color: isHighlighted ? PaletteColors.accent : PaletteColors.text }}
+                                                            style     = {{ color: isHighlighted ? PaletteColors().accent : PaletteColors().text }}
                                                         />
                                                         {!collapsed && (
                                                             <span className = "truncate">{module.title}</span>
@@ -245,7 +245,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                                 "h-3 w-3 flex-shrink-0 transition-transform duration-200",
                                                                 isOpen && "rotate-180"
                                                             )}
-                                                            style = {{ color: PaletteColors.text }}
+                                                            style = {{ color: PaletteColors().text }}
                                                         />
                                                     )}
                                                 </button>
@@ -257,8 +257,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                     side  = "right"
                                                     style = {{
                                                         background: "#1e2130",
-                                                        border    : `1px solid ${PaletteColors.border}`,
-                                                        color     : PaletteColors.textActive,
+                                                        border    : `1px solid ${PaletteColors().border}`,
+                                                        color     : PaletteColors().bg,
                                                         fontSize  : "12px",
                                                     }}
                                                 >
@@ -280,7 +280,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                             >
                                                 <div
                                                     className = "ml-4 mt-0.5 mb-0.5 pl-3 space-y-0.5"
-                                                    style     = {{ borderLeft: `1px solid ${PaletteColors.border}` }}
+                                                    style     = {{ borderLeft: `1px solid ${PaletteColors().border}` }}
                                                 >
                                                     {module.pages!.map((page) => {
                                                         const PageIcon = 
@@ -294,12 +294,12 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                                 onClick   = {(e) => { if (active) e.preventDefault() }}
                                                                 className = "flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] transition-all"
                                                                 style     = {{
-                                                                    background: active ? PaletteColors.bgActive  : "transparent",
-                                                                    color     : active ? PaletteColors.textActive: PaletteColors.text,
+                                                                    background: active ? PaletteColors().bgActive  : "transparent",
+                                                                    color     : active ? PaletteColors().textActive: PaletteColors().text,
                                                                 }}
                                                                 onMouseEnter={(e) => {
                                                                     if (!active)
-                                                                        (e.currentTarget as HTMLElement).style.background = PaletteColors.bgHover
+                                                                        (e.currentTarget as HTMLElement).style.background = PaletteColors().bgHover
                                                                 }}
                                                                 onMouseLeave={(e) => {
                                                                     if (!active)
@@ -308,7 +308,7 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                             >
                                                                 <PageIcon
                                                                     className = "h-3.5 w-3.5 flex-shrink-0"
-                                                                    style     = {{ color: active ? PaletteColors.accent : PaletteColors.text }}
+                                                                    style     = {{ color: active ? PaletteColors().accent : PaletteColors().text }}
                                                                 />
                                                                 <span className = "truncate">{page.title}</span>
                                                             </Link>
@@ -327,19 +327,19 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                     {!isMobile && (
                         <div
                             className = "h-12 flex items-center justify-end px-3 flex-shrink-0"
-                            style     = {{ borderTop: `1px solid ${PaletteColors.border}` }}
+                            style     = {{ borderTop: `1px solid ${PaletteColors().border}` }}
                         >
                             <button
                                 onClick      = {() => { setCollapsed(!collapsed); closeFlyout() }}
                                 className    = "w-8 h-8 flex items-center justify-center rounded-lg transition-all"
-                                style        = {{ color: PaletteColors.text }}
+                                style        = {{ color: PaletteColors().text }}
                                 onMouseEnter = {(e) => {
-                                    e.currentTarget.style.background = PaletteColors.bgHover
-                                    e.currentTarget.style.color      = PaletteColors.textActive
+                                    e.currentTarget.style.background = PaletteColors().bgHover
+                                    e.currentTarget.style.color      = PaletteColors().textActive
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.background = "transparent"
-                                    e.currentTarget.style.color      = PaletteColors.text
+                                    e.currentTarget.style.color      = PaletteColors().text
                                 }}
                             >
                                 <PanelLeft className = "h-4 w-4" />
@@ -363,8 +363,8 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                 left        : 60,
                                 position    : "fixed",
                                 zIndex      : 50,
-                                background  : PaletteColors.bg,
-                                border      : `1px solid ${PaletteColors.border}`,
+                                background  : PaletteColors().bg,
+                                border      : `1px solid ${PaletteColors().border}`,
                                 borderRadius: 8,
                                 overflow    : "hidden",
                                 boxShadow   : "0 8px 32px rgba(0,0,0,0.4)",
@@ -373,14 +373,14 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                             {/* Header flyout */}
                             <div
                                 className = "px-4 py-2.5 flex gap-2 items-center"
-                                style     = {{ borderBottom: `1px solid ${PaletteColors.border}`, background: PaletteColors.bgActive }}
+                                style     = {{ borderBottom: `1px solid ${PaletteColors().border}`, background: PaletteColors().bgActive }}
                             >
                                 {FlyoutModuleIcon && (
-                                    <FlyoutModuleIcon className = "h-4 w-4" style = {{ color: PaletteColors.accent }} />
+                                    <FlyoutModuleIcon className = "h-4 w-4" style = {{ color: PaletteColors().accent }} />
                                 )}
                                 <p
                                     className = "text-[11px] uppercase tracking-widest font-semibold"
-                                    style     = {{ color: PaletteColors.textActive }}
+                                    style     = {{ color: PaletteColors().textActive }}
                                 >
                                     {flyoutModule.title}
                                 </p>
@@ -400,15 +400,15 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                 onClick   = {(e) => { if (active) e.preventDefault(); closeFlyout() }}
                                                 className = "flex flex-col items-center gap-2 p-3 rounded-lg text-center transition-all"
                                                 style     = {{
-                                                    background: active ? PaletteColors.bgActive                                           : PaletteColors.bgHover,
-                                                    border    : `1px solid ${active ? PaletteColors.accent + "40" : PaletteColors.border}`,
-                                                    color     : active ? PaletteColors.textActive                                         : PaletteColors.text,
+                                                    background: active ? PaletteColors().bgActive                                           : PaletteColors().bgHover,
+                                                    border    : `1px solid ${active ? PaletteColors().accent + "40" : PaletteColors().border}`,
+                                                    color     : active ? PaletteColors().textActive                                         : PaletteColors().text,
                                                 }}
                                             >
-                                                <div className = "p-2 rounded-lg" style = {{ background: PaletteColors.bg }}>
+                                                <div className = "p-2 rounded-lg" style = {{ background: PaletteColors().bg }}>
                                                     <PageIcon
                                                         className = "h-4 w-4"
-                                                        style     = {{ color: active ? PaletteColors.accent : PaletteColors.text }}
+                                                        style     = {{ color: active ? PaletteColors().accent : PaletteColors().text }}
                                                     />
                                                 </div>
                                                 <span className = "text-[11px] font-medium leading-tight">
@@ -432,12 +432,12 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                                 onClick   = {(e) => { if (active) e.preventDefault(); closeFlyout() }}
                                                 className = "flex items-center gap-3 px-4 py-2 text-[13px] transition-all"
                                                 style     = {{
-                                                    background: active ? PaletteColors.bgActive  : "transparent",
-                                                    color     : active ? PaletteColors.textActive: PaletteColors.text,
+                                                    background: active ? PaletteColors().bgActive  : "transparent",
+                                                    color     : active ? PaletteColors().textActive: PaletteColors().text,
                                                 }}
                                                 onMouseEnter={(e) => {
                                                     if (!active)
-                                                        (e.currentTarget as HTMLElement).style.background = PaletteColors.bgHover
+                                                        (e.currentTarget as HTMLElement).style.background = PaletteColors().bgHover
                                                 }}
                                                 onMouseLeave={(e) => {
                                                     if (!active)
@@ -446,11 +446,11 @@ export default function AppSidebar({ isMobile = false }: { isMobile?: boolean })
                                             >
                                                 <div
                                                     className = "p-1.5 rounded-md"
-                                                    style     = {{ background: active ? PaletteColors.bgHover : PaletteColors.bgActive }}
+                                                    style     = {{ background: active ? PaletteColors().bgHover : PaletteColors().bgActive }}
                                                 >
                                                     <PageIcon
                                                         className = "h-3.5 w-3.5"
-                                                        style     = {{ color: active ? PaletteColors.accent : PaletteColors.text }}
+                                                        style     = {{ color: active ? PaletteColors().accent : PaletteColors().text }}
                                                     />
                                                 </div>
                                                 <span>{page.title}</span>

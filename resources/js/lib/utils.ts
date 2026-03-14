@@ -1,4 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
+import { useTheme } from "next-themes";
+import { useMemo } from "react";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -138,34 +140,31 @@ export type Column = {
   extraActions?: Action[];
 };
 
-export const PaletteColors1 = {
-  // bg        : "#0f1117",
-  // bgHover   : "#161b27",
-  // bgActive  : "#1a2035",
-  // border    : "#1e2130",
-  // text      : "#94a3b8",
-  // textActive: "#e2e8f0",
-  // accent    : "#3b82f6",
 
-  bg        : "#ffffff",
-  bgHover   : "#f8fafc",
-  bgActive  : "#f1f5f9",
-  border    : "#e2e8f0",
-  text      : "#0f172a",
-  textActive: "#020617",
-  accent    : "#3b82f6",
+export const PaletteColorsGood = {
+  bg        : "#fafafa",
+  bgHover   : "#f4f4f5",
+  bgActive  : "#ffffff",
+
+  border    : "#e5e5e5",
+
+  text      : "#737373",
+  textActive: "#111111",
+
+  accent    : "#000000",
 }
 
-export const PaletteColors = {
-  bg        : "#ffffff",
-  bgHover   : "#f8fafc",
-  bgActive  : "#f1f5f9",
+export const PaletteColors = () => {
+  const { theme } = useTheme();
 
-  card      : "#ffffff",
-  border    : "#e6e8ec",
-
-  text      : "#6b7280",
-  textActive: "#111827",
-
-  accent    : "#0f172a",
-}
+ // useMemo pour recalculer uniquement quand le theme change
+ return useMemo(() => ({
+  bg        : theme === "dark" ? "#0f1117" : "#fafafa",
+  bgHover   : theme === "dark" ? "#161b27" : "#f4f4f5",
+  bgActive  : theme === "dark" ? "#1a2035" : "#ffffff", // card
+  border    : theme === "dark" ? "#1e2130" : "#e5e5e5",
+  text      : theme === "dark" ? "#94a3b8" : "#000000",
+  textActive: theme === "dark" ? "#e2e8f0" : "#111111",
+  accent    : theme === "dark" ? "#3b82f6" : "#000000",
+}), [theme]);
+};

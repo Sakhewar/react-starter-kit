@@ -90,7 +90,7 @@ export default function MainEntry() {
 
   return (
     <AuthGuard>
-      <div className = "h-screen w-full flex overflow-hidden bg-background">
+      <div className = "h-screen w-full flex overflow-hidden">
       <div className = "hidden md:block h-full">
           <AppSidebar />
         </div>
