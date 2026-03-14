@@ -138,13 +138,34 @@ export type Column = {
   extraActions?: Action[];
 };
 
-export const PaletteColors = {
-  bg        : "#0f1117",
-  bgHover   : "#161b27",
-  bgActive  : "#1a2035",
-  border    : "#1e2130",
-  text      : "#94a3b8",
-  textActive: "#e2e8f0",
+export const PaletteColors1 = {
+  // bg        : "#0f1117",
+  // bgHover   : "#161b27",
+  // bgActive  : "#1a2035",
+  // border    : "#1e2130",
+  // text      : "#94a3b8",
+  // textActive: "#e2e8f0",
+  // accent    : "#3b82f6",
+
+  bg        : "#ffffff",
+  bgHover   : "#f8fafc",
+  bgActive  : "#f1f5f9",
+  border    : "#e2e8f0",
+  text      : "#0f172a",
+  textActive: "#020617",
   accent    : "#3b82f6",
 }
 
+export const PaletteColors = {
+  bg        : "#ffffff",
+  bgHover   : "#f8fafc",
+  bgActive  : "#f1f5f9",
+
+  card      : "#ffffff",
+  border    : "#e6e8ec",
+
+  text      : "#6b7280",
+  textActive: "#111827",
+
+  accent    : "#0f172a",
+}
