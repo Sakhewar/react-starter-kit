@@ -1,9 +1,9 @@
-import { useRef } from "react";
+
 import { FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import * as Icons from "lucide-react";
 import { Input } from "./ui/input";
 import { Card, CardContent } from "./ui/card";
-import { PaletteColors, PaletteProps } from "@/lib/utils";
+import { PaletteProps } from "@/lib/utils";
 import listofFilters from "@/configs/listOfFilters";
 
 interface FilterBarProps {

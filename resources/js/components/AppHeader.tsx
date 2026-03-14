@@ -12,10 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import MobileSidebar from "./MobileSideBar"
 import { ThemeToggle } from "./ThemeToggle"
 import { useAuthStore } from "@/hooks/authStore"
-import { PaletteColors, PaletteProps } from "@/lib/utils"
-import { useGlobalStore } from "@/hooks/backoffice"
-import { useEffect, useState } from "react"
-
+import { PaletteProps } from "@/lib/utils"
 
 type HeaderProps = {
     breadcrumb?: string[]

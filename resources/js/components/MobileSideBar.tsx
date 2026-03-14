@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import AppSidebar from "./AppSideBar"
-import { PaletteColors, PaletteProps } from "@/lib/utils"
+import { PaletteProps } from "@/lib/utils"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 

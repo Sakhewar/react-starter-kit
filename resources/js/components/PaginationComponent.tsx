@@ -5,7 +5,7 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { PaletteColors, PaletteProps } from "@/lib/utils"
+import { PaletteProps } from "@/lib/utils"
 
 export default function PaginationComponent({
   groupSize = 7,

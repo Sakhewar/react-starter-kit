@@ -1,4 +1,4 @@
-import { cn, PaletteColors, PaletteProps } from "@/lib/utils";
+import { cn, PaletteProps } from "@/lib/utils";
 import {
   Select, SelectContent, SelectItem,
   SelectTrigger, SelectValue,

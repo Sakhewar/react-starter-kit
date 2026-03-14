@@ -9,7 +9,7 @@ import {
   ContextMenuSeparator, ContextMenuTrigger,
 } from "./ui/context-menu";
 import * as Icons from "lucide-react";
-import { cn, Column, PaletteColors, PaletteProps } from "@/lib/utils";
+import { cn, Column, PaletteProps } from "@/lib/utils";
 import { SortConfig } from "@/hooks/useDataTable";
 
   // ─── Skeleton ─────────────────────────────────────────
@@ -139,6 +139,7 @@ export function DataTable({
                   <TableRow
                     className = "hover:bg-transparent"
                     style     = {{ background: palette.bg }}
+                    onContextMenu={(e) => e.stopPropagation()} 
                   >
                     {/* Checkbox tout sélectionner */}
                     <TableHead className = "w-8 text-center" style = {{ borderBottom: `1px solid ${palette.border}` }}>

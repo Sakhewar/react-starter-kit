@@ -257,25 +257,6 @@ export default function BaseContent({
             >
               {metadata?.total ?? 0}
             </Badge>
-
-            {/* Raccourcis hint */}
-            <span
-              className = "hidden lg:flex items-center gap-2 text-[10px] ml-2"
-              style     = {{ color: palette.text }}
-            >
-              <kbd
-                className = "px-1.5 py-0.5 rounded text-[10px]"
-                style     = {{ background: palette.bgActive, border: `1px solid ${palette.border}` }}
-              >
-                N
-              </kbd> Nouveau ·
-              <kbd
-                className = "px-1.5 py-0.5 rounded text-[10px]"
-                style     = {{ background: palette.bgActive, border: `1px solid ${palette.border}` }}
-              >
-                F
-              </kbd> Filtrer
-            </span>
           </div>
 
           {can(`creation-${permissionName ?? attributeName}`, permissionPages) && (
