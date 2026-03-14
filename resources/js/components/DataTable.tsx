@@ -12,7 +12,7 @@ import * as Icons from "lucide-react";
 import { cn, Column, PaletteProps } from "@/lib/utils";
 import { SortConfig } from "@/hooks/useDataTable";
 
-  // ─── Skeleton ─────────────────────────────────────────
+    // ─── Skeleton ─────────────────────────────────────────
 
 function SkeletonRow({ columns, palette }: { columns: Column[], palette: PaletteProps}) {
   return (
@@ -40,7 +40,7 @@ function SkeletonRow({ columns, palette }: { columns: Column[], palette: Palette
   )
 }
 
-  // ─── Sort icon ────────────────────────────────────────
+    // ─── Sort icon ────────────────────────────────────────
 
 function SortIcon({ colKey, sort, palette }: { colKey: string; sort: SortConfig, palette:PaletteProps })
 {
@@ -52,7 +52,7 @@ function SortIcon({ colKey, sort, palette }: { colKey: string; sort: SortConfig,
   :      <Icons.ChevronDown className   = "h-3 w-3 ml-1" style = {{ color: palette.accent }} />
 }
 
-  // ─── ActionMenuItem ───────────────────────────────────
+    // ─── ActionMenuItem ───────────────────────────────────
 
 function ActionMenuItem({ action, row, palette }: { action: any; row: any, palette: PaletteProps})
 {
@@ -64,7 +64,7 @@ function ActionMenuItem({ action, row, palette }: { action: any; row: any, palet
           ? "text-destructive focus:bg-destructive/10 focus:text-destructive"
           : action.variant === "success"
           ? "text-green-600 focus:bg-green-50 focus:text-green-600"
-          :  ""
+          :   ""
       }
       style   = {{ color: palette.text, fontSize: 13 }}
       onClick = {() => action.onClick?.(row)}
@@ -75,7 +75,7 @@ function ActionMenuItem({ action, row, palette }: { action: any; row: any, palet
   )
 }
 
-  // ─── Props ────────────────────────────────────────────
+    // ─── Props ────────────────────────────────────────────
 
 interface DataTableProps {
   columns       : Column[];
@@ -96,7 +96,7 @@ interface DataTableProps {
   palette       : PaletteProps
 }
 
-  // ─── Composant ────────────────────────────────────────
+    // ─── Composant ────────────────────────────────────────
 
 export function DataTable({
   columns,
@@ -137,9 +137,9 @@ export function DataTable({
                 {/* Header */}
                 <TableHeader>
                   <TableRow
-                    className = "hover:bg-transparent"
-                    style     = {{ background: palette.bg }}
-                    onContextMenu={(e) => e.stopPropagation()} 
+                    className     = "hover:bg-transparent"
+                    style         = {{ background: palette.bg }}
+                    onContextMenu = {(e) => e.stopPropagation()}
                   >
                     {/* Checkbox tout sélectionner */}
                     <TableHead className = "w-8 text-center" style = {{ borderBottom: `1px solid ${palette.border}` }}>
@@ -178,9 +178,9 @@ export function DataTable({
                 {/* Body */}
                 <TableBody>
                   {loading ? (
-                      // Skeleton 5 lignes
+                        // Skeleton 5 lignes
                     Array.from({ length: 5 }).map((_, i) => (
-                      <SkeletonRow key = {i} columns = {columns} palette={palette} />
+                      <SkeletonRow key = {i} columns = {columns} palette = {palette} />
                     ))
                   ) : Object.keys(errorGraphQL).length > 0 ? (
                     <TableRow>
@@ -190,7 +190,7 @@ export function DataTable({
                         </p>
                       </TableCell>
                     </TableRow>
-                  ) : items.length === 0 ? (
+                  ) : items?.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan   = {columns.length + 1}
@@ -214,7 +214,7 @@ export function DataTable({
                             borderBottom: `1px solid ${palette.border}`,
                             background  : isSelected
                               ? `${palette.accent}18`
-                              :  "transparent",
+                              :   "transparent",
                           }}
                           onContextMenu = {() => onContextMenu(row)}
                           onMouseEnter  = {(e) => {
@@ -273,7 +273,7 @@ export function DataTable({
               {action.key === "delete" && idx > 0 && (
                 <ContextMenuSeparator style = {{ background: palette.border }} />
               )}
-              <ActionMenuItem action = {action} row = {contextRow} palette={palette} />
+              <ActionMenuItem action = {action} row = {contextRow} palette = {palette} />
             </React.Fragment>
           ))
         ) : (

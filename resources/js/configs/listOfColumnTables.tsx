@@ -13,7 +13,7 @@ import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { RowActions } from "@/lib/utilsFunctiions";
 
-  // ─── Base actions ─────────────────────────────────────
+    // ─── Base actions ─────────────────────────────────────
 
 export const baseActions: Record<string, Omit<Action, "key" | "onClick">> = {
   edit  : { label: "Modifier",   icon: Pencil                        },
@@ -21,7 +21,7 @@ export const baseActions: Record<string, Omit<Action, "key" | "onClick">> = {
   delete: { label: "Supprimer",  icon: Trash2, variant: "destructive" },
 };
 
-  // ─── columnConfigs ────────────────────────────────────
+    // ─── columnConfigs ────────────────────────────────────
 
 export const columnConfigs: Record<string, Column[]> = {
   "provenance": [
@@ -29,7 +29,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "description", label: "Description" },
     {
       key: "actions", label: "", className: "flex items-center justify-center",
-        // ← fonction pour que can() soit évalué au moment du rendu
+          // ← fonction pour que can() soit évalué au moment du rendu
       actionConfig: () => ({
         delete: can("suppression-provenance"),
         edit  : can("modification-provenance"),
@@ -115,7 +115,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "telephone", label: "Téléphone" },
     { key: "rccm",      label: "RCCM"      },
     { key: "ninea",     label: "Ninea"     },
-    { key: "activer",   label: "Actif",    render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",   label: "Actif",    render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -130,7 +130,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "point_vente_id", label: "Point de vente", render: (_, row) => <span>{row?.point_vente?.libelle}</span> },
     { key: "type_depot_id",  label: "Type de dépôt",  render: (_, row) => <span>{row?.type_depot?.libelle}</span>  },
     { key: "description",    label: "Description"    },
-    { key: "activer",        label: "Actif",          render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",        label: "Actif",          render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -149,7 +149,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "type_client_id",       label: "Type de client",        render: (_, row) => <span>{row?.type_client?.libelle}</span>       },
     { key: "plafond",              label: "Plafond/Remise",        render: (_, row) => `${row?.plafond ?? ""} / ${row?.remise ? `${row?.remise}%` : ""}` },
     { key: "modalite_paiement_id", label: "Modalite de paiement",  render: (_, row) => <span>{row?.modalite_paiement?.libelle}</span> },
-    { key: "activer",              label: "Actif",                 render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",              label: "Actif",                 render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -166,7 +166,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "telephone",           label: "Téléphone"               },
     { key: "adresse",             label: "Adresse"                 },
     { key: "type_fournisseur_id", label: "Type de fournisseur",    render: (_, row) => <span>{row?.type_fournisseur?.libelle}</span> },
-    { key: "activer",             label: "Actif",                  render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",             label: "Actif",                  render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -179,7 +179,7 @@ export const columnConfigs: Record<string, Column[]> = {
   "familleproduit": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
-    { key: "activer",     label: "Actif",       render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",     label: "Actif",       render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -193,7 +193,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "libelle",            label: "Libellé"           },
     { key: "famille_produit_id", label: "Famille Produit",   render: (_, row) => <span>{row?.famille_produit?.libelle}</span> },
     { key: "description",        label: "Description"       },
-    { key: "activer",            label: "Actif",             render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",            label: "Actif",             render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -206,7 +206,7 @@ export const columnConfigs: Record<string, Column[]> = {
   "marque": [
     { key: "libelle",     label: "Libellé"     },
     { key: "description", label: "Description" },
-    { key: "activer",     label: "Actif",       render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",     label: "Actif",       render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
@@ -224,7 +224,7 @@ export const columnConfigs: Record<string, Column[]> = {
     { key: "sous_famille_produit_id", label: "Sous Famille Produit", render: (_, row) => <span>{row?.sous_famille_produit?.libelle}</span> },
     { key: "marque_id",               label: "Marque",               render: (_, row) => <span>{row?.marque?.libelle}</span>               },
     { key: "description",             label: "Description"           },
-    { key: "activer",                 label: "Actif",                render: (_, row) => <Badge className={cn("text-white rounded-[5px]", row?.activer ? "bg-green-600" : "bg-red-600")}>{row?.activer_fr}</Badge> },
+    { key: "activer",                 label: "Actif",                render: (_, row) => <div className={cn("text-white rounded-full w-3 h-3 m-auto", row?.activer ? "bg-green-600" : "bg-red-600")}></div> },
     {
       key         : "actions",  label: "", className: "flex items-center justify-center",
       actionConfig: () => ({}),
