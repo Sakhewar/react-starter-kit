@@ -19,12 +19,13 @@ type StoreQueryArgs =
     }
 }
 
-type eltQuery = 
+export type eltQuery = 
 {
-    entity    : string
-    fields    : string
-    args     ?: any
-    optionals?: Record<string, any>
+    entity      : string
+    fields      : string
+    args       ?: any
+    optionals  ?: Record<string, any>,
+    skipInNeeds?: boolean
 }
 
 type resultQuery = 
@@ -97,7 +98,7 @@ function applyResults(current: Record<string, any>, results: resultQuery[]): { n
 
     results.forEach(({ entity, data, errors }) =>
     {
-          // permissions_deps se merge dans permissions
+            // permissions_deps se merge dans permissions
         const targetEntity = entity === 'permissions_deps' ? 'permissions' : entity
 
         if (data)
@@ -226,8 +227,7 @@ export const useGlobalStore = create<GlobalState>()(
                     errors         : newErrors,
                     isLoading      : false,
                     lastInitialized: attributeName,
-                    scope          : { ...state.scope, currentPage: page, needsEltsDeps },
-                }
+                    scope: { ...state.scope, currentPage: page, needsEltsDeps: needsEltsDeps.filter((need) => !need.skipInNeeds) },                }
             })
         },
 
@@ -284,6 +284,6 @@ export const useGlobalStore = create<GlobalState>()(
 
 if (typeof window !== "undefined")
 {
-      // @ts-ignore
+        // @ts-ignore
     window.store = useGlobalStore;
 }

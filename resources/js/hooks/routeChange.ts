@@ -1,10 +1,12 @@
-export function managePageDeps(currentTemplateUrl: string, getElementsNeeds: { entity: string; fields: string; args?: any, optionals?: Record<string, any> }[])
+import { eltQuery } from "@/utils/fetchDataScope";
+
+export function managePageDeps(currentTemplateUrl: string, getElementsNeeds: eltQuery[])
 {    
     if (currentTemplateUrl.indexOf('/client') !== -1)
     {
         getElementsNeeds.push({ entity: 'typeclients',       fields: 'id,libelle', args: {} });
         getElementsNeeds.push({ entity: 'modalitepaiements', fields: 'id,libelle', args: {} });
-        getElementsNeeds.push({ entity: 'permissions',       fields: 'id,name',    args: { search: '-typeclient' }, optionals: { toType: 'permissions_deps' } });
+        getElementsNeeds.push({ entity: 'permissions',       fields: 'id,name',    args: { search: '-typeclient' }, skipInNeeds:true, optionals: { toType: 'permissions_deps' } });
     }
     else if (currentTemplateUrl.indexOf('/fournisseur') !== -1)
     {
