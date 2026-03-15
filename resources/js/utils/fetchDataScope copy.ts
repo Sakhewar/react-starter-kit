@@ -1,5 +1,6 @@
 import { EntityItem, PaginatedResponse, PaletteColors } from "@/lib/utils"
 import { graphqlGet } from "./graphql"
+import { SortConfig } from "@/hooks/useDataTable";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toPlural } from "@/components/BaseContent";
@@ -11,7 +12,7 @@ type StoreQueryArgs =
 {
     attributeName : string
     args         ?: Record<string, any>
-    fields?       : string[],
+    fields?      : string[],     
     optionals    ?: 
     {
       toType       ?: string
@@ -36,9 +37,9 @@ type resultQuery =
 
 interface InitOptions
 {
-  page          : any;
-  attributeName : string;
-  force        ?: boolean;
+  page           : any;
+  attributeName  : string;
+  force         ?: boolean;
 }
 
 interface GlobalState
@@ -51,14 +52,18 @@ interface GlobalState
     lastInitialized: string | null
     scope          : Record<any,    any>
   
+    // Fonctions
     initialize : (options: InitOptions) => Promise<void>
     getElements: (args: StoreQueryArgs) => Promise<void>
     pageChanged: (args: StoreQueryArgs) => Promise<void>
     reset      : () => void
     setState   : (key: keyof GlobalState, value: any) => void
-}
+  }
 
-async function fetchEntities(needs: eltQuery[], defaultCount = 10): Promise<resultQuery[]>
+  
+
+  
+async function fetchEntities(needs: eltQuery[],defaultCount = 10): Promise<resultQuery[]>
 {
     const promises = needs.map(async (element) =>
     {
@@ -89,34 +94,22 @@ async function fetchEntities(needs: eltQuery[], defaultCount = 10): Promise<resu
         return { entity: finalType, error: result.reason?.message || "Erreur inconnue" }
     })
 }
-
-function applyResults(current: Record<string, any>, results: resultQuery[]): { newDataPage: Record<string, any>; newErrors: Record<string, string> }
+  
+function applyResults(current: Record<string, any>,results: resultQuery[]): { newDataPage: Record<string, any>; newErrors: Record<string, string> }
 {
     const newDataPage              = { ...current }
     const newErrors: Record<string, string> = {}
 
     results.forEach(({ entity, data, errors }) =>
     {
-          // permissions_deps se merge dans permissions
-        const targetEntity = entity === 'permissions_deps' ? 'permissions' : entity
-
-        if (data)
-        {
-            const existing = newDataPage[targetEntity]
-
-            if (Array.isArray(existing) && Array.isArray(data))
-                newDataPage[targetEntity] = [...existing, ...data]
-            else if (existing?.data && data?.data)
-                newDataPage[targetEntity] = { ...data, data: [...existing.data, ...data.data] }
-            else
-                newDataPage[targetEntity] = data
-        }
-        if (errors) newErrors[targetEntity] = errors
+        if (data)  newDataPage[entity] = data
+        if (errors) newErrors[entity]  = errors
     })
 
     return { newDataPage, newErrors }
 }
-
+  
+  
 export const useGlobalStore = create<GlobalState>()(
     persist( (set, get) =>
     ({
@@ -132,29 +125,28 @@ export const useGlobalStore = create<GlobalState>()(
         {
             set({ isLoading: true })
 
-            const goodType = toPlural(attributeName)
+            const goodType  = toPlural(attributeName)
+            const finalType = optionals?.toType ?? goodType
 
-            const needs: eltQuery[] = [
+            const needs : eltQuery[] = [
                 {
-                    entity: goodType,
-                    fields: fields && Array.isArray(fields) ? fields: ((listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"]),
+                    entity   : goodType,
+                    fields   : fields && Array.isArray(fields) ? fields : ((listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"]),
                     args,
                     optionals: optionals ?? {},
                 },
             ]
 
-            const results = await fetchEntities(needs)
+            const results                    = await fetchEntities(needs)
+            const { newDataPage, newErrors } = applyResults(get().dataPage, results)
 
-            set((state) =>
-            {
-                const { newDataPage, newErrors } = applyResults(state.dataPage, results)
-                return {
-                    dataPage : newDataPage,
-                    errors   : { ...state.errors, ...newErrors },
-                    isLoading: false,
-                }
+            set({
+                dataPage : newDataPage,
+                errors   : { ...get().errors, ...newErrors },
+                isLoading: false,
             })
         },
+
 
         pageChanged: async ({ attributeName, args = {}, optionals }: StoreQueryArgs) =>
         {
@@ -162,7 +154,7 @@ export const useGlobalStore = create<GlobalState>()(
 
             set({ isLoading: true })
 
-            const needs: eltQuery[] = [
+            const needs : eltQuery [] = [
                 {
                     entity   : goodType,
                     fields   : (listofAttributes[goodType] && listofAttributes[goodType][0]) || ["id"],
@@ -171,26 +163,26 @@ export const useGlobalStore = create<GlobalState>()(
                 },
             ]
 
-            const results = await fetchEntities(needs)
-
-            set((state) =>
-            {
-                const { newDataPage, newErrors } = applyResults(state.dataPage, results)
-                return {
-                    dataPage : newDataPage,
-                    errors   : { ...state.errors, ...newErrors },
-                    isLoading: false,
-                }
+            const results                    = await fetchEntities(needs)
+            const { newDataPage, newErrors } = applyResults(get().dataPage, results)            
+            
+            set({
+                dataPage : newDataPage,
+                errors   : { ...get().errors, ...newErrors },
+                isLoading: false,
             })
         },
 
-        initialize: async (options: InitOptions) =>
-        {
-            const { page, attributeName, force = false } = options
-
+        initialize: async (options: InitOptions) => {
+            const {
+                page,
+                attributeName,
+                force = false,
+            } = options
+        
             if (!page?.link) return
             if (!force && get().lastInitialized === attributeName) return
-
+        
             set({
                 isLoading      : true,
                 dataPage       : {},
@@ -199,35 +191,33 @@ export const useGlobalStore = create<GlobalState>()(
                 error          : null,
                 errors         : {},
             })
+        
+            const needs: eltQuery[] = [];
 
-            const currentUser = useAuthStore.getState().user
-            const argPerms    = { search: `-${attributeName}` }
+            let currentUser = useAuthStore.getState().user;
+            
 
-            const needs: eltQuery[] = []
-
+            let argPerms = { search: `-${attributeName}` };
             needs.push({
                 entity: "permissions",
                 fields: "id,name",
-                args  : !currentUser ? argPerms: { ...argPerms, user_id: currentUser.id },
+                args  :  !currentUser ?  argPerms : {...argPerms, user_id : currentUser.id},
             })
-
+        
             let needsEltsDeps: eltQuery[] = []
-                needsEltsDeps             = managePageDeps(page.link, needsEltsDeps)
+            needsEltsDeps = managePageDeps(page.link, needsEltsDeps)
             needs.push(...needsEltsDeps)
-
-            const results = await fetchEntities(needs)
-
-            set((state) =>
-            {
-                const { newDataPage, newErrors } = applyResults(state.dataPage, results)
-                return {
-                    dataPage       : newDataPage,
-                    updateItem     : null,
-                    errors         : newErrors,
-                    isLoading      : false,
-                    lastInitialized: attributeName,
-                    scope          : { ...state.scope, currentPage: page, needsEltsDeps },
-                }
+        
+            const results = await fetchEntities(needs);
+            const { newDataPage, newErrors } = applyResults(get().dataPage, results)
+        
+            set({
+                dataPage       : newDataPage,
+                updateItem     : null,
+                errors         : newErrors,
+                isLoading      : false,
+                lastInitialized: attributeName,
+                scope          : { ...get().scope, currentPage: page, needsEltsDeps },
             })
         },
 
@@ -251,26 +241,26 @@ export const useGlobalStore = create<GlobalState>()(
 
         partialize: (state) => ({
             scope: {
-                collapsed: state.scope?.collapsed ?? false,
-                theme    : state.scope?.theme ?? (typeof window !== "undefined" ? localStorage.getItem("theme") : "system"),
+            collapsed: state.scope?.collapsed ?? false,
+            theme    : state.scope?.theme ?? (typeof window !== "undefined" ? localStorage.getItem("theme") : "system"),
             },
         }),
 
         merge: (persistedState: any, currentState) =>
         {
             const theme = persistedState?.scope?.theme
-                ?? (typeof window !== "undefined" ? localStorage.getItem("theme") : "system")
-                ?? "system"
+            ?? (typeof window !== "undefined" ? localStorage.getItem("theme") : "system")
+            ?? "system"
 
             const isDark = theme === "dark"
-                || (
-                       theme         === "system"
-                    && typeof window !== "undefined"
-                    && window.matchMedia("(prefers-color-scheme: dark)").matches
-                )
+            || (
+                   theme         === "system"
+                && typeof window !== "undefined"
+                && window.matchMedia("(prefers-color-scheme: dark)").matches
+            )
 
             return {
-                ...currentState,
+            ...currentState,
                 scope: {
                     ...currentState.scope,
                     collapsed: persistedState?.scope?.collapsed ?? false,
@@ -282,8 +272,10 @@ export const useGlobalStore = create<GlobalState>()(
     })
 )
 
+// uniquement en dev
 if (typeof window !== "undefined")
 {
-      // @ts-ignore
+    // @ts-ignore
     window.store = useGlobalStore;
 }
+

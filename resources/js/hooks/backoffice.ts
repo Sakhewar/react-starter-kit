@@ -9,10 +9,7 @@ import { EntityItem, PaginatedResponse } from '@/lib/utils';
 
 export function can(name: string, permissions? : any [])
 {
-  const perms = permissions || useGlobalStore.getState().dataPage.permissions;
-
-  console.log(name,perms);
-  
+  const perms = permissions || useGlobalStore.getState().dataPage.permissions;  
 
   if (Array.isArray(perms))
   {

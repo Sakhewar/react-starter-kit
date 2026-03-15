@@ -409,7 +409,7 @@ function Select2({field, value, onChange, processing} : {field : FieldConfig, va
   {
     if (!field.createIfEmpty) return
     if (!field.endpoint || !search.trim()) return
-    if(!can(`creation-${field.endpoint}`)) return
+    //if(!can(`creation-${field.endpoint}`)) return
     
     setCreating(true)
 
@@ -557,7 +557,7 @@ function Select2({field, value, onChange, processing} : {field : FieldConfig, va
               ))}
 
               {/* Bouton créer en bas de liste si options existantes */}
-              {showCreateButton && options.length > 0 && (
+              {showCreateButton && options?.length > 0 && (
                 <>
                   <div className="mx-2 my-1 h-px bg-border" />
                   <CommandItem

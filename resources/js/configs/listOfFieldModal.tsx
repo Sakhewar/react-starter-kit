@@ -75,8 +75,8 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
     "depot": 
     [
         { name: "libelle",        label: "Libellé",        type: "text",     required: true                                                          },
-        { name: "point_vente_id", label: "Point de vente", type: "select",   required: true, options: "pointventes", lgColSpan: 6, inputClassName: "w-full" },
-        { name: "type_depot_id",  label: "Type de dépôt",  type: "select",   required: true, options: "typedepots",  lgColSpan: 6, inputClassName: "w-full" },
+        { name: "point_vente_id", label: "Point de vente", type: "select",   required: true, options: "pointventes", lgColSpan: 6, inputClassName: "w-full", createIfEmpty : true, endpoint: "pointvente", },
+        { name: "type_depot_id",  label: "Type de dépôt",  type: "select",   required: true, options: "typedepots",  lgColSpan: 6, inputClassName: "w-full", createIfEmpty : true, endpoint: "typedepot", },
         { name: "description",    label: "Description",    type: "textarea"                                                                          },
     ],
 
@@ -174,9 +174,9 @@ export const fieldModals: Record<string, FieldConfig[] | TabConfig[]> =
                 { name: "code",    label: "Code",        type: "text", group: "left", groupCol: 12,  mdGroupCol: 6, lgGroupCol: 6 },
                 { name: "libelle", label: "Désignation", type: "text", required:true, group: "left",  mdGroupCol: 6, lgGroupCol: 6 },
                 { name: "description", label: "Description", type: "textarea", group: "right", nbRowsTextArea:5, inputClassName:'border-1 border-dashed border-black dark:border-white', groupCol: 12, mdGroupCol: 6, lgGroupCol: 6 },
-                { name: "famille_produit_id",     label: "Famille de produit",     type: "select",   required: true,  options: "familleproduits",    lgColSpan:6, inputClassName: "w-full" },
+                { name: "famille_produit_id",     label: "Famille de produit",     type: "select",   required: true,  options: "familleproduits",    lgColSpan:6, inputClassName: "w-full", createIfEmpty : true, endpoint: "familleproduit", },
                 { name: "sous_famille_produit_id",label: "Sous Famille de produit",type: "select",   required: false, options: "sousfamilleproduits", lgColSpan: 6, mdColSpan: 6, inputClassName: "w-full" },
-                { name: "marque_id",              label: "Marque",                 type: "select",   required: false, options: "marques",             lgColSpan: 6, mdColSpan: 6, inputClassName: "w-full" },
+                { name: "marque_id",              label: "Marque",                 type: "select",   required: false, options: "marques",             lgColSpan: 6, mdColSpan: 6, inputClassName: "w-full", createIfEmpty : true, endpoint: "marque", },
             ],
         },
         {
